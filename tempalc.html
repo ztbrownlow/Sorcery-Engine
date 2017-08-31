@@ -1,4 +1,4 @@
-<canvas id="canvas" width="600" height="300">
+<canvas id="canvas" width="600" height="450">
   Canvas not supported
 </canvas>
 <script type="text/javascript">
@@ -153,10 +153,28 @@
     canvas.width = canvas.width;
     drawDebugText();
     //TODO GUI
+		drawGUI();
     for(var i = onScreen.length - 1; i >= 0; --i) {
       onScreen[i].draw();
     }
   }
+	function drawGUI(){
+		var numRows = 3;
+		var w = canvas.width;
+		var sepWidth = 3;
+		var h = numRows * imageSize + ((2 + numRows) * sepWidth);
+
+		//draw the bars
+		context.fillStyle="#AAAAAA";
+		context.fillRect(0, canvas.height - h, w, h);
+		context.fillStyle="#BBBBBB";
+		for( var i = 1; i <= numRows - 1; i++){
+			var startHeight = canvas.height - h + (i * imageSize) + (i * sepWidth);
+			context.fillRect(0,  startHeight, canvas.width, 3 + sepWidth);
+		}
+		//draw the elements	
+	}
+	
     //DEBUG TEXT//
     //provides a frame counter so we know that draw() is updating
   var frameNum = 0;
