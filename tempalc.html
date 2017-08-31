@@ -69,44 +69,54 @@
   }
 
   var mouseX, mouseY;
-  var selected; //which element is currently being dragged
+  var selectedDraggable; //which draggable element is currently being dragged
+  var selectedGUIElement; //which gui element is selected;
   canvas.addEventListener("mousedown", function(e) {
-    selected = onScreen.filter(function(e) { return checkSprite(e, mouseX, mouseY); }); //find all elements that the mouse is over
-    if (selected.length != 0) { //if anything found
-      selected = selected[0]; //take first selected in list
+    selectedDraggable = onScreen.filter(function(e) { return checkSprite(e, mouseX, mouseY); }); //find all elements that the mouse is over
+    if (selectedDraggable.length != 0) { //if anything found
+      selectedDraggable = selectedDraggable[0]; //take first selected in list
       //move to front of onScreen:
-      for (var i = onScreen.indexOf(selected); i > 0; --i) { //run through list
+      for (var i = onScreen.indexOf(selectedDraggable); i > 0; --i) { //run through list
         onScreen[i] = onScreen[i-1]; //shift everything down one to the right
       }
-      onScreen[0] = selected; //replace first item
+      onScreen[0] = selectedDraggable; //replace first item
     } else {
-      selected = undefined; //nothing selected
+      selectedDraggable = undefined; //nothing selected
+	  //selectedGUIElement = getGUIElement(mouseX, mouseY);
+	  //TODO ROBBIE create getGUIElement(mouseX, mouseY) function
     }
   });
   canvas.addEventListener("mouseup", function(e) {
-    if(selected != undefined) { //if anything selected
-      selected.checkCollisions(); //check if collision
-      selected = undefined; //set to nothing selected
+    if(selectedDraggable != undefined) { //if anything selected
+      selectedDraggable.checkCollisions(); //check if collision
+      selectedDraggable = undefined; //set to nothing selected
     }
+	selectedGUIElement = undefined;
   });
   canvas.addEventListener("mousemove", function(e) {
     mouseX = e.offsetX;
     mouseY = e.offsetY;
-    if (selected != undefined) { //if anything selected, move it by its center
-      selected.x = mouseX - selected.element.image.width/2;
-      selected.y = mouseY - selected.element.image.height/2;
+    if (selectedDraggable != undefined) { //if anything selected, move it by its center
+      selectedDraggable.x = mouseX - selectedDraggable.element.image.width/2;
+      selectedDraggable.y = mouseY - selectedDraggable.element.image.height/2;
     }
+	else if (selectedGUIElement != undefined){
+		createSprite(selectedGUIElement.name);
+	}
   });
   canvas.addEventListener("mouseout", function(e) {
-    if(selected != undefined) { //if anything selected
-      selected.checkCollisions(); //check if collision
-      selected = undefined; //set to nothing selected
+    if(selectedDraggable != undefined) { //if anything selected
+      selectedDraggable.checkCollisions(); //check if collision
+      selectedDraggable = undefined; //set to nothing selected
     }
   });
 
   //TEMP
   //Adds a fire and water upon pressing any key
-  document.addEventListener("keydown", function(e){ onScreen.push(new Draggable("water")); onScreen.push(new Draggable("fire")); });
+  document.addEventListener("keydown", function(e){ 
+	createSprite("water");
+	createSprite("fire"); 
+	});
 
   function Draggable(name) {
     //see canvas event listeners, which use this class
@@ -148,6 +158,10 @@
   }
 
   var imageSize = 64;
+  
+  function createSprite(name){
+	onScreen.unshift(new Draggable(name));
+  }
 
   function setup() {
     elements.push(new Element("fire", "http://www4.ncsu.edu/~rnpettit/csc481/la/fire.png", imageSize, imageSize, true));
