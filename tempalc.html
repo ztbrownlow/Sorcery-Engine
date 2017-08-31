@@ -26,6 +26,15 @@
     this.combine = function(element2) {
       return element.interactions[element2.name];
     }
+		this.drawImage = function(x, y) {
+			context.fillText("Drawing image", 0, 30);
+			var newImage = new Image();
+			newImage.src = "http://www4.ncsu.edu/~rnpettit/csc481/la/fire.png";
+			newImage.width = 64;
+			newImage.height = 64;
+      //context.drawImage(newImage, 100, 100, this.width, this.height);
+			context.fillText("Done", 0, 40);
+    };
   }
 
   function elementByName(name) {
@@ -150,9 +159,9 @@
   }
 
   function draw() {
-    canvas.width = canvas.width;
+    canvas.width = canvas.width; //clears the canvas
     drawDebugText();
-    //TODO GUI
+    
 		drawGUI();
     for(var i = onScreen.length - 1; i >= 0; --i) {
       onScreen[i].draw();
@@ -160,19 +169,34 @@
   }
 	function drawGUI(){
 		var numRows = 3;
+		//width of the gui
 		var w = canvas.width;
 		var sepWidth = 3;
-		var h = numRows * imageSize + ((2 + numRows) * sepWidth);
+		//height of the gui
+		var h = numRows * imageSize + ((2 + numRows) * sepWidth); 
 
 		//draw the bars
 		context.fillStyle="#AAAAAA";
-		context.fillRect(0, canvas.height - h, w, h);
+		context.fillRect(0, canvas.height - h, w, h); //Draw Big rectangle
 		context.fillStyle="#BBBBBB";
 		for( var i = 1; i <= numRows - 1; i++){
 			var startHeight = canvas.height - h + (i * imageSize) + (i * sepWidth);
+			//Draw little separation rectangles
 			context.fillRect(0,  startHeight, canvas.width, 3 + sepWidth);
 		}
 		//draw the elements	
+		var x = 0;
+		var y = canvas.height - h;
+		
+		context.fillStyle = "black";
+    context.font = "bold 12px Arial";
+    context.fillText("x:" + x + " y:" + y, 0, 20);
+		context.fillText("name: " + elements[0].name, 0, 50);
+		
+		for( var i = 0; i < elements.length; i++ ){
+			var e = elements[i];
+			context.drawImage(e.image, x + (imageSize * i), y , imageSize, imageSize);
+		}
 	}
 	
     //DEBUG TEXT//
