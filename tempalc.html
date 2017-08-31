@@ -8,6 +8,14 @@
   var elements = new Array();
   var onScreen = new Array(); //elements on main screen
   var unlocked = new Array();
+  
+  var imageSize = 64;
+  var numRows = 3;
+  //width of the gui
+  var guiWidth = canvas.width;
+  var sepWidth = 3;
+  //height of the gui
+  var guiHeight = numRows * imageSize + ((2 + numRows) * sepWidth);
 
   //The different elements we'll be mixing with alchemy
   function Element(name, src, width, height, unlocked = false) {
@@ -61,7 +69,7 @@
     var maxY = sprite.y + sprite.element.image.height;
     var mx = x;
     var my = y;
-    console.log(minX + " " + maxX);
+    //console.log(minX + " " + maxX);
     if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
       return true;
     }
@@ -82,7 +90,7 @@
       onScreen[0] = selectedDraggable; //replace first item
     } else {
       selectedDraggable = undefined; //nothing selected
-	  //selectedGUIElement = getGUIElement(mouseX, mouseY);
+	  selectedGUIElement = getGUIElement(mouseX, mouseY);
 	  //TODO ROBBIE create getGUIElement(mouseX, mouseY) function
     }
   });
@@ -101,7 +109,8 @@
       selectedDraggable.y = mouseY - selectedDraggable.element.image.height/2;
     }
 	else if (selectedGUIElement != undefined){
-		createSprite(selectedGUIElement.name);
+		selectedDraggable = createSprite(selectedGUIElement.name);
+		selectedGUIElement = undefined;
 	}
   });
   canvas.addEventListener("mouseout", function(e) {
@@ -121,13 +130,13 @@
   function Draggable(name) {
     //see canvas event listeners, which use this class
     this.element = elementByName(name);
-    this.x = mouseX;
-    this.y = mouseY;
+    this.x = mouseX - (imageSize / 2);
+    this.y = mouseY - (imageSize / 2);
     var o_this = this; //o_this --> "outer this" - used in internal function calls, since they have their own "this"
     this.collide = function(other) { //collide with other. Returns true if valid
       var combined = o_this.element.combine(other.element); //find new element
       if (combined != undefined) { //if new element exists (valid formula)
-        console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+        //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
         this.element = combined; //set this Draggable's element to the new element
         if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
           combined.unlocked = true;
@@ -157,10 +166,32 @@
     }
   }
 
-  var imageSize = 64;
+  
+  
+  function getGUIElement(mouseX, mouseY){
+  console.log("mouse: (" + mouseX + "," + mouseY + ")");
+	for (var i = 0; i < elements.length; i++){
+		var e = elements[i];
+		var boundX1 = 0 + (imageSize * i)
+		var boundX2 = boundX1 + imageSize;
+		var boundY1 = canvas.height - guiHeight;
+		var boundY2 = boundY1 + imageSize;
+		console.log("" + e.name + ":(" + boundX1 + "," + boundY1 + ") (" + boundX2 + "," + boundY2 + ")");
+		if(mouseX >= boundX1 && mouseX <= boundX2){
+			//console.log("truex" + e.name);
+			if(mouseY >= boundY1 && mouseY <= boundY2){
+				//console.log("truey" + e.name);
+				console.log(e.name + " selected");
+				return e;
+			}
+		}
+	}
+  }
   
   function createSprite(name){
-	onScreen.unshift(new Draggable(name));
+	var created = new Draggable(name);
+	onScreen.unshift(created);
+	return created;
   }
 
   function setup() {
@@ -184,26 +215,22 @@
       onScreen[i].draw();
     }
   }
+	
 	function drawGUI(){
-		var numRows = 3;
-		//width of the gui
-		var w = canvas.width;
-		var sepWidth = 3;
-		//height of the gui
-		var h = numRows * imageSize + ((2 + numRows) * sepWidth); 
+		 
 
 		//draw the bars
 		context.fillStyle="#AAAAAA";
-		context.fillRect(0, canvas.height - h, w, h); //Draw Big rectangle
+		context.fillRect(0, canvas.height - guiHeight, guiWidth, guiHeight); //Draw Big rectangle
 		context.fillStyle="#BBBBBB";
 		for( var i = 1; i <= numRows - 1; i++){
-			var startHeight = canvas.height - h + (i * imageSize) + (i * sepWidth);
+			var startHeight = canvas.height - guiHeight + (i * imageSize) + (i * sepWidth);
 			//Draw little separation rectangles
 			context.fillRect(0,  startHeight, canvas.width, 3 + sepWidth);
 		}
 		//draw the elements	
 		var x = 0;
-		var y = canvas.height - h;
+		var y = canvas.height - guiHeight;
 		
 		context.fillStyle = "black";
 		context.font = "bold 12px Arial";
