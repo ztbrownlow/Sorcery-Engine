@@ -99,8 +99,8 @@
       selectedDraggable.checkCollisions(); //check if collision
       selectedDraggable = undefined; //set to nothing selected
     }
-	selectedGUIElement = undefined;
-	checkForDeletion(mouseX, mouseY);
+    selectedGUIElement = undefined;
+    checkForDeletion(mouseX, mouseY);
   });
   canvas.addEventListener("mousemove", function(e) {
     mouseX = e.offsetX;
@@ -109,16 +109,18 @@
       selectedDraggable.x = mouseX - selectedDraggable.element.image.width/2;
       selectedDraggable.y = mouseY - selectedDraggable.element.image.height/2;
     }
-	else if (selectedGUIElement != undefined){
-		selectedDraggable = createSprite(selectedGUIElement.name);
-		selectedGUIElement = undefined;
-	}
+    else if (selectedGUIElement != undefined){
+      selectedDraggable = createSprite(selectedGUIElement.name);
+      selectedGUIElement = undefined;
+    }
   });
   canvas.addEventListener("mouseout", function(e) {
     if(selectedDraggable != undefined) { //if anything selected
       selectedDraggable.checkCollisions(); //check if collision
       selectedDraggable = undefined; //set to nothing selected
     }
+    selectedGUIElement = undefined;
+    checkForDeletion(mouseX, mouseY);
   });
 
   //TEMP
@@ -168,18 +170,13 @@
   }
 
   function checkForDeletion(mouseX, mouseY){
-	var guiYBorder = canvas.height - guiHeight;
-	if(mouseY >= guiYBorder){
-		removeSelectedSprite();
-	}
+    var guiYBorder = canvas.height - guiHeight;
+    if(mouseY >= guiYBorder){
+      removeSelectedSprite();
+    }
   }
   function removeSelectedSprite(){
-  //remove first element (sprite) in onScreen by shifting all elements down 1 in array.
-	var i;
-	for(i = 1; i < onScreen.length; i++){
-		onScreen[i - 1] = onScreen[i];
-	}
-	onScreen.splice(i, 1);
+    onScreen.splice(0, 1);
   }
   
   function getGUIElement(mouseX, mouseY){
@@ -203,9 +200,9 @@
   }
   
   function createSprite(name){
-	var created = new Draggable(name);
-	onScreen.unshift(created);
-	return created;
+    var created = new Draggable(name);
+    onScreen.unshift(created);
+    return created;
   }
 
   function setup() {
