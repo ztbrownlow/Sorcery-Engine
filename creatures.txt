@@ -23,13 +23,12 @@ horse+wings=pegasus
 human+wings=angel
 horn+horse=unicorn
 bird+lion=griffin
-human+fur=werewolf
-human+lion=sphinx
+human+lion=sphinx (http://www4.ncsu.edu/~alrichma/images/sphinx.png)
 
-human+fish=mermaid
-human+bull=minotaur
-human+horse=centaur
-human+snake=medusa
+human+fish=mermaid (http://www4.ncsu.edu/~alrichma/images/mermaid.png)
+human+bull=minotaur (http://www4.ncsu.edu/~alrichma/images/minotar.png)
+human+horse=centaur (http://www4.ncsu.edu/~alrichma/images/centaur.png)
+human+snake=medusa (http://www4.ncsu.edu/~alrichma/images/medusa.png)
 human+bird=harpy (http://www4.ncsu.edu/~alrichma/images/harpy.png)
 
 sphinx+dragon=manticore (http://www4.ncsu.edu/~ztbrownl/images/manticore.png)
