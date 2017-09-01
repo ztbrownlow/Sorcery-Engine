@@ -8,13 +8,13 @@ water (http://www4.ncsu.edu/~ztbrownl/images/water.png)
 
 scale+fur=hair (http://www4.ncsu.edu/~ztbrownl/images/hair.png)
 
-wings+wings=bird
-scales+scales=snake
+wings+wings=bird (http://www4.ncsu.edu/~ztbrownl/images/bird.png)
+scales+scales=snake (http://www4.ncsu.edu/~ztbrownl/images/snake.png)
 wings+scales=dragon
 snake+wings=dragon
 skin+hair=human
-water+scales=fish
-fur+hair=horse
+water+scales=fish (http://www4.ncsu.edu/~ztbrownl/images/fish.png)
+fur+hair=horse (http://www4.ncsu.edu/~ztbrownl/images/horse.png)
 fur+fur=lion
 fur+horn=bull (http://www4.ncsu.edu/~ztbrownl/images/bull.png)
 
