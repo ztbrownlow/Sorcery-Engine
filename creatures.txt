@@ -15,7 +15,7 @@ snake+wings=dragon (see above)
 skin+hair=human (http://www4.ncsu.edu/~ztbrownl/images/human.png)
 water+scales=fish (http://www4.ncsu.edu/~ztbrownl/images/fish.png)
 fur+hair=horse (http://www4.ncsu.edu/~ztbrownl/images/horse.png)
-fur+fur=lion
+fur+fur=lion (http://www4.ncsu.edu/~ztbrownl/images/lion.png)
 fur+horn=bull (http://www4.ncsu.edu/~ztbrownl/images/bull.png)
 
 human+fur=werewolf (http://www4.ncsu.edu/~alrichma/images/werewolf.png)
