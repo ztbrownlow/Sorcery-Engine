@@ -1,4 +1,4 @@
 Members:
-ztlbrownl
-alrichma
-rnpettit
+ztbrownl Zach Brownlow
+alrichma Abby Richman
+rnpettit Robert Pettit
