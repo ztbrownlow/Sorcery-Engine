@@ -32,4 +32,4 @@ human+horse=centaur
 human+snake=medusa
 human+bird=harpy (http://www4.ncsu.edu/~alrichma/images/harpy.png)
 
-sphinx+dragon=manticore (http://www4.ncsu.edu/~alrichma/images/manticore.png)
+sphinx+dragon=manticore (http://www4.ncsu.edu/~ztbrownl/images/manticore.png)
