@@ -19,7 +19,7 @@ fur+fur=lion
 fur+horn=bull (http://www4.ncsu.edu/~ztbrownl/images/bull.png)
 
 human+fur=werewolf (http://www4.ncsu.edu/~alrichma/images/werewolf.png)
-horse+wings=pegasus
+horse+wings=pegasus (http://www4.ncsu.edu/~ztbrownl/images/pegasus.png)
 human+wings=angel
 horn+horse=unicorn
 bird+lion=griffin
