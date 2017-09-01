@@ -1,6 +1,12 @@
-default: wings, scales, fur, skin, horn, water
+default: 
+wings (DRAWN)
+scales (DRAWN)
+fur (DRAWN)
+skin (DRAWN)
+horn (DRAWN)
+water (DRAWN)
 
-scale+fur=hair
+scale+fur=hair (DRAWN)
 
 wings+wings=bird
 scales+scales=snake
