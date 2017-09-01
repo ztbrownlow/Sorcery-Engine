@@ -96,8 +96,9 @@
   });
   canvas.addEventListener("mouseup", function(e) {
     if(selectedDraggable != undefined) { //if anything selected
-      checkForDeletion(mouseX, mouseY);
-      selectedDraggable.checkCollisions(); //check if collision
+      if (!checkForDeletion(mouseX, mouseY)){
+        selectedDraggable.checkCollisions(); //check if collision
+      }
       selectedDraggable = undefined; //set to nothing selected
     }
     selectedGUIElement = undefined;
@@ -116,19 +117,13 @@
   });
   canvas.addEventListener("mouseout", function(e) {
     if(selectedDraggable != undefined) { //if anything selected
-      checkForDeletion(mouseX, mouseY);
-      selectedDraggable.checkCollisions(); //check if collision
+      if (!checkForDeletion(mouseX, mouseY)){
+        selectedDraggable.checkCollisions(); //check if collision
+      }
       selectedDraggable = undefined; //set to nothing selected
     }
     selectedGUIElement = undefined;
   });
-
-  //TEMP
-  //Adds a fire and water upon pressing any key
-  document.addEventListener("keydown", function(e){ 
-	createSprite("water");
-	createSprite("fire"); 
-	});
 
   function Draggable(name) {
     //see canvas event listeners, which use this class
@@ -172,33 +167,38 @@
   function checkForDeletion(mouseX, mouseY){
     var guiYBorder = canvas.height - guiHeight;
     if(mouseY >= guiYBorder){
-      removeSelectedSprite();
+      return removeSelectedSprite();
     }
+    return false;
   }
   function removeSelectedSprite(){
     if (selectedDraggable != undefined) {
       onScreen.splice(0, 1);
+      return true;
     }
+    return false;
   }
   
   function getGUIElement(mouseX, mouseY){
-  console.log("mouse: (" + mouseX + "," + mouseY + ")");
-	for (var i = 0; i < elements.length; i++){
-		var e = elements[i];
-		var boundX1 = 0 + (imageSize * i)
-		var boundX2 = boundX1 + imageSize;
-		var boundY1 = canvas.height - guiHeight;
-		var boundY2 = boundY1 + imageSize;
-		console.log("" + e.name + ":(" + boundX1 + "," + boundY1 + ") (" + boundX2 + "," + boundY2 + ")");
-		if(mouseX >= boundX1 && mouseX <= boundX2){
-			//console.log("truex" + e.name);
-			if(mouseY >= boundY1 && mouseY <= boundY2){
-				//console.log("truey" + e.name);
-				console.log(e.name + " selected");
-				return e;
-			}
-		}
-	}
+    console.log("mouse: (" + mouseX + "," + mouseY + ")");
+    for (var i = 0; i < elements.length; i++){
+      var e = elements[i];
+      if (e.unlocked) {
+        var boundX1 = 0 + (imageSize * i)
+        var boundX2 = boundX1 + imageSize;
+        var boundY1 = canvas.height - guiHeight;
+        var boundY2 = boundY1 + imageSize;
+        console.log("" + e.name + ":(" + boundX1 + "," + boundY1 + ") (" + boundX2 + "," + boundY2 + ")");
+        if(mouseX >= boundX1 && mouseX <= boundX2){
+          //console.log("truex" + e.name);
+          if(mouseY >= boundY1 && mouseY <= boundY2){
+            //console.log("truey" + e.name);
+            console.log(e.name + " selected");
+            return e;
+          }
+        }
+      }
+    }
   }
   
   function createSprite(name){
@@ -221,7 +221,10 @@
 
   function draw() {
     canvas.width = canvas.width; //clears the canvas
-    drawDebugText();
+    //drawDebugText();
+    context.fillStyle = "black";
+    context.font = "bold 12px Arial";
+    context.fillText("Place items here", 0, 10);
     
     drawGUI();
     for(var i = onScreen.length - 1; i >= 0; --i) { //go backwards through list, as front is most recent
@@ -230,8 +233,6 @@
   }
 	
 	function drawGUI(){
-		 
-
 		//draw the bars
 		context.fillStyle="#AAAAAA";
 		context.fillRect(0, canvas.height - guiHeight, guiWidth, guiHeight); //Draw Big rectangle
@@ -251,6 +252,11 @@
 		for( var i = 0; i < elements.length; i++ ){
 			var e = elements[i];
 			context.drawImage(e.image, x + (imageSize * i), y , imageSize, imageSize);
+      if (!e.unlocked) {
+        context.globalAlpha=0.5;
+        context.fillRect(x + imageSize * i, y, imageSize, imageSize+3);
+        context.globalAlpha=1;
+      }
 		}
 	}
 	
