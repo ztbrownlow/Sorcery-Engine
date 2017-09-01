@@ -1,12 +1,12 @@
 default: 
-wings (DRAWN)
-scales (DRAWN)
-fur (DRAWN)
-skin (DRAWN)
-horn (DRAWN)
-water (DRAWN)
+wings (http://www4.ncsu.edu/~ztbrownl/images/wings.png)
+scales (http://www4.ncsu.edu/~ztbrownl/images/scales.png)
+fur (http://www4.ncsu.edu/~ztbrownl/images/fur.png)
+skin (http://www4.ncsu.edu/~ztbrownl/images/skin.png)
+horn (http://www4.ncsu.edu/~ztbrownl/images/horn.png)
+water (http://www4.ncsu.edu/~ztbrownl/images/water.png)
 
-scale+fur=hair (DRAWN)
+scale+fur=hair (http://www4.ncsu.edu/~ztbrownl/images/hair.png)
 
 wings+wings=bird
 scales+scales=snake
@@ -18,7 +18,7 @@ fur+hair=horse
 fur+fur=lion
 fur+horn=bull
 
-human+fur=werewolf
+human+fur=werewolf (http://www4.ncsu.edu/~alrichma/images/werewolf.png)
 horse+wings=pegasus
 human+wings=angel
 horn+horse=unicorn
@@ -30,6 +30,6 @@ human+fish=mermaid
 human+bull=minotaur
 human+horse=centaur
 human+snake=medusa
-human+bird=harpy
+human+bird=harpy (http://www4.ncsu.edu/~alrichma/images/harpy.png)
 
-sphinx+dragon=manticore
+sphinx+dragon=manticore (http://www4.ncsu.edu/~alrichma/images/manticore.png)
