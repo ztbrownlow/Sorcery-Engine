@@ -16,7 +16,7 @@ skin+hair=human
 water+scales=fish
 fur+hair=horse
 fur+fur=lion
-fur+horn=bull
+fur+horn=bull (http://www4.ncsu.edu/~ztbrownl/images/bull.png)
 
 human+fur=werewolf (http://www4.ncsu.edu/~alrichma/images/werewolf.png)
 horse+wings=pegasus
