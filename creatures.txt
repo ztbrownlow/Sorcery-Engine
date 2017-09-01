@@ -8,18 +8,18 @@ water (http://www4.ncsu.edu/~ztbrownl/images/water.png)
 
 scale+fur=hair (http://www4.ncsu.edu/~ztbrownl/images/hair.png)
 
-wings+wings=bird (http://www4.ncsu.edu/~ztbrownl/images/bird.png)
-scales+scales=snake (http://www4.ncsu.edu/~ztbrownl/images/snake.png)
-wings+scales=dragon (http://www4.ncsu.edu/~ztbrownl/images/dragon.png)
-snake+wings=dragon (see above)
-skin+hair=human (http://www4.ncsu.edu/~ztbrownl/images/human.png)
-water+scales=fish (http://www4.ncsu.edu/~ztbrownl/images/fish.png)
-fur+hair=horse (http://www4.ncsu.edu/~ztbrownl/images/horse.png)
-fur+fur=lion (http://www4.ncsu.edu/~ztbrownl/images/lion.png)
+wings+wings=bird
+scales+scales=snake
+wings+scales=dragon
+snake+wings=dragon
+skin+hair=human
+water+scales=fish
+fur+hair=horse
+fur+fur=lion
 fur+horn=bull (http://www4.ncsu.edu/~ztbrownl/images/bull.png)
 
 human+fur=werewolf (http://www4.ncsu.edu/~alrichma/images/werewolf.png)
-horse+wings=pegasus (http://www4.ncsu.edu/~ztbrownl/images/pegasus.png)
+horse+wings=pegasus
 human+wings=angel
 horn+horse=unicorn (http://www4.ncsu.edu/~alrichma/images/unicorn.png)
 bird+lion=griffin (http://www4.ncsu.edu/~alrichma/images/griffin.png)
