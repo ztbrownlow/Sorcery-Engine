@@ -10,8 +10,8 @@ scale+fur=hair (http://www4.ncsu.edu/~ztbrownl/images/hair.png)
 
 wings+wings=bird (http://www4.ncsu.edu/~ztbrownl/images/bird.png)
 scales+scales=snake (http://www4.ncsu.edu/~ztbrownl/images/snake.png)
-wings+scales=dragon
-snake+wings=dragon
+wings+scales=dragon (http://www4.ncsu.edu/~ztbrownl/images/dragon.png)
+snake+wings=dragon (see above)
 skin+hair=human (http://www4.ncsu.edu/~ztbrownl/images/human.png)
 water+scales=fish (http://www4.ncsu.edu/~ztbrownl/images/fish.png)
 fur+hair=horse (http://www4.ncsu.edu/~ztbrownl/images/horse.png)
