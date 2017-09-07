@@ -6,36 +6,39 @@
   game.start(30);
   
   function Game(canvas) {
-    var self = this;
     this.canvas = canvas;
-    context = canvas.getContext('2d');
+    this.context = canvas.getContext('2d');
     this.gameTree = [];
     this.guiTree = [];
-    function drawGui() {
-      //override
-    }
-    function drawMain() {
-      //override
-    }
-    function draw() {
-      drawMain();
-      drawGui();
-    }
-    function update() {
-      //override
-    }
-    function loop() {
-      self.update();
-      self.draw();
-    }
     this.timer = undefined;
-    function start(milliseconds) {
-      self.timer.setInterval(self.loop, milliseconds);
-    }
-    function stop() {
-      if (self.timer != undefined) {
-        clearInterval(self.timer);
-      }
+  }
+  
+  Game.prototype.drawGui = function() {
+  }
+  
+  Game.prototype.drawMain = function() {
+  }
+  
+  Game.prototype.draw() = function() {
+    this.drawMain();
+    this.drawGui();
+  }
+  
+  Game.prototype.update = function () {
+    //override
+  }
+  
+  Game.prototype.loop = function() {
+    this.update();
+    this.draw();
+  }
+      
+  Game.prototype.start = function(milliseconds) {
+    self.timer.setInterval(self.loop, milliseconds);
+  }
+  Game.prototype.stop = function() {
+    if (self.timer != undefined) {
+      clearInterval(self.timer);
     }
   }
   
@@ -45,32 +48,56 @@
     this.image.width = width;
     this.image.height = height;
     this.name = name;
+    function draw(game, x, y) {
+      game.context.drawImage(self.image, x, y, self.image.width, self.image.height);
+    }
   }
   
-  function Object(game, name, sprite, x, y) {
+  function FilledRect(name, width, height, color) { //can use in place of sprite. Can also use gradients, patterns in place of color
+    this.width = width;
+    this.height = height;
+    this.name = name;
+    this.color = color;
+    var self;
+    function draw(game, x, y) {
+      context.save();
+      game.context.fillStyle = self.color;
+      game.context.fillRect(x, y, self.width, self.height);
+      context.restore();
+    }
+  }
+  
+  function Object(game, name, sprite, x, y, setupFunction) {
+    var self = this;
     this.sprite = sprite;
     this.x = x;
     this.y = y;
     this.game = game;
     this.name = name;
-    var self = this;
-    
+    setupFunction(self);
     function update() {
       
     }
-    
-    function draw() {
-      self.game.context.drawImage(self.image, self.x, self.y, self.image.width, self.image.height);
+    function draw(game) {
+      self.sprite.draw(game, self.x, self.y);
     }
   }
   
-  
-
   function parseFile(lineTransformer) {
-    
+    //lineTransformer is a function that takes a line as an input and then does something with it
   }
   
   
+  
+  
+  var imageSize = 64;
+  
+  function Element(game, src, width, height, name, unlocked) {
+    return new Object(game, name, Sprite(name, width, height, src), mouseX, mouseY, function(obj) { 
+      obj.unlocked = unlocked;
+      
+    });
+  }
   
   
   
@@ -86,15 +113,7 @@
   var guiHeight = numRows * imageSize + ((numRows - 1) * sepWidth);
 
   //The different elements we'll be mixing with alchemy
-  function Element(name, src, width, height, unlocked = false) {
-    this.name = name;
-    this.unlocked = unlocked;
-    this.interactions = {}; //stuff that it combines with to make other stuff
-    this.image = new Image();
-    this.image.src = src;
-    this.image.width = width;
-    this.image.height = height;
-    var element = this;
+  function Element(object, unlocked = false) {
     this.link = function(element2, element3) {
       element.interactions[element2.name] = element3;
       element2.interactions[element.name] = element3;
