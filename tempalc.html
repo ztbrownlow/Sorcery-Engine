@@ -2,12 +2,80 @@
   Canvas not supported
 </canvas>
 <script type="text/javascript">
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext('2d');
+  var game = new Game(document.getElementById("canvas"));
+  game.start(30);
+  
+  function Game(canvas) {
+    var self = this;
+    this.canvas = canvas;
+    context = canvas.getContext('2d');
+    this.gameTree = [];
+    this.guiTree = [];
+    function drawGui() {
+      //override
+    }
+    function drawMain() {
+      //override
+    }
+    function draw() {
+      drawMain();
+      drawGui();
+    }
+    function update() {
+      //override
+    }
+    function loop() {
+      self.update();
+      self.draw();
+    }
+    this.timer = undefined;
+    function start(milliseconds) {
+      self.timer.setInterval(self.loop, milliseconds);
+    }
+    function stop() {
+      if (self.timer != undefined) {
+        clearInterval(self.timer);
+      }
+    }
+  }
+  
+  function Sprite(name, width, height, src) {
+    this.image = new Image();
+    this.image.src = src;
+    this.image.width = width;
+    this.image.height = height;
+    this.name = name;
+  }
+  
+  function Object(game, name, sprite, x, y) {
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+    this.game = game;
+    this.name = name;
+    var self = this;
+    
+    function update() {
+      
+    }
+    
+    function draw() {
+      self.game.context.drawImage(self.image, self.x, self.y, self.image.width, self.image.height);
+    }
+  }
+  
+  
 
+  function parseFile(lineTransformer) {
+    
+  }
+  
+  
+  
+  
+  
   var elements = new Array();
   var onScreen = new Array(); //elements on main screen
-  var unlocked = new Array();
   
   var imageSize = 64;
   var numRows = 3;
@@ -34,15 +102,6 @@
     this.combine = function(element2) {
       return element.interactions[element2.name];
     }
-		this.drawImage = function(x, y) {
-			context.fillText("Drawing image", 0, 30);
-			var newImage = new Image();
-			newImage.src = "http://www4.ncsu.edu/~rnpettit/csc481/la/fire.png";
-			newImage.width = 64;
-			newImage.height = 64;
-      //context.drawImage(newImage, 100, 100, this.width, this.height);
-			context.fillText("Done", 0, 40);
-    };
   }
 
   function elementByName(name) { //get element by name
@@ -138,7 +197,6 @@
         this.element = combined; //set this Draggable's element to the new element
         if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
           combined.unlocked = true;
-          unlocked.push(combined)
         }
         onScreen.splice(onScreen.indexOf(other), 1); //remove other element from screen
         return true;
@@ -259,7 +317,6 @@
     linkByName("human", "snake", "medusa")
     linkByName("human", "bird", "harpy")
     linkByName("sphinx", "dragon", "manticore")
-    unlocked = elements.filter(function(e) { return e.unlocked; });
   }
 
   function update() {
@@ -309,22 +366,6 @@
       }
 		}
 	}
-	
-    //DEBUG TEXT//
-    //provides a frame counter so we know that draw() is updating
-  var frameNum = 0;
-  function drawDebugText(){
-    context.fillStyle = "black";
-    context.font = "bold 12px Arial";
-    context.fillText("Frame: " + frameNum, 0, 10);
-    frameNum++;
-  }
-
-  function game_loop() {
-    update();
-    draw();
-  }
 
   setup();
-  setInterval(game_loop, 30);
 </script>
