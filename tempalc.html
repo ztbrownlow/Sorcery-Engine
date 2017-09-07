@@ -79,7 +79,9 @@
       
     }
     function draw(game) {
-      self.sprite.draw(game, self.x, self.y);
+      if (self.sprite != undefined) {
+        self.sprite.draw(game, self.x, self.y);
+      }
     }
   }
   
