@@ -1,13 +1,3 @@
-<canvas id="canvas" width="576" height="450">
-  Canvas not supported
-</canvas>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="engine.js"></script>
-<script src="object.js"></script>
-<script src="Sprites.js"></script>
-<script src="SceneGraph.js"></script>
-<script src="alchemy.js"></script>
-
 <script type="text/javascript">
   
     //this was previously in mousemove event
@@ -19,17 +9,6 @@
       selectedDraggable = createSprite(selectedGUIElement.name);
       selectedGUIElement = undefined;
     }
-  
-  var elements = new Array();
-  var onScreen = new Array(); //elements on main screen
-  
-  var imageSize = 64;
-  var numRows = 3;
-  //width of the gui
-  var guiWidth = canvas.width;
-  var sepWidth = 3;
-  //height of the gui
-  var guiHeight = numRows * imageSize + ((numRows - 1) * sepWidth);
 
   var selectedDraggable; //which draggable element is currently being dragged
   var selectedGUIElement; //which gui element is selected;
@@ -117,14 +96,14 @@
     }
   }
 
-  function checkForDeletion(mouseX, mouseY){
+  function checkForDeletion(mouseX, mouseY) {
     var guiYBorder = canvas.height - guiHeight;
     if(mouseY >= guiYBorder){
       return removeSelectedSprite();
     }
     return false;
   }
-  function removeSelectedSprite(){
+  function removeSelectedSprite() {
     if (selectedDraggable != undefined) {
       onScreen.splice(0, 1);
       return true;
@@ -163,104 +142,3 @@
     onScreen.unshift(created);
     return created;
   }
-
-  function setup() {
-    elements.push(new Element("wings", "http://www4.ncsu.edu/~ztbrownl/images/wings.png", imageSize, imageSize, true));
-    elements.push(new Element("scales", "http://www4.ncsu.edu/~ztbrownl/images/scales.png", imageSize, imageSize, true));
-    elements.push(new Element("fur", "http://www4.ncsu.edu/~ztbrownl/images/fur.png", imageSize, imageSize, true));
-    elements.push(new Element("skin", "http://www4.ncsu.edu/~ztbrownl/images/skin.png", imageSize, imageSize, true));
-    elements.push(new Element("horn", "http://www4.ncsu.edu/~ztbrownl/images/horn.png", imageSize, imageSize, true));
-    elements.push(new Element("water", "http://www4.ncsu.edu/~ztbrownl/images/water.png", imageSize, imageSize, true));
-    elements.push(new Element("hair", "http://www4.ncsu.edu/~ztbrownl/images/hair.png", imageSize, imageSize, false));
-    elements.push(new Element("bird", "http://www4.ncsu.edu/~ztbrownl/images/bird.png", imageSize, imageSize, false));
-    elements.push(new Element("snake", "http://www4.ncsu.edu/~ztbrownl/images/snake.png", imageSize, imageSize, false));
-    elements.push(new Element("dragon", "http://www4.ncsu.edu/~ztbrownl/images/dragon.png", imageSize, imageSize, false));
-    elements.push(new Element("human", "http://www4.ncsu.edu/~ztbrownl/images/human.png", imageSize, imageSize, false));
-    elements.push(new Element("fish", "http://www4.ncsu.edu/~ztbrownl/images/fish.png", imageSize, imageSize, false))
-    elements.push(new Element("horse", "http://www4.ncsu.edu/~ztbrownl/images/horse.png", imageSize, imageSize, false))
-    elements.push(new Element("lion", "http://www4.ncsu.edu/~ztbrownl/images/lion.png", imageSize, imageSize, false))
-    elements.push(new Element("bull", "http://www4.ncsu.edu/~ztbrownl/images/bull.png", imageSize, imageSize, false))
-    elements.push(new Element("unicorn", "http://www4.ncsu.edu/~alrichma/images/unicorn.png", imageSize, imageSize, false))
-    elements.push(new Element("griffin", "http://www4.ncsu.edu/~alrichma/images/griffin.png", imageSize, imageSize, false))
-    elements.push(new Element("werewolf", "http://www4.ncsu.edu/~alrichma/images/werewolf.png", imageSize, imageSize, false))
-    elements.push(new Element("pegasus", "http://www4.ncsu.edu/~ztbrownl/images/pegasus.png", imageSize, imageSize, false))
-    elements.push(new Element("sphinx", "http://www4.ncsu.edu/~alrichma/images/sphinx.png", imageSize, imageSize, false))
-    elements.push(new Element("mermaid", "http://www4.ncsu.edu/~alrichma/images/mermaid.png", imageSize, imageSize, false))
-    elements.push(new Element("minotaur", "http://www4.ncsu.edu/~alrichma/images/minotar.png", imageSize, imageSize, false))
-    elements.push(new Element("centaur", "http://www4.ncsu.edu/~alrichma/images/centaur.png", imageSize, imageSize, false))
-    elements.push(new Element("medusa", "http://www4.ncsu.edu/~alrichma/images/medusa.png", imageSize, imageSize, false))
-    elements.push(new Element("harpy", "http://www4.ncsu.edu/~alrichma/images/harpy.png", imageSize, imageSize, false))
-    elements.push(new Element("manticore", "http://www4.ncsu.edu/~ztbrownl/images/manticore.png", imageSize, imageSize, false))
-    linkByName("scales", "fur", "hair")
-    linkByName("wings", "wings", "bird")
-    linkByName("scales", "scales", "snake")
-    linkByName("wings", "scales", "dragon")
-    linkByName("snake", "wings", "dragon")
-    linkByName("skin", "hair", "human")
-    linkByName("water", "scales", "fish")
-    linkByName("fur", "hair", "horse")
-    linkByName("fur", "fur", "lion")
-    linkByName("fur", "horn", "bull")
-    linkByName("human", "fur", "werewolf")
-    linkByName("horse", "wings", "pegasus")
-    linkByName("horn", "horse", "unicorn")
-    linkByName("bird", "lion", "griffin")
-    linkByName("human", "lion", "sphinx")
-    linkByName("human", "fish", "mermaid")
-    linkByName("human", "bull", "minotaur")
-    linkByName("human", "horse", "centaur")
-    linkByName("human", "snake", "medusa")
-    linkByName("human", "bird", "harpy")
-    linkByName("sphinx", "dragon", "manticore")
-  }
-
-  function update() {
-    //TODO Dunno if we actually need any updates
-  }
-
-  function draw() {
-    canvas.width = canvas.width; //clears the canvas
-    //drawDebugText();
-    context.fillStyle = "black";
-    context.font = "bold 12px Arial";
-    context.fillText("Place items here", 0, 10);
-    
-    drawGUI();
-    for(var i = onScreen.length - 1; i >= 0; --i) { //go backwards through list, as front is most recent
-      onScreen[i].draw();
-    }
-  }
-	
-	function drawGUI(){
-		//draw the bars
-		context.fillStyle="#AAAAAA";
-		context.fillRect(0, canvas.height - guiHeight, guiWidth, guiHeight); //Draw Big rectangle
-		context.fillStyle="#BBBBBB";
-		for( var i = 1; i <= numRows - 1; i++){
-			var startHeight = canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth);
-			//Draw little separation rectangles
-			context.fillRect(0,  startHeight, canvas.width, sepWidth);
-		}
-		//draw the elements	
-		var x = 0;
-		var y = canvas.height - guiHeight;
-		
-		context.fillStyle = "black";
-		context.font = "bold 12px Arial";
-		
-		for( var i = 0; i < elements.length; i++ ){
-			var e = elements[i];
-      var xpos = x + imageSize*(i%Math.floor(guiWidth/imageSize));
-      var ypos = y + (imageSize+sepWidth)*Math.floor(i/Math.floor(guiWidth/imageSize));
-      
-			context.drawImage(e.image, xpos, ypos, imageSize, imageSize);
-      if (!e.unlocked) {
-        context.globalAlpha=0.5;
-        context.fillRect(xpos, ypos, imageSize, imageSize);
-        context.globalAlpha=1;
-      }
-		}
-	}
-
-  setup();
-</script>

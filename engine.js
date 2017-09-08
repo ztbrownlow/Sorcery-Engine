@@ -23,7 +23,15 @@ Game.prototype.mouseMove = function() {
 }
 
 Game.prototype.draw() = function() {
-  objects.draw();
+  this.objects.draw();
+}
+
+Game.prototype.preDraw() = function() {
+  
+}
+
+Game.prototype.postDraw() = function() {
+  
 }
 
 Game.prototype.update = function () {
@@ -31,8 +39,11 @@ Game.prototype.update = function () {
 }
 
 Game.prototype.loop = function() {
+  this.canvas.width = this.canvas.width;
   this.update();
+  this.preDraw();
   this.draw();
+  this.postDraw();
 }
     
 Game.prototype.start = function(milliseconds) {

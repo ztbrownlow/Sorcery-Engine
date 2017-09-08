@@ -39,3 +39,9 @@ SceneGraph.prototype.FirstByName = function(name) {
     return temp[0]; //return first element with name
   }
 }
+
+SceneGraph.prototype.removeIndex = function(index) {
+  var temp = this.children[index];
+  this.children.splice(index, 1);
+  return temp;
+}

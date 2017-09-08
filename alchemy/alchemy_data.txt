@@ -16,6 +16,7 @@ D:bull|http://www4.ncsu.edu/~ztbrownl/images/bull.png|false
 D:unicorn|http://www4.ncsu.edu/~alrichma/images/unicorn.png|false
 D:griffin|http://www4.ncsu.edu/~alrichma/images/griffin.png|false
 D:werewolf|http://www4.ncsu.edu/~alrichma/images/werewolf.png|false
+D:angel|http://www4.ncsu.edu/~alrichma/images/angel.png|false
 D:pegasus|http://www4.ncsu.edu/~ztbrownl/images/pegasus.png|false
 D:sphinx|http://www4.ncsu.edu/~alrichma/images/sphinx.png|false
 D:mermaid|http://www4.ncsu.edu/~alrichma/images/mermaid.png|false
@@ -35,6 +36,7 @@ F:fur+hair=horse
 F:fur+fur=lion
 F:fur+horn=bull
 F:human+fur=werewolf
+F:human+wings=angel
 F:horse+wings=pegasus
 F:horn+horse=unicorn
 F:bird+lion=griffin
