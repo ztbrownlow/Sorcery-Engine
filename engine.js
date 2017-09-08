@@ -27,35 +27,35 @@ function Game(canvas) {
   this.objects = new SceneGraph("objects");
   var self = this;
   
-  Game.prototype.mouseMove = function(e) {
+  this.mouseMove = function(e) {
     
   }
 
-  Game.prototype.mouseDown = function(e) {
+  this.mouseDown = function(e) {
     
   }
 
-  Game.prototype.mouseUp = function(e) {
+  this.mouseUp = function(e) {
     
   }
 
-  Game.prototype.draw = function() {
+  this.draw = function() {
     self.objects.draw(self);
   }
 
-  Game.prototype.preDraw = function() {
+  this.preDraw = function() {
     
   }
 
-  Game.prototype.postDraw = function() {
+  this.postDraw = function() {
     
   }  
   
-  Game.prototype.update = function () {
+  this.update  = function() {
     self.objects.update();
   }
 
-  Game.prototype.loop = function() {
+  this.loop = function() {
     self.canvas.width = self.canvas.width;
     self.update();
     self.preDraw();
@@ -63,10 +63,10 @@ function Game(canvas) {
     self.postDraw();
   }
   
-  Game.prototype.start = function(milliseconds) {
+  this.start = function(milliseconds) {
     self.timer = setInterval(self.loop, milliseconds);
   }
-  Game.prototype.stop = function(milliseconds) {
+  this.stop = function(milliseconds) {
     clearInterval(self.timer);
   }
 }

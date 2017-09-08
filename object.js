@@ -5,10 +5,12 @@ function GameObject(name, sprite, x, y) {
   this.x = x;
   this.y = y;
   this.name = name;
-}
-GameObject.prototype.update = function() {};
-GameObject.prototype.draw = function(game) {
-  if (this.sprite != undefined) {
-    this.sprite.draw(game, this.x, this.y);
+  this.update = function() {
+    
   }
-};
+  this.draw = function(game) {
+    if (self.sprite != undefined) {
+      self.sprite.draw(game, self.x, self.y);
+    }
+  }
+}
