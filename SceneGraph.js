@@ -7,13 +7,13 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
 
 SceneGraph.prototype.update = function() {
   if (this.doUpdate) {
-    children.forEach(function(e) { e.update(); });
+    this.children.forEach(function(e) { e.update(); });
   }
 }
 
-SceneGraph.prototype.draw = function() {
+SceneGraph.prototype.draw = function(game) {
   if (this.doDraw) {
-    children.forEach(function(e) { e.draw(); });
+    this.children.forEach(function(e) { e.draw(game); });
   }
 }
 

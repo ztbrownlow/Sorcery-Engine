@@ -44,7 +44,7 @@ function Element(game, src, size, name, unlocked, x, y) {
 Element.prototype = Object.create(GameObject.prototype);
 Element.prototype.constructor = GameObject;
 
-parseFile("alchemy/alchemy_data.txt", function(line) {
+/*parseFile("alchemy/alchemy_data.txt", function(line) {
   console.log(line);
   if (line.length > 0) {
     if (line.startsWith("D:")) {
@@ -61,7 +61,7 @@ parseFile("alchemy/alchemy_data.txt", function(line) {
       obj_elements.FirstByName(line[0][0]).link(obj_elements.FirstByName(line[0][1]), obj_elements.FirstByName(line[1]));
     }
   }
-});
+});*/
 
 game.preDraw = function() {
   game.context.fillStyle = "black";

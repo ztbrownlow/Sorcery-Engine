@@ -39,7 +39,7 @@ Game.prototype.mouseUp = function(e) {
 }
 
 Game.prototype.draw = function() {
-  this.objects.draw();
+  this.objects.draw(this);
 }
 
 Game.prototype.preDraw = function() {
@@ -51,7 +51,7 @@ Game.prototype.postDraw = function() {
 }
 
 Game.prototype.update = function () {
-  objects.update();
+  this.objects.update();
 }
 
 Game.prototype.loop = function() {
@@ -63,11 +63,11 @@ Game.prototype.loop = function() {
 }
     
 Game.prototype.start = function(milliseconds) {
-  self.timer = setInterval(self.loop, milliseconds);
+  this.timer = setInterval(this.loop, milliseconds);
 }
 Game.prototype.stop = function() {
-  if (self.timer != undefined) {
-    clearInterval(self.timer);
+  if (this.timer != undefined) {
+    clearInterval(this.timer);
   }
 }
 
