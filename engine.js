@@ -35,7 +35,7 @@ Game.prototype.postDraw() = function() {
 }
 
 Game.prototype.update = function () {
-  //override
+  objects.update();
 }
 
 Game.prototype.loop = function() {
