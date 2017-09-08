@@ -69,7 +69,7 @@ var i = 0;
 function addElement(name, img, unlocked) {
   var xpos = imageSize*(i%Math.floor(guiWidth/imageSize));
   var ypos = game.canvas.height - guiHeight + (imageSize+sepWidth)*Math.floor(i++/Math.floor(guiWidth/imageSize));
-  obj_elements.push(new Element(name, img, imageSize, unlocked, xpos, ypos));
+  obj_elements.push(new Element(game, img, imageSize, name, unlocked, xpos, ypos));
 }
 addElement("wings", "http://www4.ncsu.edu/~ztbrownl/images/wings.png", true)
 addElement("scales", "http://www4.ncsu.edu/~ztbrownl/images/scales.png", true)
