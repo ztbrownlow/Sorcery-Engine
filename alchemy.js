@@ -19,7 +19,7 @@ var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 
 
 function Element(game, src, size, name, unlocked, x, y) {
-  GameObject.call(this, game, name, Sprite(name, size, size, src), x, y);
+  GameObject.call(this, name, new Sprite(name, size, size, src), x, y);
   
   this.unlocked = unlocked;
   this.interactions = {};
