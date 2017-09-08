@@ -73,7 +73,7 @@ function parseFile(fileUrl, lineTransformer) {
   //TODO verify this works
 }
 
-Game.prototype.addMouseListeners = function(canvas) {
+Game.prototype.setUpMouseListeners = function(canvas) {
   canvas.addEventListener("mousemove", function(e) {
     if(this.mouseX != e.offsetX || this.mouseY != e.offsetY){
       this.hasMouseMoved = true;
@@ -82,32 +82,32 @@ Game.prototype.addMouseListeners = function(canvas) {
     }
   }
   canvas.addEventListener("mousedown", function(e) {
-    this.mouseState = "BEGIN_DOWN";  
+    this.clickState = "BEGIN_DOWN";  
   }
   
   canvas.addEventListener("mouseup", function(e) {
-    this.mouseState = "BEGIN_UP";
+    this.clickState = "BEGIN_UP";
   }
   console.log("Mouse Listeners Initialized!");
 }
 
 Game.prototype.handleMouseActions = function() {
-  if(this.mouseState == "UP"){              //UP
+  if(this.clickState == "UP"){              //UP
     //do nothing?
   }
-  else if(this.mouseState == "BEGIN_DOWN"){ //BEGIN_DOWN
+  else if(this.clickState == "BEGIN_DOWN"){ //BEGIN_DOWN
     //note what object is selected, if any.
     this.selected = findObjectAt(this.mouseX, this.mouseY);
     //Transition into DOWN state
-    this.mouseState = "DOWN";
+    this.clickState = "DOWN";
   }
-  else if(this.mouseState == "DOWN"){       //DOWN
+  else if(this.clickState == "DOWN"){       //DOWN
     //The mouse continues to be held down. If the mouse moves, move the selected object.
     if(selected != undefined && this.hasMouseMoved){
       this.selected.attemptMove(this.mouseX, this.mouseY); //call GameObject.attemptMove()
     }
   }
-  else if(this.mouseState == "BEGIN_UP"){   //BEGIN_UP
+  else if(this.clickState == "BEGIN_UP"){   //BEGIN_UP
     //Drop the selected object, if any.
     if(this.selected != undefined){
       //Find what objects are underneath
@@ -121,7 +121,7 @@ Game.prototype.handleMouseActions = function() {
       this.selected = undefined;
     }
     //Finished. Transition into UP state
-    this.mouseState = "UP";
+    this.clickState = "UP";
   }
   //Movement has been resolved, set hasMouseMoved to false
   this.hasMouseMoved = false;
