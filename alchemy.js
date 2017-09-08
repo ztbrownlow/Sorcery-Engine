@@ -1,5 +1,4 @@
 var game = new Game(document.getElementById("canvas"));
-game.start(30);
 var imageSize = 64;
 
 function Element(game, src, size, name, unlocked) {
@@ -34,3 +33,4 @@ parseFile("http://www4.ncsu.edu/~ztbrownl/alchemy_data.txt", function(line) {
   }
 });
 
+game.start(30);

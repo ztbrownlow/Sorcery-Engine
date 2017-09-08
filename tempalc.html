@@ -1,6 +1,13 @@
 <canvas id="canvas" width="576" height="450">
   Canvas not supported
 </canvas>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="engine.js"></script>
+<script src="object.js"></script>
+<script src="Sprites.js"></script>
+<script src="SceneGraph.js"></script>
+<script src="alchemy.js"></script>
+
 <script type="text/javascript">
   
     //this was previously in mousemove event
@@ -23,20 +30,6 @@
   var sepWidth = 3;
   //height of the gui
   var guiHeight = numRows * imageSize + ((numRows - 1) * sepWidth);
-
-  function elementByName(name) { //get element by name
-    temp = elements.filter(function(e) { return e.name == name; });
-    if (temp.length == 0) { //doesn't exist
-      return null;
-    } else {
-      return temp[0]; //return first element with name - should only be one
-    }
-  }
-
-  //link elements so element1+element2=element3
-  function linkByName(element1, element2, element3) {
-    elementByName(element1).link(elementByName(element2), elementByName(element3));
-  }
 
   var selectedDraggable; //which draggable element is currently being dragged
   var selectedGUIElement; //which gui element is selected;
