@@ -25,49 +25,49 @@ function Game(canvas) {
   
   this.sprites = new SceneGraph("sprites");
   this.objects = new SceneGraph("objects");
-}
-
-Game.prototype.mouseMove = function(e) {
-}
-
-Game.prototype.mouseDown = function(e) {
+  var self = this;
   
-}
-
-Game.prototype.mouseUp = function(e) {
-  
-}
-
-Game.prototype.draw = function() {
-  this.objects.draw(this);
-}
-
-Game.prototype.preDraw = function() {
-  
-}
-
-Game.prototype.postDraw = function() {
-  
-}
-
-Game.prototype.update = function () {
-  this.objects.update();
-}
-
-Game.prototype.loop = function() {
-  this.canvas.width = this.canvas.width;
-  this.update();
-  this.preDraw();
-  this.draw();
-  this.postDraw();
-}
+  Game.prototype.mouseMove = function(e) {
     
-Game.prototype.start = function(milliseconds) {
-  this.timer = setInterval(this.loop, milliseconds);
-}
-Game.prototype.stop = function() {
-  if (this.timer != undefined) {
-    clearInterval(this.timer);
+  }
+
+  Game.prototype.mouseDown = function(e) {
+    
+  }
+
+  Game.prototype.mouseUp = function(e) {
+    
+  }
+
+  Game.prototype.draw = function() {
+    self.objects.draw(self);
+  }
+
+  Game.prototype.preDraw = function() {
+    
+  }
+
+  Game.prototype.postDraw = function() {
+    
+  }  
+  
+  Game.prototype.update = function () {
+    self.objects.update();
+  }
+
+  Game.prototype.loop = function() {
+    self.canvas.width = self.canvas.width;
+    self.update();
+    self.preDraw();
+    self.draw();
+    self.postDraw();
+  }
+  
+  Game.prototype.start = function(milliseconds) {
+    self.timer = setInterval(self.loop, milliseconds);
+  }
+  Game.prototype.stop = function(milliseconds) {
+    clearInterval(self.timer);
   }
 }
 
