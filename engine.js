@@ -48,6 +48,10 @@ Game.prototype.loop = function() {
     
 Game.prototype.start = function(milliseconds) {
   self.timer = setInterval(self.loop, milliseconds);
+  canvas.addEventListener("mousedown", function(e) {
+	  this.mouseX = mouseX;
+	  this.mouseY = mouseY;
+  }
 }
 Game.prototype.stop = function() {
   if (self.timer != undefined) {
