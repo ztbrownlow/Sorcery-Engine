@@ -1,12 +1,20 @@
 function Game(canvas) {
   this.mouseX = 0;
   this.mouseY = 0;
-  this.mousePressed = false;
+  this.mouseDown = false;
   var self = this;
   canvas.addEventListener("mousemove", function(e) {
     this.mouseX = e.offsetX;
     this.mouseY = e.offsetY;
-    self.mouseMove();
+    self.mouseMove(e);
+  });
+  canvas.addEventListener("mousedown", function(e) {
+    mouseDown = true;
+    self.mouseDown(e);
+  });
+  canvas.addEventListener("mouseup", function(e) {
+    mouseDown = false;
+    self.mouseUp(e);
   });
   
   this.canvas = canvas;
@@ -19,7 +27,15 @@ function Game(canvas) {
   this.objects = new SceneGraph("objects");
 }
 
-Game.prototype.mouseMove = function() {
+Game.prototype.mouseMove = function(e) {
+}
+
+Game.prototype.mouseDown = function(e) {
+  
+}
+
+Game.prototype.mouseUp = function(e) {
+  
 }
 
 Game.prototype.draw = function() {
