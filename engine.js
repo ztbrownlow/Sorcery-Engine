@@ -72,8 +72,10 @@ Game.prototype.stop = function() {
 }
 
 function parseFile(fileUrl, lineTransformer) {
+  console.log(fileUrl);
   //lineTransformer is a function that takes a line as an input and then does something with it
   return $.get( fileUrl, function( data ) {
+    console.log("reading file");
     var lines = data.split('\n');
     for (var i = 0; i < lines.length; ++i) {
       lines[i] = lineTransformer(lines[i]);

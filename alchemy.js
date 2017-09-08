@@ -44,7 +44,8 @@ function Element(game, src, size, name, unlocked, x, y) {
 Element.prototype = Object.create(GameObject.prototype);
 Element.prototype.constructor = GameObject;
 
-parseFile("http://www4.ncsu.edu/~ztbrownl/alchemy_data.txt", function(line) {
+parseFile("alchemy/alchemy_data.txt", function(line) {
+  console.log(line);
   if (line.length > 0) {
     if (line.startsWith("D:")) {
       line = line.substring(0, 2);
