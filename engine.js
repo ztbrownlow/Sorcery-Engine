@@ -22,15 +22,15 @@ function Game(canvas) {
 Game.prototype.mouseMove = function() {
 }
 
-Game.prototype.draw() = function() {
+Game.prototype.draw = function() {
   this.objects.draw();
 }
 
-Game.prototype.preDraw() = function() {
+Game.prototype.preDraw = function() {
   
 }
 
-Game.prototype.postDraw() = function() {
+Game.prototype.postDraw = function() {
   
 }
 
@@ -47,7 +47,7 @@ Game.prototype.loop = function() {
 }
     
 Game.prototype.start = function(milliseconds) {
-  self.timer.setInterval(self.loop, milliseconds);
+  self.timer = setInterval(self.loop, milliseconds);
 }
 Game.prototype.stop = function() {
   if (self.timer != undefined) {

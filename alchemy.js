@@ -9,17 +9,17 @@ var guiHeight = numRows * imageSize + ((numRows - 1) * sepWidth);
 var spr_gui = game.sprites.push(new SceneGraph("guiRects"));
 var spr_elements = game.sprites.push(new SceneGraph("elements"));
 var obj_gui = game.objects.push(new SceneGraph("guiRects", false, true));
-obj_gui.push(new Object("main", spr_gui.push(new FilledRectSprite("main", guiWidth, guiHeight, "#AAAAAA")), 0, game.canvas.height - guiHeight));
+obj_gui.push(new GameObject("main", spr_gui.push(new FilledRectSprite("main", guiWidth, guiHeight, "#AAAAAA")), 0, game.canvas.height - guiHeight));
 var spr_guiSep = spr_gui.push(new FilledRectSprite("separator", guiWidth, sepWidth, "#BBBBBB"));
 for(var i = 1; i <= numRows - 1; i++){
-  spr_guiBar.push(new Object("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
+  obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
 var obj_elements = game.objects.unshift(new SceneGraph("elements"));
 var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 
 
 function Element(game, src, size, name, unlocked, x, y) {
-  Object.apply(this, game, name, Sprite(name, size, size, src), mouseX, mouseY);
+  GameObject.call(this, game, name, Sprite(name, size, size, src), mouseX, mouseY);
   
   this.unlocked = unlocked;
   this.interactions = {};
@@ -32,7 +32,7 @@ function Element(game, src, size, name, unlocked, x, y) {
     return self.interactions[element2.name];
   }
   this.draw = function(game) {
-    Object.prototype.draw.call(self, game);
+    GameObject.prototype.draw.call(self, game);
     if (!self.unlocked) {
       game.context.globalAlpha=0.5;
       game.context.fillRect(self.x, self.y, imageSize, imageSize);
@@ -41,7 +41,8 @@ function Element(game, src, size, name, unlocked, x, y) {
   }
 }
 
-Element.inherits(Object);
+Element.prototype = Object.create(GameObject.prototype);
+Element.prototype.constructor = GameObject;
 
 parseFile("http://www4.ncsu.edu/~ztbrownl/alchemy_data.txt", function(line) {
   if (line.length > 0) {
