@@ -104,7 +104,7 @@ Game.prototype.handleMouseActions = function() {
   else if(this.mouseState == "DOWN"){       //DOWN
     //The mouse continues to be held down. If the mouse moves, move the selected object.
     if(selected != undefined && this.hasMouseMoved){
-      this.selected.setPos(this.mouseX, this.mouseY); //call GameObject.setPos()
+      this.selected.attemptMove(this.mouseX, this.mouseY); //call GameObject.attemptMove()
     }
   }
   else if(this.mouseState == "BEGIN_UP"){   //BEGIN_UP
