@@ -14,13 +14,13 @@ var spr_guiSep = spr_gui.push(new FilledRectSprite("separator", guiWidth, sepWid
 for(var i = 1; i <= numRows - 1; i++){
   obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
-var obj_elements = game.objects.unshift(new SceneGraph("elements"));
+var obj_elements = game.objects.push(new SceneGraph("elements"));
 var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 
 
 function Element(game, src, size, name, unlocked, x, y) {
   GameObject.call(this, name, spr_elements.push(new Sprite(name, size, size, src)), x, y);
-  
+  this.priorDraw = this.draw;
   this.unlocked = unlocked;
   this.interactions = {};
   var self = this;
@@ -32,7 +32,9 @@ function Element(game, src, size, name, unlocked, x, y) {
     return self.interactions[element2.name];
   }
   this.draw = function(game) {
+    self.priorDraw(game);
     if (!self.unlocked) {
+      game.context.fillStyle = "black";
       game.context.globalAlpha=0.5;
       game.context.fillRect(self.x, self.y, imageSize, imageSize);
       game.context.globalAlpha=1;
@@ -109,12 +111,14 @@ obj_elements.FirstByName("fur").link(obj_elements.FirstByName("hair"), obj_eleme
 obj_elements.FirstByName("fur").link(obj_elements.FirstByName("fur"), obj_elements.FirstByName("lion"))
 obj_elements.FirstByName("fur").link(obj_elements.FirstByName("horn"), obj_elements.FirstByName("bull"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("fur"), obj_elements.FirstByName("werewolf"))
+obj_elements.FirstByName("human").link(obj_elements.FirstByName("hair"), obj_elements.FirstByName("werewolf"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("angel"))
 obj_elements.FirstByName("horse").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("pegasus"))
 obj_elements.FirstByName("horn").link(obj_elements.FirstByName("horse"), obj_elements.FirstByName("unicorn"))
 obj_elements.FirstByName("bird").link(obj_elements.FirstByName("lion"), obj_elements.FirstByName("griffin"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("lion"), obj_elements.FirstByName("sphinx"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("fish"), obj_elements.FirstByName("mermaid"))
+obj_elements.FirstByName("human").link(obj_elements.FirstByName("water"), obj_elements.FirstByName("mermaid"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("bull"), obj_elements.FirstByName("minotaur"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("horse"), obj_elements.FirstByName("centaur"))
 obj_elements.FirstByName("human").link(obj_elements.FirstByName("snake"), obj_elements.FirstByName("medusa"))

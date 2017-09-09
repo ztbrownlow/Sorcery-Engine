@@ -1,15 +1,4 @@
 <script type="text/javascript">
-  
-    //this was previously in mousemove event
-    if (selectedDraggable != undefined) { //if anything selected, move it by its center
-      selectedDraggable.x = mouseX - selectedDraggable.element.image.width/2;
-      selectedDraggable.y = mouseY - selectedDraggable.element.image.height/2;
-    }
-    else if (selectedGUIElement != undefined){
-      selectedDraggable = createSprite(selectedGUIElement.name);
-      selectedGUIElement = undefined;
-    }
-
   var selectedDraggable; //which draggable element is currently being dragged
   var selectedGUIElement; //which gui element is selected;
   canvas.addEventListener("mousedown", function(e) {
