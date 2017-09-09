@@ -1,43 +1,24 @@
 function Game(canvas) {
   this.mouseX = 0;
   this.mouseY = 0;
-  this.mouseDown = false;
+  this.clickState = "UP"; //States: UP, BEGIN_DOWN, DOWN, BEGIN_UP
+  this.hasMouseMoved = false;
   var self = this;
-  canvas.addEventListener("mousemove", function(e) {
-    this.mouseX = e.offsetX;
-    this.mouseY = e.offsetY;
-    self.mouseMove(e);
-  });
   canvas.addEventListener("mousedown", function(e) {
-    mouseDown = true;
-    self.mouseDown(e);
-  });
-  canvas.addEventListener("mouseup", function(e) {
-    mouseDown = false;
-    self.mouseUp(e);
-  });
+	  this.mouseX = mouseX;
+	  this.mouseY = mouseY;
+  }
+  
+  this.selected;
   
   this.canvas = canvas;
   this.context = canvas.getContext('2d');
-  this.gameTree = new Array();
-  this.guiTree = new Array;
   this.timer = undefined;
   
   this.sprites = new SceneGraph("sprites");
   this.objects = new SceneGraph("objects");
-  var self = this;
-  
-  this.mouseMove = function(e) {
-    
-  }
 
-  this.mouseDown = function(e) {
-    
-  }
-
-  this.mouseUp = function(e) {
-    
-  }
+  setUpMouseListeners(this.canvas);
 
   this.draw = function() {
     self.objects.draw(self);
