@@ -33,12 +33,20 @@ function Element(spr, name, unlocked, x, y) {
   }
   this.isSpawner = true;
   this.spawnerFunc = function() {
+    if (!self.unlocked) {
+      return null;
+    }
     var temp = new Element(self.sprite, self.name, self.unlocked, self.x, self.y);
     temp.isDraggable = true;
     temp.isSpawner = false;
     temp.interactions = self.interactions;
     temp.mouseDown = function(game) {
       obj_onScreen.moveToFront(obj_onScreen.indexOf(temp));
+    }
+    temp.mouseUp = function(game) {
+      if (temp.y >= guiHeight) {
+        obj_onScreen.remove(temp);
+      }
     }
     temp.tryCollide = function(other) {
       console.log([temp, other]);

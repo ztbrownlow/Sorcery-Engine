@@ -100,11 +100,14 @@ function Game(canvas) {
       if(self.selected && self.hasMouseMoved){
         //self.selected.attemptMove(self.mouseX, self.mouseY); //call GameObject.attemptMove()
         if (self.selected.isSpawner) {
-          self.selected.isClicked = false;
-          self.selected.mouseUp();
-          self.selected = self.objects.FirstByName("onScreen").unshift(self.selected.spawnerFunc());
-          self.selected.isClicked = true;
-          self.selected.mouseDown();
+          var newObj = self.selected.spawnerFunc();
+          if (newObj) {
+            self.selected.isClicked = false;
+            self.selected.mouseUp();
+            self.selected = self.objects.FirstByName("onScreen").unshift(newObj);
+            self.selected.isClicked = true;
+            self.selected.mouseDown();
+          }
         }
       }
     }
