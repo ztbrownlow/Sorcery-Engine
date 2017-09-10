@@ -136,11 +136,9 @@ function Game(canvas) {
       var topGUIObject = null;
       var onScreen = self.objects.FirstByName("onScreen");
       var buttons = self.objects.FirstByName("elements");
-      console.log("button len: " + buttons.children.length);
 
       for(var i = 0; i < buttons.children.length; i++){
         var button = buttons.children[i];
-        console.log("Name: " + button.name);
         if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
           console.log("Clicked: " + button.name);
           topGUIObject = button;
@@ -178,6 +176,14 @@ function Game(canvas) {
 
   this.findOverlappingObjects = function(dropped) {
     //TODO return objects underneath GameObject dropped
+    var onScreen = self.objects.FirstByName("onScreen");
+    for(var i = 1; i < onScreen.children.length; i++){
+      var sprite = onScreen.children[i];
+      if(sprite.isOverlapping(dropped)){
+        console.log("overlap detected")
+        break;
+      }
+    }
     return null;
   }
 

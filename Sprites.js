@@ -38,8 +38,6 @@ function checkSpriteRect(sprite, sprX, sprY, checkX, checkY) {
   var maxX = sprX + sprite.image.width;
   var minY = sprY;
   var maxY = sprY + sprite.image.height;
-  console.log(minX + ", " + maxX + ", " + minY + ", " + maxY)
-  console.log("x: " + checkX + ", y: " + checkY)
   if (checkX >= minX && checkX <= maxX && checkY >= minY && checkY <= maxY) {
     return true;
   }

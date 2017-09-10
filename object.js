@@ -37,5 +37,9 @@ function GameObject(name, sprite, x, y) {
     return false;
   }
 
+  this.isOverlapping = function(other){
+    return (other !== this && Math.hypot(other.x - this.x, other.y - this.y) < other.sprite.image.width);
+  }
+
 
 }
