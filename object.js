@@ -11,6 +11,12 @@ function GameObject(name, sprite, x, y) {
   this.spawnerFunc = function() {
     
   }
+  this.mouseDown = function(game) {
+    
+  }
+  this.mouseUp = function(game) {
+    
+  }
   this.update = function(game) {
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX - self.sprite.image.width / 2;

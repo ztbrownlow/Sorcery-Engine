@@ -14,8 +14,8 @@ var spr_guiSep = spr_gui.push(new FilledRectSprite("separator", guiWidth, sepWid
 for(var i = 1; i <= numRows - 1; i++){
   obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
-var obj_elements = game.objects.push(new SceneGraph("elements"));
-var obj_onScreen = game.objects.push(new SceneGraph("onScreen"));
+var obj_elements = game.objects.unshift(new SceneGraph("elements"));
+var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 
 
 function Element(spr, name, unlocked, x, y) {
@@ -36,6 +36,9 @@ function Element(spr, name, unlocked, x, y) {
     var temp = new Element(self.sprite, self.name, self.unlocked, self.x, self.y);
     temp.isDraggable = true;
     temp.isSpawner = false;
+    temp.mouseDown = function(game) {
+      obj_onScreen.moveToFront(obj_onScreen.indexOf(temp));
+    }
     return temp;
   }
   this.draw = function(game) {

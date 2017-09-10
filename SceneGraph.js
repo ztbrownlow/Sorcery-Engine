@@ -12,7 +12,9 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
 
   this.draw = function(game) {
     if (self.doDraw) {
-      self.children.forEach(function(e) { e.draw(game); });
+      for (var i = self.children.length - 1; i >= 0; --i) {
+        self.children[i].draw(game);
+      }
     }
   }
 
@@ -43,5 +45,17 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
     var temp = self.children[index];
     self.children.splice(index, 1);
     return temp;
+  }
+  
+  this.indexOf = function(e) {
+    return self.children.indexOf(e);
+  }
+  
+  this.moveToFront = function(index) {
+    var temp = self.children[index];
+    for (var i = 1; i <= index; ++i) {
+      self.children[i] = self.children[i-1];
+    }
+    self.children[0] = temp;
   }
 }
