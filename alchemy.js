@@ -15,11 +15,11 @@ for(var i = 1; i <= numRows - 1; i++){
   obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
 var obj_elements = game.objects.push(new SceneGraph("elements"));
-var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
+var obj_onScreen = game.objects.push(new SceneGraph("onScreen"));
 
 
-function Element(game, src, size, name, unlocked, x, y) {
-  GameObject.call(this, name, spr_elements.push(new Sprite(name, size, size, src)), x, y);
+function Element(spr, name, unlocked, x, y) {
+  GameObject.call(this, name, spr, x, y);
   this.priorDraw = this.draw;
   this.unlocked = unlocked;
   this.interactions = {};
@@ -30,6 +30,13 @@ function Element(game, src, size, name, unlocked, x, y) {
   }
   this.combine = function(element2) {
     return self.interactions[element2.name];
+  }
+  this.isSpawner = true;
+  this.spawnerFunc = function() {
+    var temp = new Element(self.sprite, self.name, self.unlocked, self.x, self.y);
+    temp.isDraggable = true;
+    temp.isSpawner = false;
+    return temp;
   }
   this.draw = function(game) {
     self.priorDraw(game);
@@ -71,7 +78,7 @@ var i = 0;
 function addElement(name, img, unlocked) {
   var xpos = imageSize*(i%Math.floor(guiWidth/imageSize));
   var ypos = game.canvas.height - guiHeight + (imageSize+sepWidth)*Math.floor(i++/Math.floor(guiWidth/imageSize));
-  obj_elements.push(new Element(game, img, imageSize, name, unlocked, xpos, ypos));
+  obj_elements.push(new Element(spr_elements.push(new Sprite(name, imageSize, imageSize, img)), name, unlocked, xpos, ypos));
 }
 addElement("wings", "http://www4.ncsu.edu/~ztbrownl/images/wings.png", true)
 addElement("scales", "http://www4.ncsu.edu/~ztbrownl/images/scales.png", true)

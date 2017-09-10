@@ -5,8 +5,17 @@ function GameObject(name, sprite, x, y) {
   this.x = x;
   this.y = y;
   this.name = name;
-  this.update = function() {
+  this.isClicked = false;
+  this.isDraggable = false;
+  this.isSpawner = false;
+  this.spawnerFunc = function() {
     
+  }
+  this.update = function(game) {
+    if (self.isDraggable && self.isClicked) {
+      self.x = game.mouseX - self.sprite.image.width / 2;
+      self.y = game.mouseY - self.sprite.image.height / 2;
+    }
   }
   this.draw = function(game) {
     if (self.sprite != undefined) {

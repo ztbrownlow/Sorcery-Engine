@@ -4,9 +4,9 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
   this.doUpdate = doUpdate;
   this.doDraw = doDraw;
   this.children = new Array();
-  this.update = function() {
+  this.update = function(game) {
     if (self.doUpdate) {
-      self.children.forEach(function(e) { e.update(); });
+      self.children.forEach(function(e) { e.update(game); });
     }
   }
 
