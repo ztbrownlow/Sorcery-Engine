@@ -36,16 +36,18 @@ function Element(spr, name, unlocked, x, y) {
     var temp = new Element(self.sprite, self.name, self.unlocked, self.x, self.y);
     temp.isDraggable = true;
     temp.isSpawner = false;
+    temp.interactions = self.interactions;
     temp.mouseDown = function(game) {
       obj_onScreen.moveToFront(obj_onScreen.indexOf(temp));
     }
     temp.tryCollide = function(other) {
-      console.log([self, other]);
-      var combined = self.combine(other); //find new element
+      console.log([temp, other]);
+      var combined = obj_elements.FirstByName(temp.name).combine(other); //find new element
       if (combined != undefined) { //if new element exists (valid formula)
         //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
-        this.name = combined.name; //set this Draggable's element to the new element
-        this.sprite = combined.sprite;
+        temp.name = combined.name; //set this Draggable's element to the new element
+        temp.sprite = combined.sprite;
+        temp.interactions = combined.interactions;
         if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
           combined.unlocked = true;
         }
