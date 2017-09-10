@@ -27,4 +27,6 @@ function GameObject(name, sprite, x, y) {
     }
     return false;
   }
+
+
 }
