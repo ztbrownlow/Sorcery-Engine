@@ -97,10 +97,11 @@ function Game(canvas) {
         //Find what objects are underneath
         var overlapping = self.findOverlappingObjects(self.selected);
         //TODO do something with the overlapping objects
-        for(var i = 0; i < overlapping.length; i++){
-          var e = overlapping[i];
-          //Tell game class that the objects are overlapping
-        }
+        if(overlapping)
+          for(var i = 0; i < overlapping.length; i++){
+            var e = overlapping[i];
+            //Tell game class that the objects are overlapping
+          }
         //remove the previously selected object from the selected field.
         self.selected = null;
       }
