@@ -39,6 +39,21 @@ function Element(spr, name, unlocked, x, y) {
     temp.mouseDown = function(game) {
       obj_onScreen.moveToFront(obj_onScreen.indexOf(temp));
     }
+    temp.tryCollide = function(other) {
+      console.log([self, other]);
+      var combined = self.combine(other); //find new element
+      if (combined != undefined) { //if new element exists (valid formula)
+        //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+        this.name = combined.name; //set this Draggable's element to the new element
+        this.sprite = combined.sprite;
+        if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
+          combined.unlocked = true;
+        }
+        obj_onScreen.remove(other); //remove other element from screen
+        return true;
+      }
+      return false;
+    }
     return temp;
   }
   this.draw = function(game) {

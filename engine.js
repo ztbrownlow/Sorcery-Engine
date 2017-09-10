@@ -116,11 +116,15 @@ function Game(canvas) {
         //Find what objects are underneath
         var overlapping = self.findOverlappingObjects(self.selected);
         //TODO do something with the overlapping objects
-        if(overlapping)
+        if(overlapping) {
+          console.log("OVERLAP");
           for(var i = 0; i < overlapping.length; i++){
             var e = overlapping[i];
-            //Tell game class that the objects are overlapping
+            if (self.selected.tryCollide(e)) {
+              break;
+            }
           }
+        }
         //remove the previously selected object from the selected field.
         self.selected.mouseUp(game);
         self.selected = null;
@@ -180,15 +184,16 @@ function Game(canvas) {
 
   this.findOverlappingObjects = function(dropped) {
     //TODO return objects underneath GameObject dropped
+    var output = new Array();
     var onScreen = self.objects.FirstByName("onScreen");
     for(var i = 1; i < onScreen.children.length; i++){
       var sprite = onScreen.children[i];
       if(sprite.isOverlapping(dropped)){
         console.log("overlap detected")
-        break;
+        output.push(sprite);
       }
     }
-    return null;
+    return output;
   }
 
   this.setUpMouseListeners(this.canvas);

@@ -47,6 +47,10 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
     return temp;
   }
   
+  this.remove = function(e) {
+    return self.removeIndex(self.indexOf(e));
+  }
+  
   this.indexOf = function(e) {
     return self.children.indexOf(e);
   }

@@ -17,6 +17,9 @@ function GameObject(name, sprite, x, y) {
   this.mouseUp = function(game) {
     
   }
+  this.tryCollide = function(other) {
+    return false;
+  }
   this.update = function(game) {
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX - self.sprite.image.width / 2;
