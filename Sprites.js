@@ -33,12 +33,14 @@ function FilledRectSprite(name, width, height, fillStyle) { //can use in place o
 
 //checks collision with coordinate. taken from code we used in class
 //returns true if (x, y) is contained in sprite (assumes rectangular bounding box)
-function checkSpriteRect(sprite, x, y) {
-  var minX = x;
-  var maxX = x + sprite.image.width;
-  var minY = y;
-  var maxY = y + sprite.image.height;
-  if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+function checkSpriteRect(sprite, sprX, sprY, checkX, checkY) {
+  var minX = sprX;
+  var maxX = sprX + sprite.image.width;
+  var minY = sprY;
+  var maxY = sprY + sprite.image.height;
+  console.log(minX + ", " + maxX + ", " + minY + ", " + maxY)
+  console.log("x: " + checkX + ", y: " + checkY)
+  if (checkX >= minX && checkX <= maxX && checkY >= minY && checkY <= maxY) {
     return true;
   }
   return false;

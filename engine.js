@@ -118,14 +118,14 @@ function Game(canvas) {
       //TODO return the top GameObject at x, y
       var topGameObject = null;
       var topGUIObject = null;
-      var sprites = this.objects.FirstByName("onScreen");
-      var buttons = this.objects.FirstByName("elements");
+      var sprites = self.objects.FirstByName("onScreen");
+      var buttons = self.objects.FirstByName("elements");
       console.log("button len: " + buttons.children.length);
 
       for(var i = 0; i < buttons.children.length; i++){
         var button = buttons.children[i];
         console.log("Name: " + button.name);
-        if( checkSpriteRect(button.sprite, button.x, button.y)){
+        if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
           console.log("Clicked: " + button.name);
           topGUIObject = button;
           break;
