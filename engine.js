@@ -88,6 +88,7 @@ function Game(canvas) {
       self.selected = self.findObjectAt(this.mouseX, this.mouseY);
       if (self.selected) {
         self.selected.isClicked = true;
+        self.selected.mouseDown(game);
       }
       //Transition into DOWN state
       self.clickState = "DOWN";
@@ -100,8 +101,10 @@ function Game(canvas) {
         //self.selected.attemptMove(self.mouseX, self.mouseY); //call GameObject.attemptMove()
         if (self.selected.isSpawner) {
           self.selected.isClicked = false;
-          self.selected = self.objects.FirstByName("onScreen").push(self.selected.spawnerFunc());
+          self.selected.mouseUp();
+          self.selected = self.objects.FirstByName("onScreen").unshift(self.selected.spawnerFunc());
           self.selected.isClicked = true;
+          self.selected.mouseDown();
         }
       }
     }
@@ -119,6 +122,7 @@ function Game(canvas) {
             //Tell game class that the objects are overlapping
           }
         //remove the previously selected object from the selected field.
+        self.selected.mouseUp(game);
         self.selected = null;
       }
       //Finished. Transition into UP state
