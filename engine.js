@@ -4,13 +4,13 @@ function Game(canvas) {
   this.clickState = "UP"; //States: UP, BEGIN_DOWN, DOWN, BEGIN_UP
   this.hasMouseMoved = false;
   var self = this;
-  
-  this.selected;
-  
+
+  this.selected = null;
+
   this.canvas = canvas;
   this.context = canvas.getContext('2d');
   this.timer = undefined;
-  
+
   this.sprites = new SceneGraph("sprites");
   this.objects = new SceneGraph("objects");
 
@@ -19,13 +19,13 @@ function Game(canvas) {
   }
 
   this.preDraw = function() {
-    
+
   }
 
   this.postDraw = function() {
-    
-  }  
-  
+
+  }
+
   this.update  = function() {
     self.handleMouseActions();
     self.objects.update();
@@ -38,26 +38,20 @@ function Game(canvas) {
     self.draw();
     self.postDraw();
   }
-  
+
   this.start = function(milliseconds) {
     self.timer = setInterval(self.loop, milliseconds);
   }
   this.stop = function(milliseconds) {
     clearInterval(self.timer);
   }
-  
+
   this.setUpMouseListeners = function(canvas) {
     canvas.addEventListener("mousemove", function(e) {
-      if(self.mouseX != e.offsetX || self.mouseY != e.offsetY) {
-        self.hasMouseMoved = true;
-        self.mouseX = e.offsetX;
-        self.mouseY = e.offsetY;
-      }
-    })
     canvas.addEventListener("mousedown", function(e) {
-      self.clickState = "BEGIN_DOWN";  
+      self.clickState = "BEGIN_DOWN";
     })
-    
+
     canvas.addEventListener("mouseup", function(e) {
       self.clickState = "BEGIN_UP";
     })
@@ -65,24 +59,24 @@ function Game(canvas) {
   }
 
   this.handleMouseActions = function() {
-    if(self.clickState == "UP"){              //UP
+    if(self.clickState === "UP"){              //UP
       //do nothing?
     }
-    else if(self.clickState == "BEGIN_DOWN"){ //BEGIN_DOWN
+    else if(self.clickState === "BEGIN_DOWN"){ //BEGIN_DOWN
       //note what object is selected, if any.
       self.selected = self.findObjectAt(this.mouseX, this.mouseY);
       //Transition into DOWN state
       self.clickState = "DOWN";
     }
-    else if(self.clickState == "DOWN"){       //DOWN
+    else if(self.clickState === "DOWN"){       //DOWN
       //The mouse continues to be held down. If the mouse moves, move the selected object.
-      if(self.selected != undefined && self.hasMouseMoved){
+      if(self.selected !== undefined && self.hasMouseMoved){
         self.selected.attemptMove(self.mouseX, self.mouseY); //call GameObject.attemptMove()
       }
     }
-    else if(self.clickState == "BEGIN_UP"){   //BEGIN_UP
+    else if(self.clickState === "BEGIN_UP"){   //BEGIN_UP
       //Drop the selected object, if any.
-      if(self.selected != undefined){
+      if(self.selected !== undefined){
         //Find what objects are underneath
         var overlapping = self.findOverlappingObjects(selected);
         //TODO do something with the overlapping objects
@@ -99,16 +93,42 @@ function Game(canvas) {
     //Movement has been resolved, set hasMouseMoved to false
     self.hasMouseMoved = false;
   }
-  
-  //These next two functions may need to be moved inside of the Object class
-  this.findObjectAt = function(x, y) {
-    //TODO return the top GameObject at x, y
-  }
+
+    //These next two functions may need to be moved inside of the Object class
+    this.findObjectAt = function(x, y) {
+      //TODO return the top GameObject at x, y
+      var topGameObject = null;
+      var topGUIObject = null;
+      for(var i = 0; i < this.objects.children.length; i < 0) {
+        var object = this.objects.children[i];
+        if(object !== null && object instanceof object ){
+          if(object.isPointWithinSprite(object.sprite, x, y)){
+            topGameObject = object;
+            break;
+          }
+        }
+      }
+      for(var j = 0; j < this.sprites.children.length; j < 0) {
+        var sprite = this.sprites.children[j];
+        if(sprite !== null && sprite instanceof sprite ){
+          if(sprite.isPointWithinSprite(sprite.sprite, x, y)){
+            topGUIObject = sprite;
+            break;
+          }
+        }
+      }
+
+      if(topGUIObject !== null){
+        return topGUIObject;
+      }
+      return topGameObject;
+
+    }
 
   this.findOverlappingObjects = function(dropped) {
     //TODO return objects underneath GameObject dropped
   }
-  
+
   this.setUpMouseListeners(this.canvas);
 }
 

@@ -13,4 +13,18 @@ function GameObject(name, sprite, x, y) {
       self.sprite.draw(game, self.x, self.y);
     }
   }
+
+  this.isPointWithinSprite = function(sprite, x, y){
+    var minX = sprite.x;
+    var maxX = sprite.x + sprite.element.image.width;
+    var minY = sprite.y;
+    var maxY = sprite.y + sprite.element.image.height;
+    var mx = x;
+    var my = y;
+    //console.log(minX + " " + maxX);
+    if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
+      return true;
+    }
+    return false;
+  }
 }
