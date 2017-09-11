@@ -39,7 +39,7 @@ function GameObject(name, sprite, x, y) {
     var maxY = sprite.y + sprite.element.image.height;
     var mx = x;
     var my = y;
-    //console.log(minX + " " + maxX);
+    ////console.log(minX + " " + maxX);
     if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
       return true;
     }

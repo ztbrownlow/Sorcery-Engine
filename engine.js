@@ -73,17 +73,17 @@ function Game(canvas) {
       self.mouseY = e.offsetY;
       self.clickState = "BEGIN_UP";
     });
-    console.log("Mouse Listeners Initialized!");
+    //console.log("Mouse Listeners Initialized!");
   }
   
   this.handleMouseActions = function() {
     if(self.clickState === "UP"){              //UP
-      console.log("UP");
+      //console.log("UP");
       //do nothing?
     }
     else if(self.clickState === "BEGIN_DOWN"){ //BEGIN_DOWN
-      console.log(self.objects.FirstByName("onScreen").children)
-      console.log("BEGIN_DOWN");
+      //console.log(self.objects.FirstByName("onScreen").children)
+      //console.log("BEGIN_DOWN");
       //note what object is selected, if any.
       //self.selected = self.findObjectAt(this.mouseX, this.mouseY);
       self.selected = self.findObjectAt(this.mouseX, this.mouseY);
@@ -93,11 +93,11 @@ function Game(canvas) {
       }
       //Transition into DOWN state
       self.clickState = "DOWN";
-      console.log(self.selected);
-      console.log(self.objects.FirstByName("onScreen").children)
+      //console.log(self.selected);
+      //console.log(self.objects.FirstByName("onScreen").children)
     }
     else if(self.clickState === "DOWN"){       //DOWN
-      console.log("DOWN");
+      //console.log("DOWN");
       //The mouse continues to be held down. If the mouse moves, move the selected object.
       if(self.selected && self.hasMouseMoved){
         //self.selected.attemptMove(self.mouseX, self.mouseY); //call GameObject.attemptMove()
@@ -114,7 +114,7 @@ function Game(canvas) {
       }
     }
     else if(self.clickState === "BEGIN_UP"){   //BEGIN_UP
-      console.log("BEGIN_UP");
+      //console.log("BEGIN_UP");
       //Drop the selected object, if any.
       if(self.selected){
         self.selected.isClicked = false;
@@ -123,7 +123,7 @@ function Game(canvas) {
         var overlapping = self.findOverlappingObjects(self.selected);
         //TODO do something with the overlapping objects
         if(overlapping) {
-          console.log("OVERLAP");
+          //console.log("OVERLAP");
           for(var i = 0; i < overlapping.length; i++){
             var e = overlapping[i];
             if (self.selected.tryCollide(e)) {
@@ -153,7 +153,7 @@ function Game(canvas) {
       for(var i = 0; i < buttons.children.length; i++){
         var button = buttons.children[i];
         if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
-          console.log("Clicked: " + button.name);
+          //console.log("Clicked: " + button.name);
           topGUIObject = button;
           break;
         }
@@ -161,7 +161,7 @@ function Game(canvas) {
 
       // for(var i = 0; i < sprites.length; i++) {
       //   var s = sprites[i];
-      //   console.log("Button name " + s.name);
+      //   //console.log("Button name " + s.name);
       //   if (object !== null && object instanceof GameObject) {
       //     if (object.isPointWithinSprite(object.sprite, x, y)) {
       //       topGameObject = object;
@@ -176,9 +176,9 @@ function Game(canvas) {
       
       for(var i = 0; i < onScreen.children.length; i++){
         var button = onScreen.children[i];
-        console.log("Name: " + button.name);
+        //console.log("Name: " + button.name);
         if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
-          console.log("Clicked: " + button.name);
+          //console.log("Clicked: " + button.name);
           topGameObject = button;
           break;
         }
@@ -194,7 +194,7 @@ function Game(canvas) {
     for(var i = 1; i < onScreen.children.length; i++){
       var sprite = onScreen.children[i];
       if(sprite.isOverlapping(dropped)){
-        console.log("overlap detected")
+        //console.log("overlap detected")
         output.push(sprite);
       }
     }
@@ -205,10 +205,10 @@ function Game(canvas) {
 }
 
 /*function parseFile(fileUrl, lineTransformer) {
-  console.log(fileUrl);
+  //console.log(fileUrl);
   //lineTransformer is a function that takes a line as an input and then does something with it
   return $.get( fileUrl, function( data ) {
-    console.log("reading file");
+    //console.log("reading file");
     var lines = data.split('\n');
     for (var i = 0; i < lines.length; ++i) {
       lines[i] = lineTransformer(lines[i]);

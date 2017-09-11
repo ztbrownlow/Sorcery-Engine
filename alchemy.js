@@ -64,10 +64,10 @@ function DraggableElement(spr, name, unlocked, x, y) {
     }
   }
   this.tryCollide = function(other) {
-    console.log([self, other]);
+    //console.log([self, other]);
     var combined = obj_elements.FirstByName(self.name).combine(other); //find new element
     if (combined != undefined) { //if new element exists (valid formula)
-      //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+      ////console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
       self.name = combined.name; //set this Draggable's element to the new element
       self.sprite = combined.sprite;
       self.interactions = combined.interactions;
@@ -82,7 +82,7 @@ function DraggableElement(spr, name, unlocked, x, y) {
 }
 
 /*parseFile("alchemy/alchemy_data.txt", function(line) {
-  console.log(line);
+  //console.log(line);
   if (line.length > 0) {
     if (line.startsWith("D:")) {
       line = line.substring(0, 2);
