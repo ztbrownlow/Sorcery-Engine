@@ -1,66 +1,76 @@
 function Game(canvas) {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.mouseX = 0;
-    this.mouseY = 0;
-    this.context = canvas.getContext('2d');
-    this.timer = null;
-    this.sprites = new SceneGraph("sprites");
-    this.objects = new SceneGraph("objects");
+  var self = this
+  self.constructor = function(canvas) {
+    self.canvas = canvas;
+    self.mouseX = 0;
+    self.mouseY = 0;
+    self.context = canvas.getContext('2d');
+    self.timer = null;
+    self.sprites = new SceneGraph("sprites");
+    self.objects = new SceneGraph("objects"); 
+  }
+  self.setupMouseListeners = function()
+  {
+    canvas.addEventListener("mousemove", self.mouseMove)
+    canvas.addEventListener("mousedown", self.mouseDown)
+    canvas.addEventListener("mouseup", self.mouseUp)
+    canvas.addEventListener("mouseout", self.mouseOut);
+  }
+  
+  self.getObjectsUnderMouse = function() {
+    return flatten(self.objects.pointCollide(self.mouseX, self.mouseY, true)).filter(function(e) {return e;});
+  }
+  
+  self.mouseDown = function(e) {
+    var temp = self.getObjectsUnderMouse();
+    if (temp.length > 0) {
+      temp[0].mouseDown(self, e);
+    }
+  }
+  
+  self.mouseUp = function(e) {
+    var temp = self.getObjectsUnderMouse();
+    if (temp.length > 0) {
+      temp[0].mouseUp(self, e);
+    }
+  }
+  
+  self.mouseOut = function(e) {
+    self.mouseUp(e);
+  }
+  
+  self.mouseMove = function(e) {
+    self.mouseX = e.offsetX;
+    self.mouseY = e.offsetY;
+  }
+  
+  self.update = function() {
+    //self.handleMouseActions();
+    self.objects.update(self);
+  }
+  
+  self.draw = function() {
+    self.objects.draw(self.context);
+  }
+  
+  self.preDraw = function() {
     
-    canvas.addEventListener("mousemove", this.mouseMove)
-    canvas.addEventListener("mousedown", this.mouseDown)
-    canvas.addEventListener("mouseup", this.mouseUp)
-    canvas.addEventListener("mouseout", this.mouseOut);
   }
-  
-  getObjectsUnderMouse() {
-    return flatten(this.objects.pointCollide(this.mouseX, this.mouseY, true));
-  }
-  
-  mouseDown(e) {
-    this.getObjectsUnderMouse()[0].mouseDown();
-  }
-  
-  mouseUp(e) {
-    this.getObjectsUnderMouse()[0].mouseUp();
-  }
-  
-  mouseOut(e) {
-    this.mouseUp(e);
-  }
-  
-  mouseMove(e) {
-    this.mouseX = e.offsetX;
-    this.mouseY = e.offsetY;
-  }
-  
-  update() {
-    //this.handleMouseActions();
-    this.objects.update(this);
-  }
-  
-  draw() {
-    this.objects.draw(this.context);
-  }
-  
-  preDraw() {
+  self.postDraw = function() {
     
   }
-  postDraw() {
-    
+  self.loop = function() {
+    self.canvas.width = self.canvas.width;
+    self.update();
+    self.preDraw();
+    self.draw();
+    self.postDraw();
   }
-  loop() {
-    this.canvas.width = this.canvas.width;
-    this.update();
-    this.preDraw();
-    this.draw();
-    this.postDraw();
+  self.start = function(milliseconds) {
+    self.timer = setInterval(self.loop, milliseconds);
   }
-  start(milliseconds) {
-    this.timer = setInterval(this.loop, milliseconds);
+  self.stop = function() {
+    clearInterval(self.timer);
   }
-  stop() {
-    clearInterval(this.timer);
-  }
+  self.constructor(canvas);
 }

@@ -1,5 +1,4 @@
 var game = new Game(document.getElementById("canvas"));
-
 //graphical options
 var imageSize = 64;
 var numRows = 3;
@@ -14,7 +13,7 @@ var obj_gui = game.objects.push(new SceneGraph("guiRects", false, true, false));
 obj_gui.push(new GameObject("main", spr_gui.push(new FilledRect("main", guiWidth, guiHeight, "#AAAAAA")), 0, game.canvas.height - guiHeight));
 var spr_guiSep = spr_gui.push(new FilledRect("separator", guiWidth, sepWidth, "#BBBBBB"));
 for(var i = 1; i <= numRows - 1; i++){
-  obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
+  obj_gui.unshift(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
 var obj_elements = game.objects.unshift(new SceneGraph("elements"));
 var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
@@ -22,79 +21,96 @@ var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 var selected = null;
 
 //custom object
-class Element extends GameObject {
-  constructor(spr, name, unlocked, x, y) {
-    super(name, spr, x, y);
-    this.unlocked = unlocked;
-    this.interactions = {};
+function Element(spr, name, unlocked, x, y) {
+  var self = this;
+  self.constructor = function(spr, name, unlocked, x, y) {
+    GameObject.call(self, name, spr, x, y);
+    self.unlocked = unlocked;
+    self.interactions = {};
+  }
+  self.constructor(spr, name, unlocked, x, y)
+  self.link = function(element2,element3) {
+    self.interactions[element2.name] = element3;
+    element2.interactions[self.name] = element3;
   }
   
-  link(element2,element3) {
-    this.interactions[element2.name] = element3;
-    element2.interactions[this.name] = element3;
+  self.combine = function(element2) {
+    return self.interactions[element2.name];
   }
   
-  combine(element2) {
-    return this.interactions[element2.name];
+  self.oldMouseDown = self.mouseDown;
+  self.mouseDown = function(game, event) {
+    self.oldMouseDown(game, event);
+    if (self.unlocked) {
+      selected = self;
+    }
   }
-  
-  mouseDown(game, event) {
-    super.mouseDown(game, event);
-    selected = this;
-  }
-  draw(context) {
-    super.draw(context);
-    if (!this.unlocked) {
+  self.oldDraw = self.draw
+  self.draw = function(context) {
+    self.oldDraw(context);
+    if (!self.unlocked) {
       context.fillStyle = "black";
       context.globalAlpha=0.5;
-      context.fillRect(this.x, this.y, imageSize, imageSize);
+      context.fillRect(self.x, self.y, imageSize, imageSize);
       context.globalAlpha=1;
     }
   }
 }
 
+var oldUp = game.mouseUp;
+game.mouseUp = function(e) {
+  oldUp(e);
+  selected = null;
+}
+
 var oldMove = game.mouseMove;
-game.mouseMove = function(event) {
-  oldMove(event)
+game.mouseMove = function(e) {
+  oldMove(e)
+  console.log("MOVE");
   if (selected) {
-    obj_onScreen.push(new DraggableElement(selected.sprite, selected.name, selected.unlocked, selected.x, selected.y));
+    console.log(selected);
+    obj_onScreen.unshift(new DraggableElement(selected.sprite, selected.name, selected.unlocked, selected.x, selected.y));
     selected = null;
   }
 }
 
 //added functionality for collisions
-class DraggableElement extends Element {
-  constructor(spr, name, unlocked, x, y) {
-    super(spr, name, unlocked, x, y);
-    this.isDraggable = true;
+function DraggableElement(spr, name, unlocked, x, y) {
+  var self = this;
+  self.constructor = function(spr, name, unlocked, x, y) {
+    Element.call(self, spr, name, unlocked, x, y);
+    self.isDraggable = true;
+    self.isClicked = true;
+    self.xOffset = imageSize/2;
+    self.yOffset = imageSize/2;
+    self.draw = self.oldDraw;
   }
-  
-  get interactions() {
-    return obj_elements.firstByName(this.name).interactions;
+  self.constructor(spr, name, unlocked, x, y)
+  self.mouseDown = function(game, event) {
+    self.oldMouseDown(game, event);
+    obj_onScreen.moveToFront(obj_onScreen.indexOf(self));
   }
-  mouseDown(game, event) {
-    obj_onScreen.moveToFront(obj_onScreen.indexOf(this));
-  }
-  mouseUp(game, event) {
-    if (this.y >= guiHeight) {
-      obj_onScreen.remove(this);
+  self.oldMouseUp = self.mouseUp;
+  self.mouseUp = function(game, event) {
+    self.oldMouseUp(game, event);
+    if (game.mouseY >= game.canvas.height - guiHeight) {
+      obj_onScreen.remove(self);
+    } else {
+      obj_onScreen.forEachUntilFirstSuccess(function(e) {return self.tryCollide(e)});
     }
-    var self = this;
-    obj_onScreen.forEachUntilFirstSuccess(function(e) {return self.tryCollide(e)});
-    //TODO collision
   }
   
-  canCollideWith(other) {
-    return obj_elements.firstByName(this.name).combine(other);
+  self.canCollideWith = function(other) {
+    return obj_elements.firstByName(self.name).combine(other);
   }
   
-  collideWith(other) {
-    //console.log([this, other]);
-    var combined = canCollideWith(other); //find new element
+  self.collideWith = function(other) {
+    //console.log([self, other]);
+    var combined = self.canCollideWith(other); //find new element
     if (combined != undefined) { //if new element exists (valid formula)
-      ////console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
-      this.name = combined.name; //set this Draggable's element to the new element
-      this.sprite = combined.sprite;
+      ////console.log(o_self.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+      self.name = combined.name; //set self Draggable's element to the new element
+      self.sprite = combined.sprite;
       if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
         combined.unlocked = true;
       }
@@ -170,5 +186,7 @@ obj_elements.firstByName("human").link(obj_elements.firstByName("horse"), obj_el
 obj_elements.firstByName("human").link(obj_elements.firstByName("snake"), obj_elements.firstByName("medusa"))
 obj_elements.firstByName("human").link(obj_elements.firstByName("bird"), obj_elements.firstByName("harpy"))
 obj_elements.firstByName("sphinx").link(obj_elements.firstByName("dragon"), obj_elements.firstByName("manticore"))
+
+game.setupMouseListeners();
 
 game.start(30);

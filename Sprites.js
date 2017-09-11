@@ -1,39 +1,45 @@
-class Drawable {
-  super(name) {
-    this.name = name
-  }
-  draw(game, x, y) { }  
-}
-
-class Sprite extends Drawable {
-  constructor(name, width, height, src) {
-    super(name);
-    this.image = new Image();
-    this.width = width;
-    this.height = height;
-    this.src = src;
-  }
+function Drawable(name) {
+  var self = this;
   
-  get src() { return this.image.src }
-  set src(v) { this.image.src = v }
-  get width() { return this.image.width }
-  set width(v) { this.image.width = v }
-  get height() { return this.image.height }
-  set height(v) { this.image.height = v }
-  draw(game, x, y) {
-    game.context.drawImage(self.image, x, y, self.image.width, self.image.height);
+  self.constructor = function(name) {
+    self.name = name
+  }
+  self.draw = function(context, x, y) { }  
+}
+
+function Sprite(name, width, height, src) {
+  var self = this;
+  self.constructor = function(name, width, height, src) {
+    Drawable.call(self, name);
+    self.image = new Image();
+    self.image.width = width;
+    self.image.height = height;
+    self.image.src = src;
+  }
+  self.constructor(name, width, height, src);
+  
+  Object.defineProperties(self, {
+    'src': { get: function() { return self.image.src }, set: function(v) { self.image.src = v } },
+    'width': { get: function() { return self.image.width }, set: function(v) { self.image.width = v } },
+    'height': { get: function() { return self.image.height }, set: function(v) { self.image.height = v } }
+  });
+  
+  self.draw = function(context, x, y) {
+    context.drawImage(self.image, x, y, self.image.width, self.image.height);
   }
 }
 
-class FilledRect extends Drawable {
-  constructor(name, width, height, fillStyle) {
-    super(name);
-    this.width = width;
-    this.height = height;
-    this.name = name;
-    this.fillStyle = fillStyle;
+function FilledRect(name, width, height, fillStyle) {
+  var self = this;
+  self.constructor = function(name, width, height, fillStyle) {
+    Drawable.call(self, name);
+    self.width = width;
+    self.height = height;
+    self.name = name;
+    self.fillStyle = fillStyle;
   }
-  draw(context, x, y) {
+  self.constructor(name, width, height, fillStyle);
+  self.draw = function(context, x, y) {
     var saveContext = false;
     if (context.fillStyle == self.fillStyle) {
       saveContext = true;

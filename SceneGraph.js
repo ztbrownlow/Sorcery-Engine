@@ -2,149 +2,154 @@ function flatten(arrays) {
   return arrays.reduce(function(a, b){ return a.concat(b); });
 }
 
-class SceneGraph {
-  constructor(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
-    this.name = name;
-    this.doUpdate = doUpdate;
-    this.doDraw = doDraw;
-    this.isClickable = clickable;
-    this.children = new Array();
-    this.updateDirection = updateDirection;
-    this.drawDirection = drawDirection;
+function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
+  var self = this;
+  self.constructor = function(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
+    self.name = name;
+    self.doUpdate = doUpdate;
+    self.doDraw = doDraw;
+    self.isClickable = clickable;
+    self.children = new Array();
+    self.updateDirection = updateDirection;
+    self.drawDirection = drawDirection;
+    self.isSceneGraph = true;
   }
   
-  pointCollide(x, y, limitToClickable) {
-    return forEachReturn(function(e){return (!limitToClickable || e.isClickable) && e.pointCollide(x, y)});
+  self.pointCollide = function(x, y, limitToClickable) {
+    return self.forEachReturn(function(e){if (!limitToClickable || e.isClickable) { var temp = e.pointCollide(x, y); if (temp) return e.isSceneGraph ? temp : e}});
   }
   
-  mouseDown(game, event, returnOnFirstSuccess = true) {
+  self.mouseDown = function(game, event, returnOnFirstSuccess = true) {
     if (isClickable) {
       if (returnOnFirstSuccess) {
-        return this.forEachUntilFirstSuccess(function(e) {e.mouseDown(game, event);});
+        return self.forEachUntilFirstSuccess(function(e) {e.mouseDown(game, event);});
       } else {
-        return this.forEach(function(e) {e.mouseDown(game, event);});
+        return self.forEach(function(e) {e.mouseDown(game, event);});
       }
     }
   }
   
-  mouseUp(game, event, returnOnFirstSuccess = true) {
+  self.mouseUp = function(game, event, returnOnFirstSuccess = true) {
     if (isClickable) {
       if (returnOnFirstSuccess) {
-        return this.forEachUntilFirstSuccess(function(e) {e.mouseUp(game, event);});
+        return self.forEachUntilFirstSuccess(function(e) {e.mouseUp(game, event);});
       } else {
-        return this.forEach(function(e) {e.mouseUp(game, event);});
+        return self.forEach(function(e) {e.mouseUp(game, event);});
       }
     }
   }
   
-  update(game) {
+  self.update = function(game) {
     if (doUpdate) {
-      if (this.updateDirection == "backwards") {
-        this.forEachReverse(function(e) {e.update(game);});
+      if (self.updateDirection == "backwards") {
+        self.forEachReverse(function(e) {e.update(game);});
       } else {
-        this.forEach(function(e) {e.update(game);});
+        self.forEach(function(e) {e.update(game);});
       }
     }
   }
-  draw(context) {
+  self.draw = function(context) {
     if (doDraw) {
-      if (this.drawDirection == "backwards") {
-        this.forEachReverse(function(e) {e.draw(context);});
+      if (self.drawDirection == "backwards") {
+        self.forEachReverse(function(e) {e.draw(context);});
       } else {
-        this.forEach(function(e) {e.draw(context);});
+        self.forEach(function(e) {e.draw(context);});
       }
     }
   }
-  push(obj) {
-    this.children.push(obj);
+  self.push = function(obj) {
+    self.children.push(obj);
     return obj;
   }
-  unshift(obj) {
-    this.children.unshift(obj);
+  self.unshift = function(obj) {
+    self.children.unshift(obj);
     return obj;
   }
-  get length() {return this.children.length;}
-  byName(name) {
-    return this.children.filter(function(e) { return e.name == name; });
+  Object.defineProperties(self, {
+    'length': { get: function() {return self.children.length;}},
+  });
+  self.byName = function(name) {
+    return self.children.filter(function(e) { return e.name == name; });
   }
-  firstByName(name) {
-    var temp = this.children.filter(function(e) { return e.name == name; });
+  self.firstByName = function(name) {
+    var temp = self.children.filter(function(e) { return e.name == name; });
     if (temp.length == 0) { //doesn't exist
       return null;
     } else {
       return temp[0]; //return first element with name
     }
   }
-  lastByName(name) {
-    var temp = this.filter(function(e) { return e.name == name; });
+  self.lastByName = function(name) {
+    var temp = self.filter(function(e) { return e.name == name; });
     if (temp.length == 0) { //doesn't exist
       return null;
     } else {
       return temp[temp.length - 1]; //return first element with name
     }
   }
-  removeIndex(index) {
-    var temp = this.children[index];
-    this.children.splice(index, 1);
+  self.removeIndex = function(index) {
+    var temp = self.children[index];
+    self.children.splice(index, 1);
     return temp;
   }
-  remove(e) {
-    return this.removeIndex(this.indexOf(e));
+  self.remove = function(e) {
+    return self.removeIndex(self.indexOf(e));
   }
-  indexOf(e) {
-    return this.children.indexOf(e);
+  self.indexOf = function(e) {
+    return self.children.indexOf(e);
   }
-  forEach(func) {
-    this.children.forEach(func);
+  self.forEach = function(func) {
+    self.children.forEach(func);
   }
-  forEachUntilFirstSuccess(func) {
-    for (var i = 0; i < this.length; ++i) {
-      if (func(this.children[i], i, this.children)) {
-        return this.children[i];
+  self.forEachUntilFirstSuccess = function(func) {
+    for (var i = 0; i < self.length; ++i) {
+      if (func(self.children[i], i, self.children)) {
+        return self.children[i];
       }
     }
   }
-  forEachReturn(func) {
+  self.forEachReturn = function(func) {
     var output = new Array();
-    for (var i = 0; i < this.length; ++i) {
-      output.add(func(this.children[i], i, this.children));
+    for (var i = 0; i < self.length; ++i) {
+      output.push(func(self.children[i], i, self.children));
     }
     return output;
   }
-  forEachReverse(func) {
-    for (var i = this.length - 1; i >= 0; --i) {
-      func(this.children[i], i, this.children);
+  self.forEachReverse = function(func) {
+    for (var i = self.length - 1; i >= 0; --i) {
+      func(self.children[i], i, self.children);
     }
   }
-  forEachReverseUntilFirstSuccess(func) {
-    for (var i = this.length - 1; i >= 0; --i) {
-      if (func(this.children[i], i, this.children)) {
-        return this.children[i];
+  self.forEachReverseUntilFirstSuccess = function(func) {
+    for (var i = self.length - 1; i >= 0; --i) {
+      if (func(self.children[i], i, self.children)) {
+        return self.children[i];
       }
     }
   }
-  forEachReverseReturn(func) {
+  self.forEachReverseReturn = function(func) {
     var output = new Array();
-    for (var i = this.length - 1; i >= 0; --i) {
-      output.add(func(this.children[i], i, this.children));
+    for (var i = self.length - 1; i >= 0; --i) {
+      output.push(func(self.children[i], i, self.children));
     }
     return output;
   }
-  filter(func) {
-    return this.children.filter(func);
+  self.filter = function(func) {
+    return self.children.filter(func);
   }
-  moveToFront(index) {
-    var temp = this.children[index];
+  self.moveToFront = function(index) {
+    var temp = self.children[index];
     for (var i = index; i > 0; --i) {
-      this.children[i] = this.children[i-1];
+      self.children[i] = self.children[i-1];
     }
-    this.children[0] = temp;
+    self.children[0] = temp;
   }
-  moveToBack(index) {
-    var temp = this.children[index];
-    for (var i = index; i < this.length - 1; ++i) {
-      this.children[i] = this.children[i+1];
+  self.moveToBack = function(index) {
+    var temp = self.children[index];
+    for (var i = index; i < self.length - 1; ++i) {
+      self.children[i] = self.children[i+1];
     }
-    this.children[length - 1] = temp;
+    self.children[length - 1] = temp;
   }
+  self.constructor(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards");
 } 

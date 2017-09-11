@@ -1,35 +1,37 @@
-class Vector { 
-  constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z ? z : 0;
+function Vector(x, y, z) { 
+  var self = this;
+  self.constructor = function(x, y, z) {
+    self.x = x;
+    self.y = y;
+    self.z = z ? z : 0;
   }
   
-  add(other) {
-    return new Vector(this.x + other.x, this.y + other.y, this.z + other.z);
+  self.add = function(other) {
+    return new Vector(self.x + other.x, self.y + other.y, self.z + other.z);
   }
   
-  subtract(other) {
-    return new Vector(this.x - other.x, this.y - other.y, this.z - other.z);
+  self.subtract = function(other) {
+    return new Vector(self.x - other.x, self.y - other.y, self.z - other.z);
   }
   
-  dot(other) {
-    return this.x * other.x + this.y * other.y + this.z * other.z;
+  self.dot = function(other) {
+    return self.x * other.x + self.y * other.y + self.z * other.z;
   }
   
-  multiply(scalar) {
-    return new Vector(this.x * scalar, this.y * scalar, this.z * scalar);
+  self.multiply = function(scalar) {
+    return new Vector(self.x * scalar, self.y * scalar, self.z * scalar);
   }
   
-  divide(scalar) {
-    return this.multiply(1/scalar);
+  self.divide = function(scalar) {
+    return self.multiply(1/scalar);
   }
   
-  normalize() {
-    return this.divide(this.magnitude)
+  self.normalize = function() {
+    return self.divide(self.magnitude)
   }
   
-  magnitude() {
-    return Math.hypot(this.x, this.y, this.z);
+  self.magnitude = function() {
+    return Math.hypot(self.x, self.y, self.z);
   }
+  self.constructor(x, y, z);
 }
