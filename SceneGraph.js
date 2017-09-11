@@ -57,7 +57,7 @@ function SceneGraph(name, doUpdate = true, doDraw = true) {
   
   this.moveToFront = function(index) {
     var temp = self.children[index];
-    for (var i = 1; i <= index; ++i) {
+    for (var i = index; i > 0; --i) {
       self.children[i] = self.children[i-1];
     }
     self.children[0] = temp;

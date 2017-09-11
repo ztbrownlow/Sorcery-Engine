@@ -36,35 +36,7 @@ function Element(spr, name, unlocked, x, y) {
     if (!self.unlocked) {
       return null;
     }
-    var temp = new Element(self.sprite, self.name, self.unlocked, self.x, self.y);
-    temp.isDraggable = true;
-    temp.isSpawner = false;
-    temp.interactions = self.interactions;
-    temp.mouseDown = function(game) {
-      obj_onScreen.moveToFront(obj_onScreen.indexOf(temp));
-    }
-    temp.mouseUp = function(game) {
-      if (temp.y >= guiHeight) {
-        obj_onScreen.remove(temp);
-      }
-    }
-    temp.tryCollide = function(other) {
-      console.log([temp, other]);
-      var combined = obj_elements.FirstByName(temp.name).combine(other); //find new element
-      if (combined != undefined) { //if new element exists (valid formula)
-        //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
-        temp.name = combined.name; //set this Draggable's element to the new element
-        temp.sprite = combined.sprite;
-        temp.interactions = combined.interactions;
-        if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
-          combined.unlocked = true;
-        }
-        obj_onScreen.remove(other); //remove other element from screen
-        return true;
-      }
-      return false;
-    }
-    return temp;
+    return new DraggableElement(self.sprite, self.name, self.unlocked, self.x, self.y);
   }
   this.draw = function(game) {
     self.priorDraw(game);
@@ -74,6 +46,38 @@ function Element(spr, name, unlocked, x, y) {
       game.context.fillRect(self.x, self.y, imageSize, imageSize);
       game.context.globalAlpha=1;
     }
+  }
+}
+
+function DraggableElement(spr, name, unlocked, x, y) {
+  Element.call(this, spr, name, unlocked, x, y);
+  this.isDraggable = true;
+  var self = this;
+  this.isSpawner = false;
+  this.interactions = obj_elements.FirstByName(self.name).interactions;
+  this.mouseDown = function(game) {
+    obj_onScreen.moveToFront(obj_onScreen.indexOf(self));
+  }
+  this.mouseUp = function(game) {
+    if (self.y >= guiHeight) {
+      obj_onScreen.remove(self);
+    }
+  }
+  this.tryCollide = function(other) {
+    console.log([self, other]);
+    var combined = obj_elements.FirstByName(self.name).combine(other); //find new element
+    if (combined != undefined) { //if new element exists (valid formula)
+      //console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+      self.name = combined.name; //set this Draggable's element to the new element
+      self.sprite = combined.sprite;
+      self.interactions = combined.interactions;
+      if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
+        combined.unlocked = true;
+      }
+      obj_onScreen.remove(other); //remove other element from screen
+      return true;
+    }
+    return false;
   }
 }
 

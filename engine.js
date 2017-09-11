@@ -82,6 +82,7 @@ function Game(canvas) {
       //do nothing?
     }
     else if(self.clickState === "BEGIN_DOWN"){ //BEGIN_DOWN
+      console.log(self.objects.FirstByName("onScreen").children)
       console.log("BEGIN_DOWN");
       //note what object is selected, if any.
       //self.selected = self.findObjectAt(this.mouseX, this.mouseY);
@@ -93,6 +94,7 @@ function Game(canvas) {
       //Transition into DOWN state
       self.clickState = "DOWN";
       console.log(self.selected);
+      console.log(self.objects.FirstByName("onScreen").children)
     }
     else if(self.clickState === "DOWN"){       //DOWN
       console.log("DOWN");
