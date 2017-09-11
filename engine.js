@@ -118,6 +118,7 @@ function Game(canvas) {
       //Drop the selected object, if any.
       if(self.selected){
         self.selected.isClicked = false;
+        self.selected.mouseUp(game);
         //Find what objects are underneath
         var overlapping = self.findOverlappingObjects(self.selected);
         //TODO do something with the overlapping objects
@@ -131,7 +132,6 @@ function Game(canvas) {
           }
         }
         //remove the previously selected object from the selected field.
-        self.selected.mouseUp(game);
         self.selected = null;
       }
       //Finished. Transition into UP state
