@@ -1,54 +1,129 @@
-function GameObject(name, sprite, x, y) {
-  //TODO xOffset/yOffset?
-  var self = this;
-  this.sprite = sprite;
-  this.x = x;
-  this.y = y;
-  this.name = name;
-  this.isClicked = false;
-  this.isDraggable = false;
-  this.isSpawner = false;
-  this.spawnerFunc = function() {
-    
+class GameObject {
+  constructor(name, sprite, x, y, xOffset, yOffset) {
+    this.name = name;
+    this.sprite = sprite;
+    this.pos = new Vector();
+    this.x = x;
+    this.y = y;
+    this.xOffset = xOffset;
+    this.yOffset = yOffset;
+    this.isClicked = false;
+    this.isDraggable = false;
+    this.setSquareHitbox([0, 1], [0, 1]);
   }
-  this.mouseDown = function(game) {
-    
+  
+  get x() {
+    return this.pos.x;
   }
-  this.mouseUp = function(game) {
-    
+  
+  get y() {
+    return this.pos.y;
   }
-  this.tryCollide = function(other) {
-    return false;
+  
+  set x(val) {
+    this.pos.x = val;
   }
-  this.update = function(game) {
-    if (self.isDraggable && self.isClicked) {
-      self.x = game.mouseX - self.sprite.image.width / 2;
-      self.y = game.mouseY - self.sprite.image.height / 2;
+  
+  set y(val) {
+    this.pos.y = val;
+  }
+  
+  setSquareHitbox(xRange, yRange) {
+    this.hitbox = {type: 'square', xRange: xRange, yRange: yRange, center: [(xRange[1]+xRange[0])/2, (yRange[1]+yRange[0])/2], halfWidth: (xRange[1]-xRange[0])/2, halfHeight: (yRange[1]-yRange[0])/2};
+  }
+  
+  setCircleHitbox(center, radius) {
+    this.hitbox = {type: 'circle', radius: radius, center: center};
+  }
+  
+  get width() {return sprite.width}
+  get height() {return sprite.height}
+  get src() {return sprite.src}
+  
+  mouseDown(game, event) {
+    this.isClicked = true;
+  }
+  
+  mouseUp(game, event) {
+    this.isClicked = false;
+  }
+  
+  update(game) {
+    if (isDraggable && isClicked) {
+      this.x = game.mouseX;
+      this.y = game.mouseY;
     }
   }
-  this.draw = function(game) {
-    if (self.sprite != undefined) {
-      self.sprite.draw(game, self.x, self.y);
-    }
-  }
-
-  this.isPointWithinSprite = function(sprite, x, y){
-    var minX = sprite.x;
-    var maxX = sprite.x + sprite.element.image.width;
-    var minY = sprite.y;
-    var maxY = sprite.y + sprite.element.image.height;
-    var mx = x;
-    var my = y;
-    ////console.log(minX + " " + maxX);
-    if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
+  
+  draw(context) {
+    if (this.sprite) {
+      this.sprite.draw(game, this.x - xOffset, this.y - yOffset);
       return true;
     }
     return false;
   }
-
-  this.isOverlapping = function(other){
-    return (other !== this && Math.hypot(other.x - this.x, other.y - this.y) < other.sprite.image.width);
+  
+  pointCollide(x, y) {
+    var pos = new Vector(x, y);
+    if (this.hitbox == 'square') {
+      var minX = x - xOffset + this.hitbox.xRange[0] * this.width;
+      var maxX = x - xOffset + this.hitbox.xRange[1] * this.width;
+      var minY = y - xOffset + this.hitbox.yRange[0] * this.height;
+      var maxY = y - xOffset + this.hitbox.yRange[1] * this.height;
+      return x >= minX && x <= maxX && y >= minY && y <= maxY;
+    } else if (this.hitbox == 'circle') {
+      return pos.subtract(this.hitbox.center).magnitude() < this.hitbox.radius;
+    } 
+    return false;
   }
-
-
+  
+  checkForObjectCollide(other) {
+    if (this.hitbox == 'square') {
+      var minX = x - xOffset + this.hitbox.xRange[0] * this.width;
+      var maxX = x - xOffset + this.hitbox.xRange[1] * this.width;
+      var minY = y - yOffset + this.hitbox.yRange[0] * this.height;
+      var maxY = y - yOffset + this.hitbox.yRange[1] * this.height;
+      if (other.hitbox == 'square') {
+        var otherMinX = x - xOffset + other.hitbox.xRange[0] * other.width;
+        var otherMaxX = x - xOffset + other.hitbox.xRange[1] * other.width;
+        var otherMinY = y - xOffset + other.hitbox.yRange[0] * other.height;
+        var otherMaxY = y - xOffset + other.hitbox.yRange[1] * other.height;
+        return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
+      } else if (other.hitbox == 'circle') {
+        var centerX = x - xOffset + this.hitbox.center[0] * this.width;
+        var centerY = y - yOffset + this.hitbox.center[1] * this.height;
+        var diffCentX = Math.abs(other.center.x - centerX);
+        var diffCentY = Math.abs(other.center.y - centerY);
+        if (diffCentX >= this.hitbox.halfWidth + other.hitbox.radius || diffCentY >= this.hitbox.halfHeight + other.hitbox.radius) {
+          return false;
+        }
+        if (diffCentX < this.hitbox.halfWidth || diffCentY < this.hitbox.halfHeight) {
+          return true;
+        }
+        return Math.hypot(diffCentX - this.hitbox.halfWidth, diffCentY - this.hitbox.halfHeight) < other.hitbox.radius;
+      }
+    } else if (this.hitbox == 'circle') {
+      if (other.hitbox == 'square') {
+        return other.objectCollide(this);
+      } else if (other.hitbox == 'circle') {
+        return other.hitbox.center.subtract(this.hitbox.center).magnitude() < this.hitbox.radius + other.hitbox.radius
+      }
+    }
+    return false;
+  }
+  
+  canCollideWith(other) {
+    return false;
+  }
+  
+  collideWith(other) {
+    
+  }
+  
+  tryCollide(other) {
+    if (checkForObjectCollide(other) && canCollideWith(other)) {
+      return collideWith(other);
+    }
+    return false;
+  }
 }
