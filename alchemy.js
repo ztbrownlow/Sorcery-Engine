@@ -92,7 +92,7 @@ function DraggableElement(spr, name, unlocked, x, y) {
   }
   self.oldMouseUp = self.mouseUp;
   self.mouseUp = function(game, event) {
-    self.oldMouseUp(game, event);
+    GameObject.mouseUp.call(self, game, event);
     if (game.mouseY >= game.canvas.height - guiHeight) {
       obj_onScreen.remove(self);
     } else {
@@ -107,7 +107,7 @@ function DraggableElement(spr, name, unlocked, x, y) {
   self.collideWith = function(other) {
     //console.log([self, other]);
     var combined = self.canCollideWith(other); //find new element
-    if (combined != undefined) { //if new element exists (valid formula)
+    if (combined) { //if new element exists (valid formula)
       ////console.log(o_self.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
       self.name = combined.name; //set self Draggable's element to the new element
       self.sprite = combined.sprite;
@@ -186,7 +186,5 @@ obj_elements.firstByName("human").link(obj_elements.firstByName("horse"), obj_el
 obj_elements.firstByName("human").link(obj_elements.firstByName("snake"), obj_elements.firstByName("medusa"))
 obj_elements.firstByName("human").link(obj_elements.firstByName("bird"), obj_elements.firstByName("harpy"))
 obj_elements.firstByName("sphinx").link(obj_elements.firstByName("dragon"), obj_elements.firstByName("manticore"))
-
-game.setupMouseListeners();
 
 game.start(30);

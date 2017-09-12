@@ -14,6 +14,7 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     self.drawDirection = drawDirection;
     self.isSceneGraph = true;
   }
+  self.constructor(name, doUpdate, doDraw, clickable, updateDirection, drawDirection);
   
   self.pointCollide = function(x, y, limitToClickable) {
     return self.forEachReturn(function(e){if (!limitToClickable || e.isClickable) { var temp = e.pointCollide(x, y); if (temp) return e.isSceneGraph ? temp : e}});
@@ -151,5 +152,4 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
     self.children[length - 1] = temp;
   }
-  self.constructor(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards");
 } 

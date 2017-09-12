@@ -8,13 +8,10 @@ function Game(canvas) {
     self.timer = null;
     self.sprites = new SceneGraph("sprites");
     self.objects = new SceneGraph("objects"); 
-  }
-  self.setupMouseListeners = function()
-  {
-    canvas.addEventListener("mousemove", self.mouseMove)
-    canvas.addEventListener("mousedown", self.mouseDown)
-    canvas.addEventListener("mouseup", self.mouseUp)
-    canvas.addEventListener("mouseout", self.mouseOut);
+    canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
+    canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
+    canvas.addEventListener("mouseup", function(e) {self.mouseUp(e)});
+    canvas.addEventListener("mouseout", function(e) {self.mouseOut(e)});
   }
   
   self.getObjectsUnderMouse = function() {
