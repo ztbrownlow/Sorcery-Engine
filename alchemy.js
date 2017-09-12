@@ -92,7 +92,7 @@ function DraggableElement(spr, name, unlocked, x, y) {
   }
   self.oldMouseUp = self.mouseUp;
   self.mouseUp = function(game, event) {
-    GameObject.mouseUp.call(self, game, event);
+    self.oldMouseUp(self, game, event);
     if (game.mouseY >= game.canvas.height - guiHeight) {
       obj_onScreen.remove(self);
     } else {
