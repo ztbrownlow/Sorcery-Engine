@@ -62,9 +62,21 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     self.children.push(obj);
     return obj;
   }
+  self.pop = function() {
+    return self.children.pop();
+  }
   self.unshift = function(obj) {
     self.children.unshift(obj);
     return obj;
+  }
+  self.shift = function(obj) {
+    return self.children.shift();
+  }
+  self.first = function() {
+    return self.children[0];
+  }
+  self.last = function() {
+    return self.children[self.children.length - 1];
   }
   Object.defineProperties(self, {
     'length': { get: function() {return self.children.length;}},
@@ -96,15 +108,24 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
   self.remove = function(e) {
     return self.removeIndex(self.indexOf(e));
   }
+  self.removeAll = function() {
+    self.children.splice(0, self.children.length);
+  }
   self.indexOf = function(e) {
     return self.children.indexOf(e);
   }
   self.forEach = function(func) {
     self.children.forEach(func);
   }
-  self.forEachUntilFirstSuccess = function(func) {
+  self.forEachUntilFirstSuccess = function(func, deepCheck = false) {
     for (var i = 0; i < self.length; ++i) {
-      if (func(self.children[i], i, self.children)) {
+      if (deepCheck && self.children[i] instanceof SceneGraph) {
+        var temp = self.children[i].forEachUntilFirstSuccess(func, true);
+        if (temp) {
+          return temp;
+        }
+      }
+      else if (func(self.children[i], i, self.children)) {
         return self.children[i];
       }
     }

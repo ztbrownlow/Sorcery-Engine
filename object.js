@@ -91,7 +91,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         var otherMaxX = other.x - other.xOffset + other.hitbox.xRange[1] * other.width;
         var otherMinY = other.y - other.yOffset + other.hitbox.yRange[0] * other.height;
         var otherMaxY = other.y - other.yOffset + other.hitbox.yRange[1] * other.height;
-        return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
+        return minX <= otherMaxX && maxX >= otherMinX && minY <= otherMaxY && maxY >= otherMinY
       } else if (other.hitbox.type == 'circle') {
         var centerX = self.x - self.xOffset + self.hitbox.center[0] * self.width;
         var centerY = self.y - self.yOffset + self.hitbox.center[1] * self.height;
