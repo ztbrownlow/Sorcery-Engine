@@ -14,8 +14,8 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 
 game.lose = function() {
   console.log("Game lost");
-  //TODO highscore stuff
   var temp = null;
+  var tempName = null;
   for (var i = 0; i < hs.length; ++i) {
     if (temp != null) {
       var temp2 = hs[i];
@@ -23,8 +23,10 @@ game.lose = function() {
       temp = temp2;
     } else {
       if (game.score > hs[i].score) {
+        tempName = prompt("New high score!\nEnter your name:","");
         temp = hs[i];
         hs[i] = {score: game.score};
+        //TODO Associate a name with the score
       }
     }
   }
@@ -54,7 +56,8 @@ game.outOfBounds = function(x, y) {
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var hs = [{score: 0}, {score: 0}, {score: 0}]
+var hs = [{score: 0}, {score: 0}, {score: 0}];
+//TODO create array of high score names or modify the current hs array.
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
