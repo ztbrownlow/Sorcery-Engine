@@ -87,7 +87,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.tail_sprite = tail_sprite;
     self.direcQueue = new Array();
   }
-  var snakeAngle;
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   self.update = function(game) {
     while (self.direcQueue.length) {
@@ -105,18 +104,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
       game.lose();
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
-    }
-    if(self.direction[0] == 1 && self.direction[1] == 0){
-      snakeAngle = 0;
-    }
-    else if(self.direction[0] == -1 && self.direction[1] == 0){
-      snakeAngle = 180;
-    }
-    else if(self.direction[0] == 0 && self.direction[1] == 1){
-      snakeAngle = 90;
-    }
-    else{
-      snakeAngle = 270;
     }
   }
   self.canCollideWith = function(other) { 
@@ -150,6 +137,19 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     }
   }
   self.draw = function(context) {
+    var snakeAngle;
+    if(self.direction[0] == 1 && self.direction[1] == 0){
+      snakeAngle = 0;
+    }
+    else if(self.direction[0] == -1 && self.direction[1] == 0){
+      snakeAngle = 180;
+    }
+    else if(self.direction[0] == 0 && self.direction[1] == 1){
+      snakeAngle = 90;
+    }
+    else{
+      snakeAngle = 270;
+    }
     drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
   }
 }
@@ -163,14 +163,17 @@ function Body(sprite, follow) {
     self.lastY = self.y;
   }
   self.constructor(sprite, follow);
-  var snakeAngle;
   self.update = function(game) {
     self.lastX = self.x;
     self.lastY = self.y;
     self.x = self.follow.lastX;
     self.y = self.follow.lastY;
-    dirX = self.follow.x - self.x;
-    dirY = self.follow.y - self.y;
+  }
+  
+  self.draw = function(context) {
+    var dirX = self.follow.x - self.x;
+    var dirY = self.follow.y - self.y;
+    var snakeAngle;
     if(dirX == 20 && dirY == 0){
       snakeAngle = 0;
     }
@@ -183,9 +186,6 @@ function Body(sprite, follow) {
     else{
       snakeAngle = 270;
     }
-  }
-  
-  self.draw = function(context) {
     drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
   }
 }
