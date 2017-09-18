@@ -57,7 +57,7 @@ game.setup = function() {
 
 //move to engine for refactoring for next week
 game.outOfBounds = function(x, y) {
-  return x > game.canvas.width || x < 0 || y > game.canvas.height || y < 0;
+  return x >= game.canvas.width || x < 0 || y >= game.canvas.height || y < 0;
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
@@ -107,16 +107,18 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
           game.lose();
         } else {
           self.tree.pop();
-          var last = self.tree.last();
-          if (last != self) {
-            last.sprite = self.tail_sprite;
+          if (self.tree.length != 1)
+          {
+            self.tree.last().sprite = self.tail_sprite;
           }
         }
         obj_food_tree.remove(other);
       } else {
         ++game.score;
         var last = self.tree.last();
-        last.sprite = self.body_sprite;
+        if (last != self) {
+          last.sprite = self.body_sprite;
+        }
         self.tree.push(new Body(self.tail_sprite, last));
         other.placeInGame(); //place food again
       }
@@ -150,8 +152,8 @@ function Food() {
     var y;
     var temp;
     do {
-      x = Math.floor(Math.random() * game.canvas.width / snakeSize) * snakeSize;
-      y = Math.floor(Math.random() * game.canvas.height / snakeSize) * snakeSize;
+      x = Math.floor(Math.random() * (game.canvas.width-1) / snakeSize) * snakeSize;
+      y = Math.floor(Math.random() * (game.canvas.height-1) / snakeSize) * snakeSize;
       temp = game.objects.pointCollide(x, y, false);
     } while (!temp || flatten(temp).filter(function(e) {return e;}).length != 0);
     self.x = x;
