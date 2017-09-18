@@ -12,6 +12,12 @@ var obj_snake_tree = game.objects.push(new SceneGraph("snake", true, true, false
 var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false));
 var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false));
 
+game.postDraw = function(){
+  game.context.fillStyle = "black";
+  game.context.font = "bold 12px Consolas";
+  game.context.fillText("Score: " + game.score, 0, 10);
+}
+
 game.lose = function() {
   console.log("Game lost");
   var temp = null;
