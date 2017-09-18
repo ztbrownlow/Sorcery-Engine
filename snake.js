@@ -1,6 +1,5 @@
 var game = new Game(document.getElementById("canvas"));
 var snakeSize = 20;
-var snakeAngle = 0;
 
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
 var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
@@ -70,7 +69,7 @@ function drawRotatedImage(sprite, x, y, angle)
     game.context.save(); 
     game.context.translate(x + 10, y + 10); 
     game.context.rotate(angle * RADIANS); 
-    sprite.draw = game.context.drawImage(sprite.image, -(sprite.image.width/2), -(sprite.image.height/2));
+    game.context.drawImage(sprite.image, -(sprite.image.width/2), -(sprite.image.height/2));
     game.context.restore(); 
 }
 
@@ -106,19 +105,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-	if(self.direction[0] == 1 && self.direction[1] == 0){
-		snakeAngle = 0;
-	}
-	else if(self.direction[0] == -1 && self.direction[1] == 0){
-		snakeAngle = 180;
-	}
-	else if(self.direction[0] == 0 && self.direction[1] == 1){
-		snakeAngle = 90;
-	}
-	else{
-		snakeAngle = 270;
-	}
-	drawRotatedImage(sprite, self.x, self.y, snakeAngle)
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -150,6 +136,22 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
       game.lose();
     }
   }
+  self.draw = function(context) {
+    var snakeAngle;
+    if(self.direction[0] == 1 && self.direction[1] == 0){
+      snakeAngle = 0;
+    }
+    else if(self.direction[0] == -1 && self.direction[1] == 0){
+      snakeAngle = 180;
+    }
+    else if(self.direction[0] == 0 && self.direction[1] == 1){
+      snakeAngle = 90;
+    }
+    else{
+      snakeAngle = 270;
+    }
+    drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
+  }
 }
 
 function Body(sprite, follow) {
@@ -166,8 +168,12 @@ function Body(sprite, follow) {
     self.lastY = self.y;
     self.x = self.follow.lastX;
     self.y = self.follow.lastY;
-    dirX = self.follow.x - self.x;
-    dirY = self.follow.y - self.y;
+  }
+  
+  self.draw = function(context) {
+    var dirX = self.follow.x - self.x;
+    var dirY = self.follow.y - self.y;
+    var snakeAngle;
     if(dirX == 20 && dirY == 0){
       snakeAngle = 0;
     }
