@@ -205,7 +205,7 @@ function Food() {
     self.placeInGame();
     GameObject.call(self, "food", spr_food, self.x, self.y);
     self.mainSprite = self.sprite;
-    self.stepsUntilRotten = 30;
+    self.stepsUntilRotten = 40;
     self.rottenSprite = spr_food_rotten;
   }
   self.constructor();
