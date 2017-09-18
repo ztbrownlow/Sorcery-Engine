@@ -52,7 +52,7 @@ game.setup = function() {
 
 //move to engine for refactoring for next week
 game.outOfBounds = function(x, y) {
-  return x > game.canvas.width || x < 0 || y > game.canvas.height || y < 0;
+  return x >= game.canvas.width || x < 0 || y >= game.canvas.height || y < 0;
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
