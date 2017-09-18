@@ -15,12 +15,30 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 game.lose = function() {
   console.log("Game lost");
   //TODO highscore stuff
+  var temp = null;
+  for (var i = 0; i < hs.length; ++i) {
+    if (temp != null) {
+      var temp2 = hs[i];
+      hs[i] = temp;
+      temp = temp2;
+    } else {
+      if (game.score > hs[i].score) {
+        temp = hs[i];
+        hs[i] = {score: game.score};
+      }
+    }
+  }
   game.setup();
 }
 
 var head;
 
 game.setup = function() {
+  for (var i = 0; i < hs.length; ++i) {
+    for (var property in hs[i]) {
+      hs_elems[i].getElementsByClassName(property)[0].innerHTML = hs[i][property]
+    }
+  }
   game.score = 0;
   obj_snake_tree.removeAll();
   obj_food_tree.removeAll();
@@ -35,7 +53,8 @@ game.outOfBounds = function(x, y) {
   return x > game.canvas.width || x < 0 || y > game.canvas.height || y < 0;
 }
 
-var score = 0;
+var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
+var hs = [{score: 0}, {score: 0}, {score: 0}]
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
@@ -53,10 +72,11 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   self.update = function(game) {
-    if (self.direcQueue.length) {
+    while (self.direcQueue.length) {
       var temp = self.direcQueue.shift();
       if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
         self.direction = temp;
+        break;
       }
     }
     self.lastX = self.x;
