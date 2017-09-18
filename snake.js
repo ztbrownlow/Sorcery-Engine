@@ -49,9 +49,16 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.tree = tree;
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
+    self.direcQueue = new Array();
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   self.update = function(game) {
+    if (self.direcQueue.length) {
+      var temp = self.direcQueue.shift();
+      if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
+        self.direction = temp;
+      }
+    }
     self.lastX = self.x;
     self.lastY = self.y;
     self.x += self.direction[0] * snakeSize;
@@ -149,24 +156,22 @@ window.addEventListener("keydown", onKeyDown, false); //I want this to be game.c
 //may want to eventually refactor this to check at the start of an update instead of being asynchronous?
 // ^ could handle this using a queue of events and run through them at the start of update function
 function onKeyDown(event) {
-  var keyCode = event.keyCode;
-  switch (keyCode) {
-    case 68: //d
-      if (head.direction[0] != -1)
-        head.direction = [1, 0]
-      break;
-    case 83: //s
-      if (head.direction[1] != -1)
-        head.direction = [0, 1]
-      break;
-    case 65: //a
-      if (head.direction[0] != 1)
-        head.direction = [-1, 0]
-      break;
-    case 87: //w
-      if (head.direction[1] != 1)
-        head.direction = [0, -1]
-      break;
+  if (!head.direcUpdated) {
+    var keyCode = event.keyCode;
+    switch (keyCode) {
+      case 68: //d
+        head.direcQueue.push([1, 0])
+        break;
+      case 83: //s
+        head.direcQueue.push([0, 1])
+        break;
+      case 65: //a
+        head.direcQueue.push([-1, 0])
+        break;
+      case 87: //w
+        head.direcQueue.push([0, -1])
+        break;
+    }
   }
 }
 
