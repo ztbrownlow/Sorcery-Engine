@@ -23,10 +23,9 @@ game.lose = function() {
       temp = temp2;
     } else {
       if (game.score > hs[i].score) {
-        tempName = prompt("New high score!\nEnter your name:","");
+        tempName = prompt("New high score: " + game.score + "!\nEnter your name.","");
         temp = hs[i];
-        hs[i] = {score: game.score};
-        //TODO Associate a name with the score
+        hs[i] = {score: game.score, name: tempName};
       }
     }
   }
@@ -56,8 +55,7 @@ game.outOfBounds = function(x, y) {
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var hs = [{score: 0}, {score: 0}, {score: 0}];
-//TODO create array of high score names or modify the current hs array.
+var hs = [{score: 23, name: "ztlbrown"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
