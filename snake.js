@@ -166,24 +166,22 @@ function Body(sprite, follow) {
     self.lastY = self.y;
     self.x = self.follow.lastX;
     self.y = self.follow.lastY;
-	dirX = self.follow.lastX - self.lastX;
-	dirY = self.follow.lastY - self.lastY;
-	if(dirX == 20 && dirY == 0){
-		snakeAngle = 0;
-	}
-	else if(dirX == -20 && dirY == 0){
-		snakeAngle = 180;
-	}
-	else if(dirX == 0 && dirY == 20){
-		snakeAngle = 90;
-	}
-	else{
-		snakeAngle = 270;
-	}
-	drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
+    dirX = self.follow.x - self.x;
+    dirY = self.follow.y - self.y;
+    if(dirX == 20 && dirY == 0){
+      snakeAngle = 0;
+    }
+    else if(dirX == -20 && dirY == 0){
+      snakeAngle = 180;
+    }
+    else if(dirX == 0 && dirY == 20){
+      snakeAngle = 90;
+    }
+    else{
+      snakeAngle = 270;
+    }
+    drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
   }
-  
-  
 }
 
 function Food() {
