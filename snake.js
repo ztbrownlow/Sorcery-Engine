@@ -102,6 +102,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   self.collideWith = function(other) {
     if (other instanceof Food) {
       if (other.rotten) {
+        obj_food_tree.remove(other);
         --game.score;
         if (self.tree.length == 1) {
           game.lose();
@@ -112,7 +113,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
             self.tree.last().sprite = self.tail_sprite;
           }
         }
-        obj_food_tree.remove(other);
       } else {
         ++game.score;
         var last = self.tree.last();
