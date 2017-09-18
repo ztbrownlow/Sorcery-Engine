@@ -61,7 +61,7 @@ game.outOfBounds = function(x, y) {
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var hs = [{score: 23, name: "ztlbrown"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
+var hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
