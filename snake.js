@@ -35,6 +35,7 @@ game.lose = function() {
       }
     }
   }
+  localStorage.setItem("highScores", JSON.stringify(hs));
   game.setup();
 }
 
@@ -61,7 +62,12 @@ game.outOfBounds = function(x, y) {
 }
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
+var hs;
+var temp = localStorage.getItem("highScores");
+if (temp)
+  hs = JSON.parse(temp)
+else
+  hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
 
 var RADIANS = Math.PI/180; 
 function drawRotatedImage(sprite, x, y, angle)
@@ -230,22 +236,20 @@ window.addEventListener("keydown", onKeyDown, false); //I want this to be game.c
 //may want to eventually refactor this to check at the start of an update instead of being asynchronous?
 // ^ could handle this using a queue of events and run through them at the start of update function
 function onKeyDown(event) {
-  if (!head.direcUpdated) {
-    var keyCode = event.keyCode;
-    switch (keyCode) {
-      case 68: //d
-        head.direcQueue.push([1, 0])
-        break;
-      case 83: //s
-        head.direcQueue.push([0, 1])
-        break;
-      case 65: //a
-        head.direcQueue.push([-1, 0])
-        break;
-      case 87: //w
-        head.direcQueue.push([0, -1])
-        break;
-    }
+  var keyCode = event.keyCode;
+  switch (keyCode) {
+    case 68: //d
+      head.direcQueue.push([1, 0])
+      break;
+    case 83: //s
+      head.direcQueue.push([0, 1])
+      break;
+    case 65: //a
+      head.direcQueue.push([-1, 0])
+      break;
+    case 87: //w
+      head.direcQueue.push([0, -1])
+      break;
   }
 }
 
