@@ -69,15 +69,6 @@ if (temp)
 else
   hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
 
-var RADIANS = Math.PI/180; 
-function drawRotatedImage(sprite, x, y, angle)
-{ 
-    game.context.save(); 
-    game.context.translate(x + 10, y + 10); 
-    game.context.rotate(angle * RADIANS); 
-    game.context.drawImage(sprite.image, -(sprite.image.width/2), -(sprite.image.height/2));
-    game.context.restore(); 
-}
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
@@ -111,6 +102,18 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
+	if(self.direction[0] == 1 && self.direction[1] == 0){
+      self.sprite.angle = 0;
+    }
+    else if(self.direction[0] == -1 && self.direction[1] == 0){
+      self.sprite.angle = 180;
+    }
+    else if(self.direction[0] == 0 && self.direction[1] == 1){
+      self.sprite.angle = 90;
+    }
+    else{
+      self.sprite.angle = 270;
+    }
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -142,22 +145,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
       game.lose();
     }
   }
-  self.draw = function(context) {
-    var snakeAngle;
-    if(self.direction[0] == 1 && self.direction[1] == 0){
-      snakeAngle = 0;
-    }
-    else if(self.direction[0] == -1 && self.direction[1] == 0){
-      snakeAngle = 180;
-    }
-    else if(self.direction[0] == 0 && self.direction[1] == 1){
-      snakeAngle = 90;
-    }
-    else{
-      snakeAngle = 270;
-    }
-    drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
-  }
 }
 
 function Body(sprite, follow) {
@@ -174,25 +161,20 @@ function Body(sprite, follow) {
     self.lastY = self.y;
     self.x = self.follow.lastX;
     self.y = self.follow.lastY;
-  }
-  
-  self.draw = function(context) {
-    var dirX = self.follow.x - self.x;
+	var dirX = self.follow.x - self.x;
     var dirY = self.follow.y - self.y;
-    var snakeAngle;
     if(dirX == 20 && dirY == 0){
-      snakeAngle = 0;
+      sprite.angle = 0;
     }
     else if(dirX == -20 && dirY == 0){
-      snakeAngle = 180;
+      sprite.angle = 180;
     }
     else if(dirX == 0 && dirY == 20){
-      snakeAngle = 90;
+      sprite.angle = 90;
     }
     else{
-      snakeAngle = 270;
+      sprite.anglee = 270;
     }
-    drawRotatedImage(self.sprite, self.x, self.y, snakeAngle);
   }
 }
 
