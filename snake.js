@@ -173,7 +173,7 @@ function Body(sprite, follow) {
       sprite.angle = 90;
     }
     else{
-      sprite.anglee = 270;
+      sprite.angle = 270;
     }
   }
 }
