@@ -18,6 +18,10 @@ function Game(canvas) {
     canvas.addEventListener("mouseout", function(e) {self.mouseOut(e)});
   }
   
+  self.outOfBounds = function(x, y) {
+    return x >= game.canvas.width || x < 0 || y >= game.canvas.height || y < 0;
+  }
+  
   self.getObjectsUnderMouse = function() {
     return flatten(self.objects.pointCollide(self.mouseX, self.mouseY, true)).filter(function(e) {return e;});
   }

@@ -56,11 +56,6 @@ game.setup = function() {
   //other stuff probably
 }
 
-//move to engine for refactoring for next week
-game.outOfBounds = function(x, y) {
-  return x >= game.canvas.width || x < 0 || y >= game.canvas.height || y < 0;
-}
-
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
 var hs;
 var temp = localStorage.getItem("highScores");
@@ -68,7 +63,6 @@ if (temp)
   hs = JSON.parse(temp)
 else
   hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
-
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
@@ -102,7 +96,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-	if(self.direction[0] == 1 && self.direction[1] == 0){
+    if(self.direction[0] == 1 && self.direction[1] == 0){
       self.sprite.angle = 0;
     }
     else if(self.direction[0] == -1 && self.direction[1] == 0){
@@ -161,7 +155,7 @@ function Body(sprite, follow) {
     self.lastY = self.y;
     self.x = self.follow.lastX;
     self.y = self.follow.lastY;
-	var dirX = self.follow.x - self.x;
+    var dirX = self.follow.x - self.x;
     var dirY = self.follow.y - self.y;
     if(dirX == 20 && dirY == 0){
       sprite.angle = 0;
