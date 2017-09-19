@@ -19,7 +19,7 @@ function Game(canvas) {
   }
   
   self.outOfBounds = function(x, y) {
-    return x >= game.canvas.width || x < 0 || y >= game.canvas.height || y < 0;
+    return x >= self.canvas.width || x < 0 || y >= self.canvas.height || y < 0;
   }
   
   self.getObjectsUnderMouse = function() {
