@@ -15,7 +15,6 @@ function Sprite(name, width, height, src) {
     self.image.width = width;
     self.image.height = height;
     self.image.src = src;
-	self.angle = 0;
   }
   self.constructor(name, width, height, src);
   
@@ -25,12 +24,12 @@ function Sprite(name, width, height, src) {
     'height': { get: function() { return self.image.height }, set: function(v) { self.image.height = v } }
   });
   
-  self.draw = function(context, x, y) {
+  self.draw = function(context, x, y, angle) {
 	if(self.angle != 0){
 		var RADIANS = Math.PI/180; 
 		context.save()
 		context.translate(x + (self.image.width / 2), y + (self.image.height / 2));
-		context.rotate(self.angle * RADIANS);
+		context.rotate(angle * RADIANS);
 		context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2));
 		context.restore();
 	}

@@ -68,46 +68,36 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
   self.constructor = function(sprite, snakeSize, tree, body_sprite, tail_sprite) {
     GameObject.call(self, "snake_head", sprite, snakeSize, snakeSize)
-    self.sprite = sprite;
     self.snakeSize = snakeSize;
     self.lastX = 0;
     self.lastY = snakeSize;
-    self.direction = [1, 0];
     self.tree = tree;
+	self.direction = [snakeSize,0];
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
-    self.direcQueue = new Array();
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
+  
+  self.oldupdate = self.update;
   self.update = function(game) {
-    while (self.direcQueue.length) {
-      var temp = self.direcQueue.shift();
-      if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
-        self.direction = temp;
-        break;
-      }
-    }
-    self.lastX = self.x;
-    self.lastY = self.y;
-    self.x += self.direction[0] * snakeSize;
-    self.y += self.direction[1] * snakeSize;
+	self.oldupdate(game);
     if (game.outOfBounds(self.x, self.y)) {
       game.lose();
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-    if(self.direction[0] == 1 && self.direction[1] == 0){
-      self.sprite.angle = 0;
-    }
-    else if(self.direction[0] == -1 && self.direction[1] == 0){
-      self.sprite.angle = 180;
-    }
-    else if(self.direction[0] == 0 && self.direction[1] == 1){
-      self.sprite.angle = 90;
-    }
-    else{
-      self.sprite.angle = 270;
-    }
+	if(Key.isDown(Key.W)){
+		self.direcQueue.push([0, -snakeSize]);
+	}
+	if(Key.isDown(Key.A)){
+		self.direcQueue.push([-snakeSize, 0]);
+	}
+	if(Key.isDown(Key.S)){
+		self.direcQueue.push([0, snakeSize]);
+	}
+	if(Key.isDown(Key.D)){
+		self.direcQueue.push([snakeSize, 0]);
+	}
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -150,24 +140,23 @@ function Body(sprite, follow) {
     self.lastY = self.y;
   }
   self.constructor(sprite, follow);
+  self.oldupdate = self.update;
   self.update = function(game) {
-    self.lastX = self.x;
-    self.lastY = self.y;
-    self.x = self.follow.lastX;
-    self.y = self.follow.lastY;
-    var dirX = self.follow.x - self.x;
+	self.direcQueue.push([self.follow.lastX - self.x,self.follow.lastY - self.y]);
+	self.oldupdate();
+	var dirX = self.follow.x - self.x;
     var dirY = self.follow.y - self.y;
-    if(dirX == 20 && dirY == 0){
-      sprite.angle = 0;
+    if(dirX > 0&& dirY == 0){
+      self.angle = 0;
     }
-    else if(dirX == -20 && dirY == 0){
-      sprite.angle = 180;
+    else if(dirX < 0 && dirY == 0){
+      self.angle = 180;
     }
-    else if(dirX == 0 && dirY == 20){
-      sprite.angle = 90;
+    else if(dirX == 0 && dirY > 0){
+      self.angle = 90;
     }
     else{
-      sprite.angle = 270;
+      self.angle = 270;
     }
   }
 }
@@ -206,28 +195,5 @@ function Food() {
     }
   }
 }
-
-window.addEventListener("keydown", onKeyDown, false); //I want this to be game.canvas.addEventListener but that doesn't seem to work
-//probably also want a key up event at some point but don't need it right now
-//may want to eventually refactor this to check at the start of an update instead of being asynchronous?
-// ^ could handle this using a queue of events and run through them at the start of update function
-function onKeyDown(event) {
-  var keyCode = event.keyCode;
-  switch (keyCode) {
-    case 68: //d
-      head.direcQueue.push([1, 0])
-      break;
-    case 83: //s
-      head.direcQueue.push([0, 1])
-      break;
-    case 65: //a
-      head.direcQueue.push([-1, 0])
-      break;
-    case 87: //w
-      head.direcQueue.push([0, -1])
-      break;
-  }
-}
-
 game.setup();
 game.start(100);

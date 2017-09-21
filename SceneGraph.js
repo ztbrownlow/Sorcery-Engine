@@ -1,7 +1,3 @@
-function flatten(arrays) {
-  return arrays.reduce(function(a, b){ return a.concat(b); });
-}
-
 function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
   var self = this;
   self.constructor = function(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {

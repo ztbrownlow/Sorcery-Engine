@@ -6,12 +6,17 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.pos = new Vector();
     self.x = x;
     self.y = y;
+	self.lastX = x;
+    self.lastY = y;
     self.xOffset = xOffset;
     self.yOffset = yOffset;
     self.isClicked = false;
     self.isDraggable = false;
     self.isClickable = true;
     self.setSquareHitbox([0, 1], [0, 1]);
+	self.direction = [0, 0];
+	self.direcQueue = new Array();
+	self.angle = 0;
   }
   Object.defineProperties(self, {
     'x': { 
@@ -51,7 +56,19 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isClicked = false;
   }
   
-  self.update = function(game) {
+  self.update = function(game) { 
+    self.lastX = self.x;
+    self.lastY = self.y;
+	while (self.direcQueue.length) {
+      var temp = self.direcQueue.shift();
+      if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
+        self.direction = temp;
+        break;
+      }
+    }
+	self.angle = Math.atan2(self.direction[1], self.direction[0]) / (Math.PI/180);
+	self.x += self.direction[0];
+	self.y += self.direction[1];
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX;
       self.y = game.mouseY;
@@ -60,7 +77,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   self.draw = function(context) {
     if (self.sprite) {
-      self.sprite.draw(context, self.x - self.xOffset, self.y - self.yOffset);
+      self.sprite.draw(context, self.x - self.xOffset, self.y - self.yOffset, self.angle);
       return true;
     }
     return false;
@@ -130,4 +147,5 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     return false;
   }
   self.constructor(name, sprite, x, y, xOffset, yOffset);
-}
+};
+
