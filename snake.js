@@ -15,39 +15,37 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 game.postDraw = function(){
   game.context.fillStyle = "black";
   game.context.font = "bold 12px Consolas";
-  game.context.fillText("Score: " + game.score, 0, 10);
+  game.context.fillText("Score: " + score.score, 0, 10);
 }
 
 game.lose = function() {
   console.log("Game lost");
-  var temp = null;
-  var tempName = null;
-  for (var i = 0; i < hs.length; ++i) {
-    if (temp != null) {
-      var temp2 = hs[i];
-      hs[i] = temp;
-      temp = temp2;
-    } else {
-      if (game.score > hs[i].score) {
-        tempName = prompt("New high score: " + game.score + "!\nEnter your name.","");
-        temp = hs[i];
-        hs[i] = {score: game.score, name: tempName};
-      }
-    }
+  if(score.isHighScore(score.score)){
+	tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
+	score.addHighScore(tempName,score.score);
+	score.saveHighScores();
   }
-  localStorage.setItem("highScores", JSON.stringify(hs));
   game.setup();
 }
 
 var head;
 
 game.setup = function() {
-  for (var i = 0; i < hs.length; ++i) {
-    for (var property in hs[i]) {
-      hs_elems[i].getElementsByClassName(property)[0].innerHTML = hs[i][property]
-    }
+  score = new Score(3);
+  var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
+  var localHighScore = score.getHighScores();
+  if(localHighScore.length == 0){
+	score.addHighScore("ztbrownl",23);
+	score.addHighScore("alrichma",8);
+	score.addHighScore("rnpettit",3);  
   }
-  game.score = 0;
+  else{
+	score.highScores = localHighScore;
+  }
+  for (var i = 0; i < score.highScoreMax; i++) {
+	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
+      hs_elems[i].innerHTML = text;
+  }
   obj_snake_tree.removeAll();
   obj_food_tree.removeAll();
   head = obj_snake_tree.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree));
@@ -55,14 +53,6 @@ game.setup = function() {
   obj_food_tree.push(new Food());
   //other stuff probably
 }
-
-var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var hs;
-var temp = localStorage.getItem("highScores");
-if (temp)
-  hs = JSON.parse(temp)
-else
-  hs = [{score: 23, name: "ztbrownl"}, {score: 8, name: "alrichma"}, {score: 3, name: "rnpettit"}];
 
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
@@ -106,7 +96,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     if (other instanceof Food) {
       if (other.rotten) {
         obj_food_tree.remove(other);
-        --game.score;
+        score.substractScore(1);
         if (self.tree.length == 1) {
           game.lose();
         } else {
@@ -117,7 +107,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
           }
         }
       } else {
-        ++game.score;
+        score.addScore(1);
         var last = self.tree.last();
         if (last != self) {
           last.sprite = self.body_sprite;

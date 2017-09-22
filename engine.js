@@ -3,6 +3,7 @@ document.write('<script type="text/javascript" src="Sprites.js"></script>');
 document.write('<script type="text/javascript" src="object.js"></script>');
 document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
+document.write('<script type="text/javascript" src="score.js"></script>');
 
 function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
