@@ -45,6 +45,7 @@ else
 }
 
 game.setup = function() {
+  score.score = 0;
   for (var i = 0; i < score.highScoreMax; i++) {
 	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
@@ -116,7 +117,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
           last.sprite = self.body_sprite;
         }
         self.tree.push(new Body(self.tail_sprite, last));
-        other.placeInGame(); //place food again
+        other.reset(); //place food again
       }
     } else {
       game.lose();
@@ -131,48 +132,29 @@ function Body(sprite, follow) {
     self.follow = follow;
     self.lastX = self.x;
     self.lastY = self.y;
+    self.calculateAngleFromDirection(self.follow.direction);
   }
   self.constructor(sprite, follow);
   self.oldupdate = self.update;
   self.update = function(game) {
-	self.direcQueue.push([self.follow.lastX - self.x,self.follow.lastY - self.y]);
-	self.oldupdate();
-	var dirX = self.follow.x - self.x;
-    var dirY = self.follow.y - self.y;
-    if(dirX > 0&& dirY == 0){
-      self.angle = 0;
-    }
-    else if(dirX < 0 && dirY == 0){
-      self.angle = 180;
-    }
-    else if(dirX == 0 && dirY > 0){
-      self.angle = 90;
-    }
-    else{
-      self.angle = 270;
-    }
+    self.direcQueue.push([self.follow.lastX - self.x,self.follow.lastY - self.y]);
+    self.oldupdate();
+    self.calculateAngleFromDirection(self.follow.x - self.x, self.follow.y - self.y);
   }
 }
 
 function Food() {
   var self = this;
-  self.placeInGame = function() {
-    var x;
-    var y;
-    var temp;
-    do {
-      x = Math.floor(Math.random() * (game.canvas.width-1) / snakeSize) * snakeSize;
-      y = Math.floor(Math.random() * (game.canvas.height-1) / snakeSize) * snakeSize;
-      temp = game.objects.pointCollide(x, y, false);
-    } while (!temp || flatten(temp).filter(function(e) {return e;}).length != 0);
-    self.x = x;
-    self.y = y;
+  self.reset = function() {
+    var temp = game.findRandomUnoccupiedPoint(game.objects, snakeSize);
+    self.x = temp[0];
+    self.y = temp[1];
     self.steps = 0;
     self.rotten = false;
     self.sprite = self.mainSprite;
   }
   self.constructor = function() {
-    self.placeInGame();
+    self.reset();
     GameObject.call(self, "food", spr_food, self.x, self.y);
     self.mainSprite = self.sprite;
     self.stepsUntilRotten = 40;

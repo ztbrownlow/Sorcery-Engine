@@ -59,20 +59,24 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.update = function(game) { 
     self.lastX = self.x;
     self.lastY = self.y;
-	while (self.direcQueue.length) {
+    while (self.direcQueue.length) {
       var temp = self.direcQueue.shift();
       if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
         self.direction = temp;
+        self.calculateAngleFromDirection(self.direction[0], self.direction[1])
         break;
       }
     }
-	self.angle = Math.atan2(self.direction[1], self.direction[0]) / (Math.PI/180);
-	self.x += self.direction[0];
-	self.y += self.direction[1];
+    self.x += self.direction[0];
+    self.y += self.direction[1];
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX;
       self.y = game.mouseY;
     }
+  }
+  
+  self.calculateAngleFromDirection = function(dirX, dirY) {
+    self.angle = Math.atan2(dirY, dirX) / (Math.PI/180);
   }
   
   self.draw = function(context) {

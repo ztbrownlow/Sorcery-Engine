@@ -25,6 +25,20 @@ function Game(canvas) {
     canvas.addEventListener("mouseout", function(e) {self.mouseOut(e)});
   }
   
+  self.findRandomUnoccupiedPoint = function(objectTree, step) {
+    var x;
+    var y;
+    var temp;
+    do {
+      x = Math.floor(Math.random() * (self.canvas.width-1) / step) * step;
+      y = Math.floor(Math.random() * (self.canvas.height-1) / step) * step;
+      temp = self.objects.pointCollide(x, y, false);
+    } while (!temp || flatten(temp).filter(function(e) {return e;}).length != 0);
+    self.x = x;
+    self.y = y;
+    return [x, y];
+  }
+  
   self.outOfBounds = function(x, y) {
     return x >= self.canvas.width || x < 0 || y >= self.canvas.height || y < 0;
   }

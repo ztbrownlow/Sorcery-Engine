@@ -5,7 +5,7 @@ function Score(max){
 		self.highScoreMax = max;
 		self.highScores = new Array();
 		for(var i = 0; i < self.highScoreMax; i++){
-		 self.highScores.push(["empty",0]);	
+		  self.highScores.push(["empty",0]);	
 		}
 	}
 	
@@ -33,7 +33,7 @@ function Score(max){
 	self.addHighScore = function(user, highscore){
 		for(var i = 0; i < self.highScoreMax; i++){
 			if(self.getHighScoreAt(i) < highscore){
-				self.highScores.splice(i, 0 ,[user,highscore]);
+				self.highScores.splice(i, 0, [user,highscore]);
 				self.highScores.pop();
 				break;
 			}
