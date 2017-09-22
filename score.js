@@ -10,8 +10,12 @@ function Score(max){
 	}
 	
 	self.constructor(max);
-	self.addScore = function(score){ self.score += score;}
-	self.subtractScore = function(score){ self.score -= score;}
+	self.addScore = function(score){ 
+    self.score += score;
+  }
+	self.subtractScore = function(score){
+    self.score -= score;
+  }
 	self.getHighScoreAt = function(index){
 		return self.highScores[index][1];
 	}

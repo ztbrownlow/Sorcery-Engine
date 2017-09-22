@@ -29,6 +29,7 @@ game.lose = function() {
 }
 
 var head;
+var score;
 
 game.setup = function() {
   score = new Score(3);
@@ -96,7 +97,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     if (other instanceof Food) {
       if (other.rotten) {
         obj_food_tree.remove(other);
-        score.substractScore(1);
+        score.addScore(-1);
         if (self.tree.length == 1) {
           game.lose();
         } else {
