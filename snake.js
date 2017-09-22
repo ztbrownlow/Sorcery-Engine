@@ -69,6 +69,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.direction = [snakeSize,0];
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
+    Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push([0, -snakeSize])});
+    Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push([-snakeSize, 0])});
+    Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push([0, snakeSize])});
+    Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push([snakeSize, 0])});
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   
@@ -80,10 +84,6 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-    Key.keyDownFuncs[Key.W] = function(event){self.direcQueue.push([0, -snakeSize])};
-    Key.keyDownFuncs[Key.A] = function(event){self.direcQueue.push([-snakeSize, 0])};
-    Key.keyDownFuncs[Key.S] = function(event){self.direcQueue.push([0, snakeSize])};
-    Key.keyDownFuncs[Key.D] = function(event){self.direcQueue.push([snakeSize, 0])};
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -124,18 +124,17 @@ function Body(sprite, follow) {
     self.follow = follow;
     self.lastX = self.x;
     self.lastY = self.y;
-    if (self.follow instanceof Head) {
-      self.calculateAngleFromDirection(self.follow.direction);
-    } else {
-      self.calculateAngleFromDirection(self.follow.follow.x - self.follow.x, self.follow.follow.y - self.follow.y);
-    }
   }
   self.constructor(sprite, follow);
   self.oldupdate = self.update;
   self.update = function(game) {
     self.direcQueue.push([self.follow.lastX - self.x,self.follow.lastY - self.y]);
     self.oldupdate();
-    self.calculateAngleFromDirection(self.follow.x - self.x, self.follow.y - self.y);
+  }
+  self.olddraw = self.draw;
+  self.draw = function(context) {
+    self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)
+    self.olddraw(context);
   }
 }
 
