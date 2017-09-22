@@ -43,8 +43,10 @@ function Score(max){
 		localStorage.setItem("highScores", JSON.stringify(self.highScores));
 	}
 	self.getHighScores = function(){
-		var json = JSON.parse(localStorage.getItem("highScores"));
-		return json;
+		var json = localStorage.getItem("highScores");
+    if (json)
+      return JSON.parse(json);
+    return null;
 	}
 	
 }

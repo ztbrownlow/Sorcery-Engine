@@ -21,9 +21,9 @@ game.postDraw = function(){
 game.lose = function() {
   console.log("Game lost");
   if(score.isHighScore(score.score)){
-	tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
-	score.addHighScore(tempName,score.score);
-	score.saveHighScores();
+    tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
+    score.addHighScore(tempName,score.score);
+    score.saveHighScores();
   }
   game.setup();
 }
@@ -31,18 +31,20 @@ game.lose = function() {
 var head;
 var score;
 
+score = new Score(3);
+var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
+var localHighScore = score.getHighScores();
+if(!localHighScore){
+  score.addHighScore("ztbrownl",23);
+  score.addHighScore("alrichma",8);
+  score.addHighScore("rnpettit",3);  
+}
+else
+{
+  score.highScores = localHighScore;
+}
+
 game.setup = function() {
-  score = new Score(3);
-  var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-  var localHighScore = score.getHighScores();
-  if(localHighScore.length == 0){
-	score.addHighScore("ztbrownl",23);
-	score.addHighScore("alrichma",8);
-	score.addHighScore("rnpettit",3);  
-  }
-  else{
-	score.highScores = localHighScore;
-  }
   for (var i = 0; i < score.highScoreMax; i++) {
 	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
