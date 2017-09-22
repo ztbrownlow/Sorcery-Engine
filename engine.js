@@ -44,7 +44,13 @@ function Game(canvas) {
   }
   
   self.getObjectsUnderMouse = function() {
-    return flatten(self.objects.pointCollide(self.mouseX, self.mouseY, true)).filter(function(e) {return e;});
+    var temp = self.objects.pointCollide(self.mouseX, self.mouseY, true);
+    if (temp) {
+      var f = flatten(temp);
+      if (f)
+        return f.filter(function(e) {return e;});
+    }
+    return [];
   }
   
   self.mouseDown = function(e) {
