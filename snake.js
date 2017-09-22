@@ -66,7 +66,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.lastX = 0;
     self.lastY = snakeSize;
     self.tree = tree;
-	self.direction = [snakeSize,0];
+    self.direction = [snakeSize,0];
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
   }
@@ -80,18 +80,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-	if(Key.isDown(Key.W)){
-		self.direcQueue.push([0, -snakeSize]);
-	}
-	if(Key.isDown(Key.A)){
-		self.direcQueue.push([-snakeSize, 0]);
-	}
-	if(Key.isDown(Key.S)){
-		self.direcQueue.push([0, snakeSize]);
-	}
-	if(Key.isDown(Key.D)){
-		self.direcQueue.push([snakeSize, 0]);
-	}
+    Key.keyDownFuncs[Key.W] = function(event){self.direcQueue.push([0, -snakeSize])};
+    Key.keyDownFuncs[Key.A] = function(event){self.direcQueue.push([-snakeSize, 0])};
+    Key.keyDownFuncs[Key.S] = function(event){self.direcQueue.push([0, snakeSize])};
+    Key.keyDownFuncs[Key.D] = function(event){self.direcQueue.push([snakeSize, 0])};
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -132,7 +124,11 @@ function Body(sprite, follow) {
     self.follow = follow;
     self.lastX = self.x;
     self.lastY = self.y;
-    self.calculateAngleFromDirection(self.follow.direction);
+    if (self.follow instanceof Head) {
+      self.calculateAngleFromDirection(self.follow.direction);
+    } else {
+      self.calculateAngleFromDirection(self.follow.follow.x - self.follow.x, self.follow.follow.y - self.follow.y);
+    }
   }
   self.constructor(sprite, follow);
   self.oldupdate = self.update;

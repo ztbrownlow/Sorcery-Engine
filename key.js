@@ -4,6 +4,9 @@ window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, fa
 
 var Key = {
   _pressed: {},
+  
+  keyDownFuncs: [],
+  keyUpFuncs: [],
 
   LEFT: 37,
   UP: 38,
@@ -19,10 +22,16 @@ var Key = {
   },
   
   onKeydown: function(event) {
+    if (this.keyDownFuncs[event.keyCode]) {
+      this.keyDownFuncs[event.keyCode](event);
+    }
     this._pressed[event.keyCode] = true;
   },
   
   onKeyup: function(event) {
+    if (this.keyUpFuncs[event.keyCode]) {
+      this.keyUpFuncs[event.keyCode](event);
+    }
     delete this._pressed[event.keyCode];
   }
 };
