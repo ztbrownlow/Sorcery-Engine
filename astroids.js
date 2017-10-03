@@ -6,7 +6,7 @@ var rocketSize = 50;
 var bulletSize = 5;
 
 var astroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png"));
+var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
 var rocketfire = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#eaeaab"));
 
@@ -31,11 +31,11 @@ function Rocket(){
 	var rocketSpeed = 2;
 	self.constructor = function(){
 		GameObject.call(self,"rocket",rocket,250,200);
-		Key.bind(Key.W, Key.KEY_DOWN, function(event){moveY(-rocketSpeed)});
-		Key.bind(Key.A, Key.KEY_DOWN, function(event){moveX(-rocketSpeed)});
-		Key.bind(Key.S, Key.KEY_DOWN, function(event){moveY(rocketSpeed)});
-		Key.bind(Key.D, Key.KEY_DOWN, function(event){moveX(rocketSpeed)});
-		Key.bind(Key.SPACE, Key.KEY_DOWN, function(event){shootBullet()});
+		Key.bind(Key.W, Key.KEY_HELD, function(){moveY(-rocketSpeed)});
+		Key.bind(Key.A, Key.KEY_HELD, function(){moveX(-rocketSpeed)});
+		Key.bind(Key.S, Key.KEY_HELD, function(){moveY(rocketSpeed)});
+		Key.bind(Key.D, Key.KEY_HELD, function(){moveX(rocketSpeed)});
+		Key.bind(Key.SPACE, Key.KEY_DOWN, shootBullet);
 	}
 	self.constructor();
 	function moveX(x){
@@ -70,7 +70,7 @@ function Rocket(){
 		else if (directionX < 0){directionX += 1}
 		if(directionY > 0){ directionY -= 1 }
 		else if (directionY < 0){directionY += 1}
-		console.log(directionX + " " + directionY)
+		//console.log(directionX + " " + directionY)
 	}
 }
 
@@ -99,4 +99,4 @@ function Bullet(directionX, directionY, positionX, positionY){
 
 
 game.setup();
-game.start(100);
+game.start(30);

@@ -78,6 +78,7 @@ function Game(canvas) {
   
   self.update = function() {
     //self.handleMouseActions();
+    Key.update();
     self.objects.update(self);
   }
   

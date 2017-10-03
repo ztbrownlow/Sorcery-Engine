@@ -7,6 +7,7 @@ var Key = {
   
   keyDownFuncs: [],
   keyUpFuncs: [],
+  keyHeldFuncs: [],
 
   SPACE: 32,
   LEFT: 37,
@@ -24,6 +25,7 @@ var Key = {
   
   KEY_UP: 0,
   KEY_DOWN: 1,
+  KEY_HELD: 2,
   
   bind: function(key, keyDir, func) {
     if (keyDir == this.KEY_UP) {
@@ -37,6 +39,21 @@ var Key = {
         this.keyDownFuncs[key] = [func];
       } else {
         this.keyDownFuncs[key].push(func);
+      }
+    } else if (keyDir == this.KEY_HELD) {
+      var temp = this.keyHeldFuncs.filter(function(k) {return k.key == key});
+      if (temp.length == 0) {
+        this.keyHeldFuncs.push({key: key, funcs: [func]});
+      } else {
+        temp[0].funcs.push(func);
+      }
+    }
+  },
+  
+  update: function() {
+    for (var i = 0; i < this.keyHeldFuncs.length; ++i) {
+      if (this.isDown(this.keyHeldFuncs[i].key)) {
+        this.keyHeldFuncs[i].funcs.forEach(function(f) {f();})
       }
     }
   },

@@ -63,12 +63,14 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       var temp = self.direcQueue.shift();
       if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
         self.direction = temp;
-        self.calculateAngleFromDirection(self.direction[0], self.direction[1])
         break;
       }
     }
-    self.x += self.direction[0];
-    self.y += self.direction[1];
+    if (self.direction[0] != 0 || self.direction[1] != 0) {
+      self.calculateAngleFromDirection(self.direction[0], self.direction[1])
+      self.x += self.direction[0];
+      self.y += self.direction[1];
+    }
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX;
       self.y = game.mouseY;
