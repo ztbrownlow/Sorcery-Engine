@@ -1,5 +1,5 @@
-window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
-window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
+window.addEventListener('keyup', function(event) { if (!event.repeat) { Key.onKeyup(event); } }, false);
+window.addEventListener('keydown', function(event) { if (!event.repeat) { Key.onKeydown(event); } }, false);
 
 
 var Key = {
