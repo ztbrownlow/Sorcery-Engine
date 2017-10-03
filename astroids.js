@@ -27,8 +27,10 @@ function Rocket(){
 	var self = this;
 	var directionX = 0;
 	var directionY = 0;
-	var maxSpeed =20;
+	var maxSpeed = 5;
 	var rocketSpeed = 2;
+	var bulletLimit = 0;
+	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",rocket,250,200);
 		Key.bind(Key.W, Key.KEY_HELD, function(){moveY(-rocketSpeed)});
@@ -59,7 +61,10 @@ function Rocket(){
 		directionY = temp;
 	}
 	function shootBullet(){
-		obj_bullet.push(new Bullet(directionX, directionY, self.x + (rocketSize/2), self.y))
+		if(bulletLimit <= 0){
+			obj_bullet.push(new Bullet(directionX, directionY, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
+			bulletLimit = 10;
+		}
 	}
 	self.oldupdate = self.update;
 	self.update = function(game){
@@ -70,27 +75,20 @@ function Rocket(){
 		else if (directionX < 0){directionX += 1}
 		if(directionY > 0){ directionY -= 1 }
 		else if (directionY < 0){directionY += 1}
+		bulletLimit--;
 		//console.log(directionX + " " + directionY)
 	}
 }
 
 function Bullet(directionX, directionY, positionX, positionY){
 	var self = this;
-	var bulletSpeed = 5;
+	var bulletSpeed = 10;
 	self.constructor = function(){
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
-		if(directionX > 0){
-			directionX = bulletSpeed;
-		}
-		else if(directionX < 0){
-			directionX = -bulletSpeed;
-		}
-		if(directionY > 0){
-			directionY = bulletSpeed;
-		}
-		else if(directionY <= 0){
-			directionY = -bulletSpeed;
-		}
+		if(directionX > 0){ directionX = bulletSpeed; }
+		else if(directionX < 0){  directionX = -bulletSpeed; }
+		if(directionY > 0){ directionY = bulletSpeed; }
+		else if(directionY <= 0){ directionY = -bulletSpeed; }
 		self.direction[0] = directionX;
 		self.direction[1] = directionY;
 	}
@@ -99,4 +97,4 @@ function Bullet(directionX, directionY, positionX, positionY){
 
 
 game.setup();
-game.start(30);
+game.start(50);
