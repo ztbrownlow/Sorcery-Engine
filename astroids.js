@@ -4,6 +4,7 @@ var mediumAstroidSize = 100;
 var smallAstroidSize = 50;
 var rocketSize = 50;
 var bulletSize = 5;
+var bulletSpeed = 10;
 
 var astroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
@@ -62,7 +63,7 @@ function Rocket(){
 	}
 	function shootBullet(){
 		if(bulletLimit <= 0){
-			obj_bullet.push(new Bullet(directionX, directionY, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
+			obj_bullet.push(new Bullet(self.angle, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
 			bulletLimit = 10;
 		}
 	}
@@ -80,17 +81,12 @@ function Rocket(){
 	}
 }
 
-function Bullet(directionX, directionY, positionX, positionY){
+function Bullet(angle, positionX, positionY){
 	var self = this;
-	var bulletSpeed = 10;
 	self.constructor = function(){
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
-		if(directionX > 0){ directionX = bulletSpeed; }
-		else if(directionX < 0){  directionX = -bulletSpeed; }
-		if(directionY > 0){ directionY = bulletSpeed; }
-		else if(directionY <= 0){ directionY = -bulletSpeed; }
-		self.direction[0] = directionX;
-		self.direction[1] = directionY;
+		self.direction[0] = bulletSpeed*Math.cos(angle * (Math.PI/180));
+		self.direction[1] = bulletSpeed*Math.sin(angle * (Math.PI/180));
 	}
 	self.constructor();
 }
