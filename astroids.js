@@ -24,6 +24,7 @@ function Rocket(){
 	var self = this;
 	var directionX = 0;
 	var directionY = 0;
+	var maxSpeed = 20;
 	var rocketSpeed = 7;
 	self.constructor = function(){
 		GameObject.call(self,"rocket",rocket,250,200);
@@ -35,10 +36,23 @@ function Rocket(){
 	self.constructor();
 	function moveX(x){
 		var temp = directionX + x;
-		directionX += x;
+		if(temp > maxSpeed && temp > 0){
+			temp = maxSpeed;
+		}
+		else if(temp < -maxSpeed && temp < 0){
+			temp = -maxSpeed;
+		}
+		directionX = temp;
 	}
 	function moveY(y){
-		directionY += y;
+		var temp = directionY + y;
+		if(temp > maxSpeed && temp > 0){
+			temp = maxSpeed;
+		}
+		else if(temp < -maxSpeed && temp < 0){
+			temp = -maxSpeed;
+		}
+		directionY = temp;
 	}
 	self.oldupdate = self.update;
 	self.update = function(game){
