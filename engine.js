@@ -1,219 +1,108 @@
+document.write('<script type="text/javascript" src="vector.js"></script>');
+document.write('<script type="text/javascript" src="Sprites.js"></script>');
+document.write('<script type="text/javascript" src="object.js"></script>');
+document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
+document.write('<script type="text/javascript" src="key.js"></script>');
+document.write('<script type="text/javascript" src="score.js"></script>');
+
+function flatten(arrays) {
+  return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
+}
+
 function Game(canvas) {
-  this.mouseX = 0;
-  this.mouseY = 0;
-  this.clickState = "UP"; //States: UP, BEGIN_DOWN, DOWN, BEGIN_UP
-  this.hasMouseMoved = false;
-  var self = this;
-
-  this.selected = null;
-
-  this.canvas = canvas;
-  this.context = canvas.getContext('2d');
-  this.timer = undefined;
-
-  this.sprites = new SceneGraph("sprites");
-  this.objects = new SceneGraph("objects");
-
-  this.draw = function() {
-    self.objects.draw(self);
+  var self = this
+  self.constructor = function(canvas) {
+    self.canvas = canvas;
+    self.mouseX = 0;
+    self.mouseY = 0;
+    self.context = canvas.getContext('2d');
+    self.timer = null;
+    self.sprites = new SceneGraph("sprites");
+    self.objects = new SceneGraph("objects"); 
+    canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
+    canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
+    canvas.addEventListener("mouseup", function(e) {self.mouseUp(e)});
+    canvas.addEventListener("mouseout", function(e) {self.mouseOut(e)});
   }
-
-  this.preDraw = function() {
-
+  
+  self.findRandomUnoccupiedPoint = function(objectTree, step) {
+    var x;
+    var y;
+    var temp;
+    do {
+      x = Math.floor(Math.random() * (self.canvas.width-1) / step) * step;
+      y = Math.floor(Math.random() * (self.canvas.height-1) / step) * step;
+      temp = self.objects.pointCollide(x, y, false);
+    } while (!temp || flatten(temp).filter(function(e) {return e;}).length != 0);
+    self.x = x;
+    self.y = y;
+    return [x, y];
   }
-
-  this.postDraw = function() {
-
+  
+  self.outOfBounds = function(x, y) {
+    return x >= self.canvas.width || x < 0 || y >= self.canvas.height || y < 0;
   }
-
-  this.update  = function() {
-    self.handleMouseActions();
+  
+  self.getObjectsUnderMouse = function() {
+    var temp = self.objects.pointCollide(self.mouseX, self.mouseY, true);
+    if (temp) {
+      var f = flatten(temp);
+      if (f)
+        return f.filter(function(e) {return e;});
+    }
+    return [];
+  }
+  
+  self.mouseDown = function(e) {
+    var temp = self.getObjectsUnderMouse();
+    if (temp.length > 0) {
+      temp[0].mouseDown(self, e);
+    }
+  }
+  
+  self.mouseUp = function(e) {
+    var temp = self.getObjectsUnderMouse();
+    if (temp.length > 0) {
+      temp[0].mouseUp(self, e);
+    }
+  }
+  
+  self.mouseOut = function(e) {
+    self.mouseUp(e);
+  }
+  
+  self.mouseMove = function(e) {
+    self.mouseX = e.offsetX;
+    self.mouseY = e.offsetY;
+  }
+  
+  self.update = function() {
+    //self.handleMouseActions();
     self.objects.update(self);
   }
-
-  this.loop = function() {
+  
+  self.draw = function() {
+    self.objects.draw(self.context);
+  }
+  
+  self.preDraw = function() {
+    
+  }
+  self.postDraw = function() {
+    
+  }
+  self.loop = function() {
     self.canvas.width = self.canvas.width;
     self.update();
     self.preDraw();
     self.draw();
     self.postDraw();
   }
-
-  this.start = function(milliseconds) {
+  self.start = function(milliseconds) {
     self.timer = setInterval(self.loop, milliseconds);
   }
-  this.stop = function(milliseconds) {
+  self.stop = function() {
     clearInterval(self.timer);
   }
-
-  this.setUpMouseListeners = function(canvas) {
-    canvas.addEventListener("mousemove", function(e) {
-      if(self.mouseX !== e.offsetX || self.mouseY !== e.offsetY) {
-
-        self.hasMouseMoved = true;
-        self.mouseX = e.offsetX;
-        self.mouseY = e.offsetY;
-
-      }
-    })
-    canvas.addEventListener("mousedown", function(e) {
-      self.mouseX = e.offsetX;
-      self.mouseY = e.offsetY;
-      self.clickState = "BEGIN_DOWN";
-    })
-
-    canvas.addEventListener("mouseup", function(e) {
-      self.mouseX = e.offsetX;
-      self.mouseY = e.offsetY;
-      self.clickState = "BEGIN_UP";
-    })
-    
-    canvas.addEventListener("mouseout", function(e) {
-      self.mouseX = e.offsetX;
-      self.mouseY = e.offsetY;
-      self.clickState = "BEGIN_UP";
-    });
-    //console.log("Mouse Listeners Initialized!");
-  }
-  
-  this.handleMouseActions = function() {
-    if(self.clickState === "UP"){              //UP
-      //console.log("UP");
-      //do nothing?
-    }
-    else if(self.clickState === "BEGIN_DOWN"){ //BEGIN_DOWN
-      //console.log(self.objects.FirstByName("onScreen").children)
-      //console.log("BEGIN_DOWN");
-      //note what object is selected, if any.
-      //self.selected = self.findObjectAt(this.mouseX, this.mouseY);
-      self.selected = self.findObjectAt(this.mouseX, this.mouseY);
-      if (self.selected) {
-        self.selected.isClicked = true;
-        self.selected.mouseDown(game);
-      }
-      //Transition into DOWN state
-      self.clickState = "DOWN";
-      //console.log(self.selected);
-      //console.log(self.objects.FirstByName("onScreen").children)
-    }
-    else if(self.clickState === "DOWN"){       //DOWN
-      //console.log("DOWN");
-      //The mouse continues to be held down. If the mouse moves, move the selected object.
-      if(self.selected && self.hasMouseMoved){
-        //self.selected.attemptMove(self.mouseX, self.mouseY); //call GameObject.attemptMove()
-        if (self.selected.isSpawner) {
-          var newObj = self.selected.spawnerFunc();
-          if (newObj) {
-            self.selected.isClicked = false;
-            self.selected.mouseUp();
-            self.selected = self.objects.FirstByName("onScreen").unshift(newObj);
-            self.selected.isClicked = true;
-            self.selected.mouseDown();
-          }
-        }
-      }
-    }
-    else if(self.clickState === "BEGIN_UP"){   //BEGIN_UP
-      //console.log("BEGIN_UP");
-      //Drop the selected object, if any.
-      if(self.selected){
-        self.selected.isClicked = false;
-        self.selected.mouseUp(game);
-        //Find what objects are underneath
-        var overlapping = self.findOverlappingObjects(self.selected);
-        //TODO do something with the overlapping objects
-        if(overlapping) {
-          //console.log("OVERLAP");
-          for(var i = 0; i < overlapping.length; i++){
-            var e = overlapping[i];
-            if (self.selected.tryCollide(e)) {
-              break;
-            }
-          }
-        }
-        //remove the previously selected object from the selected field.
-        self.selected = null;
-      }
-      //Finished. Transition into UP state
-      self.clickState = "UP";
-    }
-    //Movement has been resolved, set hasMouseMoved to false
-    self.hasMouseMoved = false;
-  }
-
-
-    //These next two functions may need to be moved inside of the Object class
-    this.findObjectAt = function(x, y) {
-      //TODO return the top GameObject at x, y
-      var topGameObject = null;
-      var topGUIObject = null;
-      var onScreen = self.objects.FirstByName("onScreen");
-      var buttons = self.objects.FirstByName("elements");
-
-      for(var i = 0; i < buttons.children.length; i++){
-        var button = buttons.children[i];
-        if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
-          //console.log("Clicked: " + button.name);
-          topGUIObject = button;
-          break;
-        }
-      }
-
-      // for(var i = 0; i < sprites.length; i++) {
-      //   var s = sprites[i];
-      //   //console.log("Button name " + s.name);
-      //   if (object !== null && object instanceof GameObject) {
-      //     if (object.isPointWithinSprite(object.sprite, x, y)) {
-      //       topGameObject = object;
-      //       break;
-      //     }
-      //   }
-      // }
-
-      if(topGUIObject !== null){
-        return topGUIObject;
-      }
-      
-      for(var i = 0; i < onScreen.children.length; i++){
-        var button = onScreen.children[i];
-        //console.log("Name: " + button.name);
-        if( checkSpriteRect(button.sprite, button.x, button.y, x, y)){
-          //console.log("Clicked: " + button.name);
-          topGameObject = button;
-          break;
-        }
-      }
-      
-      return topGameObject;
-    }
-
-  this.findOverlappingObjects = function(dropped) {
-    //TODO return objects underneath GameObject dropped
-    var output = new Array();
-    var onScreen = self.objects.FirstByName("onScreen");
-    for(var i = 1; i < onScreen.children.length; i++){
-      var sprite = onScreen.children[i];
-      if(sprite.isOverlapping(dropped)){
-        //console.log("overlap detected")
-        output.push(sprite);
-      }
-    }
-    return output;
-  }
-
-  this.setUpMouseListeners(this.canvas);
+  self.constructor(canvas);
 }
-
-/*function parseFile(fileUrl, lineTransformer) {
-  //console.log(fileUrl);
-  //lineTransformer is a function that takes a line as an input and then does something with it
-  return $.get( fileUrl, function( data ) {
-    //console.log("reading file");
-    var lines = data.split('\n');
-    for (var i = 0; i < lines.length; ++i) {
-      lines[i] = lineTransformer(lines[i]);
-    }
-    return lines;
-  });
-  //TODO verify this works
-}*/

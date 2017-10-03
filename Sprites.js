@@ -1,45 +1,64 @@
+function Drawable(name) {
+  var self = this;
+  
+  self.constructor = function(name) {
+    self.name = name
+  }
+  self.draw = function(context, x, y) { }  
+}
+
 function Sprite(name, width, height, src) {
-  this.image = new Image();
-  this.image.src = src;
-  this.image.width = width;
-  this.image.height = height;
-  this.name = name;
   var self = this;
-  this.draw = function(game, x, y) {
-    game.context.drawImage(self.image, x, y, self.image.width, self.image.height);
-  };
+  self.constructor = function(name, width, height, src) {
+    Drawable.call(self, name);
+    self.image = new Image();
+    self.image.width = width;
+    self.image.height = height;
+    self.image.src = src;
+  }
+  self.constructor(name, width, height, src);
+  
+  Object.defineProperties(self, {
+    'src': { get: function() { return self.image.src }, set: function(v) { self.image.src = v } },
+    'width': { get: function() { return self.image.width }, set: function(v) { self.image.width = v } },
+    'height': { get: function() { return self.image.height }, set: function(v) { self.image.height = v } }
+  });
+  
+  self.draw = function(context, x, y, angle) {
+    if(self.angle != 0){
+      var RADIANS = Math.PI/180; 
+      context.save()
+      context.translate(x + (self.image.width / 2), y + (self.image.height / 2));
+      context.rotate(angle * RADIANS);
+      context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height);
+      context.restore();
+    }
+    else{
+      context.drawImage(self.image, x, y, self.image.width, self.image.height);
+    }
+  }
 }
 
-function FilledRectSprite(name, width, height, fillStyle) { //can use in place of sprite. fillStyle can be color, gradient, pattern
+function FilledRect(name, width, height, fillStyle) {
   var self = this;
-  self.width = width;
-  self.height = height;
-  self.name = name;
-  self.fillStyle = fillStyle;
-
-  this.draw = function(game, x, y) {
+  self.constructor = function(name, width, height, fillStyle) {
+    Drawable.call(self, name);
+    self.width = width;
+    self.height = height;
+    self.name = name;
+    self.fillStyle = fillStyle;
+  }
+  self.constructor(name, width, height, fillStyle);
+  self.draw = function(context, x, y) {
     var saveContext = false;
-    if (game.context.fillStyle == self.fillStyle) {
+    if (context.fillStyle == self.fillStyle) {
       saveContext = true;
-      game.context.save();
+      context.save();
     }
-    game.context.fillStyle = self.fillStyle;
-    game.context.fillRect(x, y, self.width, self.height);
+    context.fillStyle = self.fillStyle;
+    context.fillRect(x, y, self.width, self.height);
     if (saveContext) {
-      game.context.restore();
+      context.restore();
     }
   }
-}
-
-//checks collision with coordinate. taken from code we used in class
-//returns true if (x, y) is contained in sprite (assumes rectangular bounding box)
-function checkSpriteRect(sprite, sprX, sprY, checkX, checkY) {
-  var minX = sprX;
-  var maxX = sprX + sprite.image.width;
-  var minY = sprY;
-  var maxY = sprY + sprite.image.height;
-  if (checkX >= minX && checkX <= maxX && checkY >= minY && checkY <= maxY) {
-    return true;
-  }
-  return false;
 }

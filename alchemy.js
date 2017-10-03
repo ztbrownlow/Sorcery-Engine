@@ -1,76 +1,116 @@
 var game = new Game(document.getElementById("canvas"));
+//graphical options
 var imageSize = 64;
 var numRows = 3;
-//width of the gui
 var guiWidth = canvas.width;
 var sepWidth = 3;
-//height of the gui
 var guiHeight = numRows * imageSize + ((numRows - 1) * sepWidth);
+
+//set up scene graph
 var spr_gui = game.sprites.push(new SceneGraph("guiRects"));
 var spr_elements = game.sprites.push(new SceneGraph("elements"));
-var obj_gui = game.objects.push(new SceneGraph("guiRects", false, true));
-obj_gui.push(new GameObject("main", spr_gui.push(new FilledRectSprite("main", guiWidth, guiHeight, "#AAAAAA")), 0, game.canvas.height - guiHeight));
-var spr_guiSep = spr_gui.push(new FilledRectSprite("separator", guiWidth, sepWidth, "#BBBBBB"));
+var obj_gui = game.objects.push(new SceneGraph("guiRects", false, true, false));
+obj_gui.push(new GameObject("main", spr_gui.push(new FilledRect("main", guiWidth, guiHeight, "#AAAAAA")), 0, game.canvas.height - guiHeight));
+var spr_guiSep = spr_gui.push(new FilledRect("separator", guiWidth, sepWidth, "#BBBBBB"));
 for(var i = 1; i <= numRows - 1; i++){
-  obj_gui.push(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
+  obj_gui.unshift(new GameObject("sep_"+i, spr_guiSep, 0, game.canvas.height - guiHeight + (i * imageSize) + ((i-1) * sepWidth)));
 }
 var obj_elements = game.objects.unshift(new SceneGraph("elements"));
 var obj_onScreen = game.objects.unshift(new SceneGraph("onScreen"));
 
+var selected = null;
 
+//custom object
 function Element(spr, name, unlocked, x, y) {
-  GameObject.call(this, name, spr, x, y);
-  this.priorDraw = this.draw;
-  this.unlocked = unlocked;
-  this.interactions = {};
   var self = this;
-  this.link = function(element2, element3) {
+  self.constructor = function(spr, name, unlocked, x, y) {
+    GameObject.call(self, name, spr, x, y);
+    self.unlocked = unlocked;
+    self.interactions = {};
+  }
+  self.constructor(spr, name, unlocked, x, y)
+  self.link = function(element2,element3) {
     self.interactions[element2.name] = element3;
     element2.interactions[self.name] = element3;
   }
-  this.combine = function(element2) {
+  
+  self.combine = function(element2) {
     return self.interactions[element2.name];
   }
-  this.isSpawner = true;
-  this.spawnerFunc = function() {
-    if (!self.unlocked) {
-      return null;
+  
+  self.oldMouseDown = self.mouseDown;
+  self.mouseDown = function(game, event) {
+    self.oldMouseDown(game, event);
+    if (self.unlocked) {
+      selected = self;
     }
-    return new DraggableElement(self.sprite, self.name, self.unlocked, self.x, self.y);
   }
-  this.draw = function(game) {
-    self.priorDraw(game);
+  self.oldDraw = self.draw
+  self.draw = function(context) {
+    self.oldDraw(context);
     if (!self.unlocked) {
-      game.context.fillStyle = "black";
-      game.context.globalAlpha=0.5;
-      game.context.fillRect(self.x, self.y, imageSize, imageSize);
-      game.context.globalAlpha=1;
+      context.fillStyle = "black";
+      context.globalAlpha=0.5;
+      context.fillRect(self.x, self.y, imageSize, imageSize);
+      context.globalAlpha=1;
     }
   }
 }
 
+var oldUp = game.mouseUp;
+game.mouseUp = function(e) {
+  oldUp(e);
+  selected = null;
+}
+
+var oldMove = game.mouseMove;
+game.mouseMove = function(e) {
+  oldMove(e)
+  console.log("MOVE");
+  if (selected) {
+    console.log(selected);
+    obj_onScreen.unshift(new DraggableElement(selected.sprite, selected.name, selected.unlocked, selected.x, selected.y));
+    selected = null;
+  }
+}
+
+//added functionality for collisions
 function DraggableElement(spr, name, unlocked, x, y) {
-  Element.call(this, spr, name, unlocked, x, y);
-  this.isDraggable = true;
   var self = this;
-  this.isSpawner = false;
-  this.interactions = obj_elements.FirstByName(self.name).interactions;
-  this.mouseDown = function(game) {
+  self.constructor = function(spr, name, unlocked, x, y) {
+    Element.call(self, spr, name, unlocked, x, y);
+    self.isDraggable = true;
+    self.isClicked = true;
+    self.xOffset = imageSize/2;
+    self.yOffset = imageSize/2;
+    self.draw = self.oldDraw;
+  }
+  self.constructor(spr, name, unlocked, x, y)
+  self.mouseDown = function(game, event) {
+    self.oldMouseDown(game, event);
     obj_onScreen.moveToFront(obj_onScreen.indexOf(self));
   }
-  this.mouseUp = function(game) {
-    if (self.y >= guiHeight) {
+  self.oldMouseUp = self.mouseUp;
+  self.mouseUp = function(game, event) {
+    self.oldMouseUp(self, game, event);
+    if (game.mouseY >= game.canvas.height - guiHeight) {
       obj_onScreen.remove(self);
+    } else {
+      obj_onScreen.forEachUntilFirstSuccess(function(e) {return self.tryCollide(e)});
     }
   }
-  this.tryCollide = function(other) {
+  
+  self.canCollideWith = function(other) {
+    return obj_elements.firstByName(self.name).combine(other);
+  }
+  
+  self.collideWith = function(other) {
     //console.log([self, other]);
-    var combined = obj_elements.FirstByName(self.name).combine(other); //find new element
-    if (combined != undefined) { //if new element exists (valid formula)
-      ////console.log(o_this.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
-      self.name = combined.name; //set this Draggable's element to the new element
+    var combined = self.canCollideWith(other); //find new element
+    if (combined) { //if new element exists (valid formula)
+      ////console.log(o_self.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
+      self.name = combined.name; //set self Draggable's element to the new element
       self.sprite = combined.sprite;
-      self.interactions = combined.interactions;
       if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
         combined.unlocked = true;
       }
@@ -81,31 +121,14 @@ function DraggableElement(spr, name, unlocked, x, y) {
   }
 }
 
-/*parseFile("alchemy/alchemy_data.txt", function(line) {
-  //console.log(line);
-  if (line.length > 0) {
-    if (line.startsWith("D:")) {
-      line = line.substring(0, 2);
-      line = line.split('|');
-      var i = obj_elements.length;
-      var xpos = imageSize*(i%Math.floor(guiWidth/imageSize));
-      var ypos = game.canvas.height - guiHeight + (imageSize+sepWidth)*Math.floor(i/Math.floor(guiWidth/imageSize));
-      obj_elements.push(new Element(line[0], line[1], imageSize, line[2] == "true" ? true : false, xPos, yPos));
-    } else if (line.startsWith("F:")) {
-      line = line.substring(0, 2);
-      line = line.split('=');
-      line[0] = line[0].split("+");
-      obj_elements.FirstByName(line[0][0]).link(obj_elements.FirstByName(line[0][1]), obj_elements.FirstByName(line[1]));
-    }
-  }
-});*/
-
+//text
 game.preDraw = function() {
   game.context.fillStyle = "black";
   game.context.font = "bold 12px Arial";
   game.context.fillText("Place items here", 0, 10);
 }
 
+//adding elements to game
 var i = 0;
 function addElement(name, img, unlocked) {
   var xpos = imageSize*(i%Math.floor(guiWidth/imageSize));
@@ -139,29 +162,29 @@ addElement("centaur", "http://www4.ncsu.edu/~alrichma/images/centaur.png", false
 addElement("medusa", "http://www4.ncsu.edu/~alrichma/images/medusa.png", false)
 addElement("harpy", "http://www4.ncsu.edu/~alrichma/images/harpy.png", false)
 addElement("manticore", "http://www4.ncsu.edu/~ztbrownl/images/manticore.png", false)
-obj_elements.FirstByName("scales").link(obj_elements.FirstByName("fur"), obj_elements.FirstByName("hair"))
-obj_elements.FirstByName("wings").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("bird"))
-obj_elements.FirstByName("scales").link(obj_elements.FirstByName("scales"), obj_elements.FirstByName("snake"))
-obj_elements.FirstByName("wings").link(obj_elements.FirstByName("scales"), obj_elements.FirstByName("dragon"))
-obj_elements.FirstByName("snake").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("dragon"))
-obj_elements.FirstByName("skin").link(obj_elements.FirstByName("hair"), obj_elements.FirstByName("human"))
-obj_elements.FirstByName("water").link(obj_elements.FirstByName("scales"), obj_elements.FirstByName("fish"))
-obj_elements.FirstByName("fur").link(obj_elements.FirstByName("hair"), obj_elements.FirstByName("horse"))
-obj_elements.FirstByName("fur").link(obj_elements.FirstByName("fur"), obj_elements.FirstByName("lion"))
-obj_elements.FirstByName("fur").link(obj_elements.FirstByName("horn"), obj_elements.FirstByName("bull"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("fur"), obj_elements.FirstByName("werewolf"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("hair"), obj_elements.FirstByName("werewolf"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("angel"))
-obj_elements.FirstByName("horse").link(obj_elements.FirstByName("wings"), obj_elements.FirstByName("pegasus"))
-obj_elements.FirstByName("horn").link(obj_elements.FirstByName("horse"), obj_elements.FirstByName("unicorn"))
-obj_elements.FirstByName("bird").link(obj_elements.FirstByName("lion"), obj_elements.FirstByName("griffin"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("lion"), obj_elements.FirstByName("sphinx"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("fish"), obj_elements.FirstByName("mermaid"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("water"), obj_elements.FirstByName("mermaid"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("bull"), obj_elements.FirstByName("minotaur"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("horse"), obj_elements.FirstByName("centaur"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("snake"), obj_elements.FirstByName("medusa"))
-obj_elements.FirstByName("human").link(obj_elements.FirstByName("bird"), obj_elements.FirstByName("harpy"))
-obj_elements.FirstByName("sphinx").link(obj_elements.FirstByName("dragon"), obj_elements.FirstByName("manticore"))
+obj_elements.firstByName("scales").link(obj_elements.firstByName("fur"), obj_elements.firstByName("hair"))
+obj_elements.firstByName("wings").link(obj_elements.firstByName("wings"), obj_elements.firstByName("bird"))
+obj_elements.firstByName("scales").link(obj_elements.firstByName("scales"), obj_elements.firstByName("snake"))
+obj_elements.firstByName("wings").link(obj_elements.firstByName("scales"), obj_elements.firstByName("dragon"))
+obj_elements.firstByName("snake").link(obj_elements.firstByName("wings"), obj_elements.firstByName("dragon"))
+obj_elements.firstByName("skin").link(obj_elements.firstByName("hair"), obj_elements.firstByName("human"))
+obj_elements.firstByName("water").link(obj_elements.firstByName("scales"), obj_elements.firstByName("fish"))
+obj_elements.firstByName("fur").link(obj_elements.firstByName("hair"), obj_elements.firstByName("horse"))
+obj_elements.firstByName("fur").link(obj_elements.firstByName("fur"), obj_elements.firstByName("lion"))
+obj_elements.firstByName("fur").link(obj_elements.firstByName("horn"), obj_elements.firstByName("bull"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("fur"), obj_elements.firstByName("werewolf"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("hair"), obj_elements.firstByName("werewolf"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("wings"), obj_elements.firstByName("angel"))
+obj_elements.firstByName("horse").link(obj_elements.firstByName("wings"), obj_elements.firstByName("pegasus"))
+obj_elements.firstByName("horn").link(obj_elements.firstByName("horse"), obj_elements.firstByName("unicorn"))
+obj_elements.firstByName("bird").link(obj_elements.firstByName("lion"), obj_elements.firstByName("griffin"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("lion"), obj_elements.firstByName("sphinx"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("fish"), obj_elements.firstByName("mermaid"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("water"), obj_elements.firstByName("mermaid"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("bull"), obj_elements.firstByName("minotaur"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("horse"), obj_elements.firstByName("centaur"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("snake"), obj_elements.firstByName("medusa"))
+obj_elements.firstByName("human").link(obj_elements.firstByName("bird"), obj_elements.firstByName("harpy"))
+obj_elements.firstByName("sphinx").link(obj_elements.firstByName("dragon"), obj_elements.firstByName("manticore"))
 
 game.start(30);
