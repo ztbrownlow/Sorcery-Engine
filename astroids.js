@@ -1,12 +1,14 @@
 var game = new Game(document.getElementById("canvas"));
 var bigAstroidSize = 100;
-var mediumAstroidSize = 100;
-var smallAstroidSize = 50;
+var mediumAstroidSize = 50;
+var smallAstroidSize = 30;
 var astroidSpeed = 2;
 var rocketSize = 40;
 var bulletSize = 5;
 
-var astroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
+var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
+var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
+var smallAstroid = game.sprites.push(new Sprite("astroid", smallAstroidSize, smallAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
 var rocketfire = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
@@ -28,8 +30,8 @@ game.setup = function(){
 		while(y > 130 && y < 320){
 			var y = Math.random() * (game.canvas.height)
 		}
-		var angle = Math.random() * (180);
-		obj_astroids.push(new Astroid(x,y,angle));
+		var angle = Math.random() * (360);
+		obj_astroids.push(new Astroid(x,y,angle, astroidSpeed, 3, bigAstroid));
 	}
 }
 
@@ -99,6 +101,10 @@ function Rocket(){
 		//console.log(self.x + " " + self.y)
 		//console.log(directionX + " " + directionY)
 	}
+	self.canCollideWith = function(other) { return true; }
+	self.collideWith = function(other){
+		
+	}
 	
 }
 
@@ -124,20 +130,21 @@ function Bullet(angle, positionX, positionY){
 		}
 		bulletLife--;
 		if(bulletLife < 0){
-			obj_bullet.shift();    
+			obj_bullet.remove(self);  
 		}
 	}
 }
 
-function Astroid(x, y, angle){
+function Astroid(x, y, angle, speed, size, sprite){
 	var self = this;
-	var size = 3;
-	self.constructor = function(x, y, angle){
-		GameObject.call(self,"astroid",astroid,x,y);
-		self.direction[0] = astroidSpeed*Math.cos(angle * (Math.PI/180));
-		self.direction[1] = astroidSpeed*Math.sin(angle * (Math.PI/180));
+	var size = size;
+	self.constructor = function(x, y, angle, speed, size, sprite){
+		self.size = size;
+		GameObject.call(self,"astroid",sprite,x,y);
+		self.direction[0] = speed*Math.cos(angle * (Math.PI/180));
+		self.direction[1] = speed*Math.sin(angle * (Math.PI/180));
 	}
-	self.constructor(x,y, angle);
+	self.constructor(x,y, angle, speed, size, sprite);
 	self.oldupdate = self.update;
 	self.update = function(game){
 		self.oldupdate(game);
@@ -147,6 +154,34 @@ function Astroid(x, y, angle){
 			
 			if(self.y > game.canvas.height){self.y = 0}
 			else if(self.y < 0){self.y = game.canvas.height}
+		}
+		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+	}
+	self.canCollideWith = function(other) { return true; }
+	self.collideWith = function(other){
+		if(other instanceof Bullet){
+			//small astroid
+			if(self.size == 1){
+				//add points
+				obj_astroids.remove(self);
+			}
+			else{
+				//default assume big astroid
+				var tempSprite = mediumAstroid;
+				var tempSize = 2;
+				//medium astroid
+				if(self.size == 2){
+					tempSprite = smallAstroid;
+					tempSize = 1;
+				}
+				//create two astroids in two different directions
+				obj_astroids.push(new Astroid(self.x,self.y,angle+90, astroidSpeed*3, tempSize, tempSprite));
+				obj_astroids.push(new Astroid(self.x,self.y,angle-90, astroidSpeed*3, tempSize, tempSprite));
+				//remove astroid that got hit
+				obj_astroids.remove(self);
+			}
+			//remove bullet that hit
+			obj_bullet.remove(self);
 		}
 	}
 }
