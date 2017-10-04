@@ -3,11 +3,35 @@
     <head>
         <meta charset="UTF-8" />
         <title> Astroids </title>
+		<link rel="stylesheet" type="text/css" href="astroids.css" />
     </head>
     <body>
+	<h2> Astroids</h2>
 <canvas id="canvas" width="580" height="460" style="border:1px solid #000000;">
   Canvas not supported
 </canvas>
+<table>
+  <thead>
+    <tr>
+      <th>High Scores</th>
+      <!--We can add more columns like for name, etc. if we want later-->
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="hs1">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+    <tr id="hs2">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+    <tr id="hs3">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+  </tbody>
+</table>
 <script src="engine.js"></script>
 <script src="astroids.js"></script>
 </body>

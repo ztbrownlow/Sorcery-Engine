@@ -18,7 +18,45 @@ var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var rocket;
 
+game.postDraw = function(){
+  game.context.fillStyle = "white";
+  game.context.font = "bold 12px Palatino Linotype";
+  game.context.fillText("Score: " + score.score, 0, 10);
+}
+
+game.lose = function() {
+	console.log("Game lost");
+	if(score.isHighScore(score.score)){
+		tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
+		score.addHighScore(tempName,score.score);
+		score.saveHighScores();
+	}
+  game.setup();
+}
+
+var rocket;
+var score = new Score(3);
+var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
+var localHighScore = score.getHighScores();
+if(!localHighScore){
+  score.addHighScore("ztbrownl",23);
+  score.addHighScore("alrichma",8);
+  score.addHighScore("rnpettit",3);  
+}
+else
+{
+  score.highScores = localHighScore;
+}
+
 game.setup = function(){
+	score.score = 0;
+	for (var i = 0; i < score.highScoreMax; i++) {
+	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
+      hs_elems[i].innerHTML = text;
+	}
+	obj_astroids.removeAll();
+	obj_bullet.removeAll();
+	obj_rocket.removeAll();
 	rocket = obj_rocket.push(new Rocket());
 	for(i = 0; i < 4; i++){
 		var x = 200;
@@ -37,8 +75,6 @@ game.setup = function(){
 
 function Rocket(){
 	var self = this;
-	var directionX = 0;
-	var directionY = 0;
 	var maxSpeed = 15;
 	var rocketSpeed = 2;
 	var bulletLimit = 0;
@@ -47,6 +83,8 @@ function Rocket(){
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",rocket,250,200);
+		self.directionX = 0;
+		self.directionY = 0;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(angleChange)});
@@ -54,14 +92,14 @@ function Rocket(){
 	}
 	self.constructor();
 	function move(){
-		var tempx = directionX + rocketSpeed*Math.cos(self.angle * (Math.PI/180))
-		var tempy = directionY + rocketSpeed*Math.sin(self.angle * (Math.PI/180));
+		var tempx = self.directionX + rocketSpeed*Math.cos(self.angle * (Math.PI/180))
+		var tempy = self.directionY + rocketSpeed*Math.sin(self.angle * (Math.PI/180));
 		if(tempx > 0 && tempx > maxSpeed){ tempx = maxSpeed;}
 		else if(tempx < 0 && tempx < -maxSpeed){ tempx = -maxSpeed;}
 		if(tempy > 0 && tempy > maxSpeed){ tempy = maxSpeed;}
 		else if(tempy < 0 && tempy < -maxSpeed){ tempy = -maxSpeed;}
-		directionX = tempx;
-		directionY = tempy;
+		self.directionX = tempx;
+		self.directionY = tempy;
 		moving = true;
 	}
 	function changeAngle(angle){
@@ -76,8 +114,8 @@ function Rocket(){
 	self.oldupdate = self.update;
 	self.update = function(game){
 		self.oldupdate(game);
-		self.direction[0] = directionX;
-		self.direction[1] = directionY;
+		self.direction[0] = self.directionX;
+		self.direction[1] = self.directionY;
 		//if the rocket is out of bounds move it to the other side
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
@@ -87,14 +125,14 @@ function Rocket(){
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
 		//slow down the movement of the rocket
-		if(directionX > 0){ directionX -= 1 }
-		else if (directionX < 0){directionX += 1}
-		if(directionY > 0){ directionY -= 1 }
-		else if (directionY < 0){directionY += 1}
+		if(self.directionX > 0){ self.directionX -= 1 }
+		else if (self.directionX < 0){self.directionX += 1}
+		if(self.directionY > 0){ self.directionY -= 1 }
+		else if (self.directionY < 0){self.directionY += 1}
 		//if you don't have W down, then check if direction is less than one so it can fully stop.
 		if(!moving){
-			if(Math.abs(directionX) < 1){ directionX = 0 }
-			if(Math.abs(directionY) < 1) {directionY = 0 }
+			if(Math.abs(self.directionX) < 1){ self.directionX = 0 }
+			if(Math.abs(self.directionY) < 1) {self.directionY = 0 }
 		}
 		bulletLimit--;
 		moving = false;
@@ -162,7 +200,7 @@ function Astroid(x, y, angle, speed, size, sprite){
 		if(other instanceof Bullet){
 			//small astroid
 			if(self.size == 1){
-				//add points
+				score.addScore(50);
 				obj_astroids.remove(self);
 			}
 			else{
@@ -173,6 +211,11 @@ function Astroid(x, y, angle, speed, size, sprite){
 				if(self.size == 2){
 					tempSprite = smallAstroid;
 					tempSize = 1;
+					score.addScore(30);
+				}
+				else{
+					//destroyed big astroid
+					score.addScore(10);
 				}
 				//create two astroids in two different directions
 				obj_astroids.push(new Astroid(self.x,self.y,angle+90, astroidSpeed*3, tempSize, tempSprite));
@@ -182,6 +225,9 @@ function Astroid(x, y, angle, speed, size, sprite){
 			}
 			//remove bullet that hit
 			obj_bullet.remove(self);
+		}
+		else if(other instanceof Rocket){
+			game.lose()
 		}
 	}
 }
