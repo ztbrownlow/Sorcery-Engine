@@ -4,7 +4,6 @@ var mediumAstroidSize = 100;
 var smallAstroidSize = 50;
 var rocketSize = 50;
 var bulletSize = 5;
-var bulletSpeed = 10;
 
 var astroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
@@ -28,38 +27,30 @@ function Rocket(){
 	var self = this;
 	var directionX = 0;
 	var directionY = 0;
-	var maxSpeed = 5;
+	var maxSpeed = 10;
 	var rocketSpeed = 2;
 	var bulletLimit = 0;
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",rocket,250,200);
-		Key.bind(Key.W, Key.KEY_HELD, function(){moveY(-rocketSpeed)});
-		Key.bind(Key.A, Key.KEY_HELD, function(){moveX(-rocketSpeed)});
-		Key.bind(Key.S, Key.KEY_HELD, function(){moveY(rocketSpeed)});
-		Key.bind(Key.D, Key.KEY_HELD, function(){moveX(rocketSpeed)});
+		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
+		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-5)});
+		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(5)});
 		Key.bind(Key.SPACE, Key.KEY_DOWN, shootBullet);
 	}
 	self.constructor();
-	function moveX(x){
-		var temp = directionX + x;
-		if(temp > maxSpeed && temp > 0){
-			temp = maxSpeed;
-		}
-		else if(temp < -maxSpeed && temp < 0){
-			temp = -maxSpeed;
-		}
-		directionX = temp;
+	function move(){
+		var tempx = directionX + rocketSpeed*Math.cos(self.angle * (Math.PI/180))
+		var tempy = directionY + rocketSpeed*Math.sin(self.angle * (Math.PI/180));
+		if(tempx > 0 && tempx > maxSpeed){ tempx = maxSpeed;}
+		else if(tempx < 0 && tempx < -maxSpeed){ tempx = -maxSpeed;}
+		if(tempy > 0 && tempy > maxSpeed){ tempy = maxSpeed;}
+		else if(tempy < 0 && tempy < -maxSpeed){ tempy = -maxSpeed;}
+		directionX = tempx;
+		directionY = tempy;
 	}
-	function moveY(y){
-		var temp = directionY + y;
-		if(temp > maxSpeed && temp > 0){
-			temp = maxSpeed;
-		}
-		else if(temp < -maxSpeed && temp < 0){
-			temp = -maxSpeed;
-		}
-		directionY = temp;
+	function changeAngle(angle){
+		self.angle += angle;
 	}
 	function shootBullet(){
 		if(bulletLimit <= 0){
@@ -72,17 +63,29 @@ function Rocket(){
 		self.oldupdate(game);
 		self.direction[0] = directionX;
 		self.direction[1] = directionY;
+		if(game.outOfBounds(self.x, self.y)){
+			if(self.x > game.canvas.width){self.x = 0}
+			else if(self.x < 0){self.x = game.canvas.width}
+			
+			if(self.y > game.canvas.height){self.y = 0}
+			else if(self.y < 0){self.y = game.canvas.height}
+		}
+		directionX = Math.round(directionX)
+		directionY = Math.round(directionY)
 		if(directionX > 0){ directionX -= 1 }
 		else if (directionX < 0){directionX += 1}
 		if(directionY > 0){ directionY -= 1 }
 		else if (directionY < 0){directionY += 1}
 		bulletLimit--;
 		//console.log(directionX + " " + directionY)
+		console.log(self.x + " " + self.y)
 	}
+	
 }
 
 function Bullet(angle, positionX, positionY){
 	var self = this;
+	var bulletSpeed = 15;
 	self.constructor = function(){
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
 		self.direction[0] = bulletSpeed*Math.cos(angle * (Math.PI/180));

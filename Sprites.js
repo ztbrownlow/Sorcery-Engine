@@ -10,11 +10,6 @@ function Drawable(name) {
 function Sprite(name, width, height, src, defAngle=0) {
   var self = this;
   self.constructor = function(name, width, height, src, defAngle=0) {
-    console.log(name)
-    console.log(width)
-    console.log(height)
-    console.log(src)
-    console.log(defAngle)
     Drawable.call(self, name);
     self.image = new Image();
     self.image.width = width;
