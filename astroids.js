@@ -61,24 +61,22 @@ game.setup = function(){
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
 	rocket = obj_rocket.push(new Rocket());
-	spawnAsteroids();
+	for(i = 0; i < 4; i++){ spawnAsteroids(rocket.x, rocket.y); }
   Key.reset();
 }
 
-function spawnAsteroids() {
-  for(i = 0; i < 4; i++){
-		var x = 200;
-		var y = 200;
-		//choose a number that will not be around the rocket
-		while(x > 130 && x < 400){
-			var x = Math.random() * (game.canvas.width)
-		}
-		while(y > 130 && y < 320){
-			var y = Math.random() * (game.canvas.height)
-		}
-		var angle = Math.random() * (360);
-		obj_astroids.push(new Astroid(x,y,angle, astroidSpeed, 3, bigAstroid));
+function spawnAsteroids(rocketx, rockety) {
+	var x = rocket.x;
+	var y = rocket.y;
+	//choose a number that will not be around the rocket
+	while(x > (rocket.x - 100) && x < (rocket.x + 100)){
+		x = Math.random() * (game.canvas.width)
 	}
+	while(y > (rocket.y - 100) && y < (rocket.y - 100)){
+		y = Math.random() * (game.canvas.height)
+	}
+	var angle = Math.random() * (360);
+	obj_astroids.push(new Astroid(x,y,angle, astroidSpeed, 3, bigAstroid));
 }
 
 function Rocket(){
@@ -194,7 +192,7 @@ function AsteroidSpawner() {
   
   self.update = function(game) {
     if (obj_astroids.isEmpty()) {
-      spawnAsteroids();
+      spawnAsteroids(rocket.x, rocket.y);
     }
   }
 }
@@ -243,6 +241,8 @@ function Astroid(x, y, angle, speed, size, sprite){
 				else{
 					//destroyed big astroid
 					score.addScore(10);
+					//spawn big astroid
+					spawnAsteroids(rocket.x, rocket.y);
 				}
 				//create two astroids in two different directions
 				obj_astroids.push(new Astroid(self.x,self.y,angle+90, astroidSpeed*3, tempSize, tempSprite));
