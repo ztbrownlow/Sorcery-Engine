@@ -97,7 +97,7 @@ function Rocket(){
     Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.LEFT, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){changeAngle(angleChange)});
-		Key.bind(Key.SPACE, Key.KEY_DOWN, shootBullet);
+		Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
 	}
 	self.constructor();
 	function move(){
@@ -114,7 +114,7 @@ function Rocket(){
 	function changeAngle(angle){
 		self.angle += angle;
 	}
-	function shootBullet(){
+	self.shootBullet = function(){
 		if(bulletLimit <= 0){
 			obj_bullet.push(new Bullet(self.angle, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
 			bulletLimit = 10;
