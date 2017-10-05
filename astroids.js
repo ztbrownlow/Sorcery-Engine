@@ -9,7 +9,7 @@ var bulletSize = 5;
 var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var smallAstroid = game.sprites.push(new Sprite("astroid", smallAstroidSize, smallAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
+var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
 var rocketfire = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
 
@@ -54,6 +54,7 @@ game.setup = function(){
 	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
 	}
+  console.log(rocket);
 	obj_astroids.removeAll();
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
@@ -82,7 +83,7 @@ function Rocket(){
 	var moving = false;
 	
 	self.constructor = function(){
-		GameObject.call(self,"rocket",rocket,250,200);
+		GameObject.call(self,"rocket",spr_rocket,250,200);
 		self.directionX = 0;
 		self.directionY = 0;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
