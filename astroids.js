@@ -2,9 +2,9 @@ var game = new Game(document.getElementById("canvas"));
 var bigAstroidSize = 100;
 var mediumAstroidSize = 50;
 var smallAstroidSize = 30;
-var astroidSpeed = 2;
 var rocketSize = 40;
 var bulletSize = 5;
+var level = 0;
 
 var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
@@ -56,16 +56,15 @@ game.setup = function(){
 	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
 	}
-  console.log(rocket);
 	obj_astroids.removeAll();
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
 	rocket = obj_rocket.push(new Rocket());
-	for(i = 0; i < 4; i++){ spawnAsteroids(rocket.x, rocket.y); }
-  Key.reset();
+	for(i = 0; i < 4; i++){ spawnAsteroid(rocket.x, rocket.y); }
+    Key.reset();
 }
 
-function spawnAsteroids(rocketx, rockety) {
+function spawnAsteroid(rocketx, rockety) {
 	var x = rocket.x;
 	var y = rocket.y;
 	//choose a number that will not be around the rocket
@@ -76,7 +75,8 @@ function spawnAsteroids(rocketx, rockety) {
 		y = Math.random() * (game.canvas.height)
 	}
 	var angle = Math.random() * (360);
-	obj_astroids.push(new Astroid(x,y,angle, astroidSpeed, 3, bigAstroid));
+	//default values for a big astroid, speed of 2 and size of 3
+	obj_astroids.push(new Astroid(x,y,angle, 2, 3, bigAstroid));
 }
 
 function Rocket(){
@@ -192,7 +192,9 @@ function AsteroidSpawner() {
   
   self.update = function(game) {
     if (obj_astroids.isEmpty()) {
-      spawnAsteroids(rocket.x, rocket.y);
+		level++;
+	    var amtSpawn = 4 + Math.floor(level/2)
+		for(i = 0; i < amtSpawn; i++){ spawnAsteroids(rocket.x, rocket.y); }
     }
   }
 }
@@ -202,6 +204,7 @@ function Astroid(x, y, angle, speed, size, sprite){
 	var size = size;
 	self.constructor = function(x, y, angle, speed, size, sprite){
 		self.size = size;
+		self.astroidSpeed = speed;
 		GameObject.call(self,"astroid",sprite,x,y);
 		self.direction[0] = speed*Math.cos(angle * (Math.PI/180));
 		self.direction[1] = speed*Math.sin(angle * (Math.PI/180));
@@ -225,7 +228,7 @@ function Astroid(x, y, angle, speed, size, sprite){
 		if(other instanceof Bullet){
 			//small astroid
 			if(self.size == 1){
-				score.addScore(50);
+				score.addScore(100);
 				obj_astroids.remove(self);
 			}
 			else{
@@ -236,17 +239,15 @@ function Astroid(x, y, angle, speed, size, sprite){
 				if(self.size == 2){
 					tempSprite = smallAstroid;
 					tempSize = 1;
-					score.addScore(30);
+					score.addScore(50);
 				}
 				else{
 					//destroyed big astroid
-					score.addScore(10);
-					//spawn big astroid
-					spawnAsteroids(rocket.x, rocket.y);
+					score.addScore(40);
 				}
 				//create two astroids in two different directions
-				obj_astroids.push(new Astroid(self.x,self.y,angle+90, astroidSpeed*3, tempSize, tempSprite));
-				obj_astroids.push(new Astroid(self.x,self.y,angle-90, astroidSpeed*3, tempSize, tempSprite));
+				obj_astroids.push(new Astroid(self.x,self.y,angle+90, self.astroidSpeed*2, tempSize, tempSprite));
+				obj_astroids.push(new Astroid(self.x,self.y,angle-90, self.astroidSpeed*2, tempSize, tempSprite));
 				//remove astroid that got hit
 				obj_astroids.remove(self);
 			}
