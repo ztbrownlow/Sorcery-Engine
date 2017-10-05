@@ -18,6 +18,8 @@ var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var rocket;
 
+game.objects.push(new AsteroidSpawner());
+
 game.postDraw = function(){
   game.context.fillStyle = "white";
   game.context.font = "bold 12px Palatino Linotype";
@@ -59,7 +61,12 @@ game.setup = function(){
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
 	rocket = obj_rocket.push(new Rocket());
-	for(i = 0; i < 4; i++){
+	spawnAsteroids();
+  Key.reset();
+}
+
+function spawnAsteroids() {
+  for(i = 0; i < 4; i++){
 		var x = 200;
 		var y = 200;
 		//choose a number that will not be around the rocket
@@ -89,6 +96,9 @@ function Rocket(){
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(angleChange)});
+    Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
+		Key.bind(Key.LEFT, Key.KEY_HELD, function(){changeAngle(-angleChange)});
+		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){changeAngle(angleChange)});
 		Key.bind(Key.SPACE, Key.KEY_DOWN, shootBullet);
 	}
 	self.constructor();
@@ -174,6 +184,21 @@ function Bullet(angle, positionX, positionY){
 	}
 }
 
+function AsteroidSpawner() {
+  var self = this;
+  self.constructor = function() {
+    GameObject.call(self, "asteroidSpawner", null, 0, 0);
+    self.isCollidable=false;
+  }
+  self.constructor();
+  
+  self.update = function(game) {
+    if (obj_astroids.isEmpty()) {
+      spawnAsteroids();
+    }
+  }
+}
+
 function Astroid(x, y, angle, speed, size, sprite){
 	var self = this;
 	var size = size;
@@ -182,6 +207,7 @@ function Astroid(x, y, angle, speed, size, sprite){
 		GameObject.call(self,"astroid",sprite,x,y);
 		self.direction[0] = speed*Math.cos(angle * (Math.PI/180));
 		self.direction[1] = speed*Math.sin(angle * (Math.PI/180));
+    self.setCircleHitbox();
 	}
 	self.constructor(x,y, angle, speed, size, sprite);
 	self.oldupdate = self.update;

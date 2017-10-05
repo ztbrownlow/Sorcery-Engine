@@ -16,6 +16,10 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     return self.forEachReturn(function(e){if (!limitToClickable || e.isClickable) { var temp = e.pointCollide(x, y); if (temp) return e.isSceneGraph ? temp : e}});
   }
   
+  self.isEmpty = function() {
+    return (self.children.length == 0);
+  }
+  
   self.mouseDown = function(game, event, returnOnFirstSuccess = true) {
     if (isClickable) {
       if (returnOnFirstSuccess) {

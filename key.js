@@ -23,6 +23,10 @@ var Key = {
     return this._pressed[keyCode];
   },
   
+  reset: function() {
+    this._pressed = {};
+  },
+  
   KEY_UP: 0,
   KEY_DOWN: 1,
   KEY_HELD: 2,

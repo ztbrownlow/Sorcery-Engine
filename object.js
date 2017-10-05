@@ -6,17 +6,18 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.pos = new Vector();
     self.x = x;
     self.y = y;
-	self.lastX = x;
+    self.lastX = x;
     self.lastY = y;
     self.xOffset = xOffset;
     self.yOffset = yOffset;
     self.isClicked = false;
     self.isDraggable = false;
     self.isClickable = true;
+    self.isCollidable = true;
     self.setSquareHitbox([0, 1], [0, 1]);
-	self.direction = [0, 0];
-	self.direcQueue = new Array();
-	self.angle = 0;
+    self.direction = [0, 0];
+    self.direcQueue = new Array();
+    self.angle = 0;
   }
   Object.defineProperties(self, {
     'x': { 
@@ -40,12 +41,16 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     'src': { get: function() {return sprite.src}}
   });  
   
-  self.setSquareHitbox = function(xRange, yRange) {
+  self.setSquareHitbox = function(xRange=[0,1], yRange=[0,1]) {
     self.hitbox = {type: 'square', xRange: xRange, yRange: yRange, center: [(xRange[1]+xRange[0])/2, (yRange[1]+yRange[0])/2], halfWidth: (xRange[1]-xRange[0])/2, halfHeight: (yRange[1]-yRange[0])/2};
   }
   
-  self.setCircleHitbox = function(center, radius) {
+  self.setCircleHitbox = function(center=new Vector(self.width/2, self.height/2), radius=Math.max(self.width, self.height)/2) {
+    console.log(self.hitbox)
+    console.log(center)
+    console.log(radius)
     self.hitbox = {type: 'circle', radius: radius, center: center};
+    console.log(self.hitbox)
   }
   
   self.mouseDown = function(game, event) {
@@ -118,8 +123,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       } else if (other.hitbox.type == 'circle') {
         var centerX = self.x - self.xOffset + self.hitbox.center[0] * self.width;
         var centerY = self.y - self.yOffset + self.hitbox.center[1] * self.height;
-        var diffCentX = Math.abs(other.center.x - centerX);
-        var diffCentY = Math.abs(other.center.y - centerY);
+        var diffCentX = Math.abs(other.hitbox.center.x + other.x - other.xOffset - centerX);
+        var diffCentY = Math.abs(other.hitbox.center.y + other.y - other.yOffset - centerY);
         if (diffCentX >= self.hitbox.halfWidth + other.hitbox.radius || diffCentY >= self.hitbox.halfHeight + other.hitbox.radius) {
           return false;
         }
@@ -130,9 +135,9 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       }
     } else if (self.hitbox.type == 'circle') {
       if (other.hitbox.type == 'square') {
-        return other.objectCollide(self);
+        return other.checkForObjectCollide(self);
       } else if (other.hitbox.type == 'circle') {
-        return other.hitbox.center.subtract(self.hitbox.center).magnitude() < self.hitbox.radius + other.hitbox.radius
+        return other.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset)).subtract(self.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
       }
     }
     return false;
@@ -147,7 +152,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   }
   
   self.tryCollide = function(other) {
-    if (self !== other && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
+    if (self !== other && other.isCollidable && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
       return self.collideWith(other);
     }
     return false;

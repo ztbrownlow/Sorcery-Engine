@@ -1,10 +1,12 @@
-function Vector(x, y, z) { 
+function Vector(x, y, z=0) { 
   var self = this;
   self.constructor = function(x, y, z) {
     self.x = x;
     self.y = y;
     self.z = z ? z : 0;
   }
+  
+  self.constructor(x, y, z);
   
   self.add = function(other) {
     return new Vector(self.x + other.x, self.y + other.y, self.z + other.z);
@@ -33,5 +35,4 @@ function Vector(x, y, z) {
   self.magnitude = function() {
     return Math.hypot(self.x, self.y, self.z);
   }
-  self.constructor(x, y, z);
 }
