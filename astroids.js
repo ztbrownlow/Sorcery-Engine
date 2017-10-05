@@ -29,7 +29,7 @@ game.lose = function() {
 	if(score.isHighScore(score.score)){
 		tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
 		score.addHighScore(tempName,score.score);
-		score.saveHighScores();
+		score.saveHighScores("asteroids");
 	}
   game.setup();
 }
@@ -37,11 +37,11 @@ game.lose = function() {
 var rocket;
 var score = new Score(3);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = score.getHighScores();
+var localHighScore = score.getHighScores("asteroids");
 if(!localHighScore){
-  score.addHighScore("ztbrownl",23);
-  score.addHighScore("alrichma",8);
-  score.addHighScore("rnpettit",3);  
+  score.addHighScore("ztbrownl",30);
+  score.addHighScore("alrichma",20);
+  score.addHighScore("rnpettit",10);  
 }
 else
 {

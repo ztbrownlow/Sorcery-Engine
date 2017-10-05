@@ -39,14 +39,13 @@ function Score(max){
 			}
 		}
 	}
-	self.saveHighScores = function(){
-		localStorage.setItem("highScores", JSON.stringify(self.highScores));
+	self.saveHighScores = function(name=""){
+		localStorage.setItem("highScores_"+name, JSON.stringify(self.highScores));
 	}
-	self.getHighScores = function(){
-		var json = localStorage.getItem("highScores");
+	self.getHighScores = function(name=""){
+		var json = localStorage.getItem("highScores_"+name);
     if (json)
       return JSON.parse(json);
     return null;
 	}
-	
 }
