@@ -12,9 +12,9 @@ var rocket_start_y = 200;
 var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var smallAstroid = game.sprites.push(new Sprite("astroid", smallAstroidSize, smallAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
+var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png"));
 var spr_life_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png"));
-var rocketfire = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
+var spr_rocketfire = game.sprites.push(new Sprite("rocketfire", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
 
 var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
@@ -84,8 +84,6 @@ function Lives(numberOfLives, sprite){
     self.isCollidable = false;
 	}
 	self.constructor(numberOfLives, sprite);
-	self.update = function(game) {
-	}
 	self.loseLife = function(){
 		var poppedLife = self.livesArray.pop();
 		game.objects.remove(poppedLife);
@@ -136,10 +134,12 @@ function Rocket(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
 		self.velocity = new Vector(0,0);
 		self.bulletLimit = 0;
+		self.angle = 0;
+		self.moving = false;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(angleChange)});
-    Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
+		Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.LEFT, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){changeAngle(angleChange)});
 		Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
@@ -148,12 +148,14 @@ function Rocket(){
 	self.constructor();
 	function move(){
 		var tempVel = self.velocity;
-		tempVel = tempVel.add(new Vector(rocketSpeed*Math.cos(self.angle * (Math.PI/180)), rocketSpeed*Math.sin(self.angle * (Math.PI/180))));
+		var speed = calculateVelocity(rocketSpeed,self.angle);
+		tempVel = tempVel.add(speed);
 		if(tempVel.x > 0 && tempVel.x > maxSpeed){ tempVel.x = maxSpeed;}
 		else if(tempVel.x < 0 && tempVel.x < -maxSpeed){ tempVel.x = -maxSpeed;}
 		if(tempVel.y > 0 && tempVel.y > maxSpeed){ tempVel.y = maxSpeed;}
 		else if(tempVel.y < 0 && tempVel.y < -maxSpeed){ tempVel.y = -maxSpeed;}
 		self.velocity = tempVel;
+		self.moving = true;
 	}
 	function changeAngle(angle){
 		self.angle += angle;
@@ -178,24 +180,19 @@ function Rocket(){
 			if(self.y > game.canvas.height){self.y = 0}
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
-		//slow down the movement of the rocket
-		var currentVelVector = self.velocity;
-		var velMagnitudeCurrent = currentVelVector.magnitude();
-		if(velMagnitudeCurrent != 0){
-			var velMagnitudeNext = velMagnitudeCurrent - 0.5;
-			if(velMagnitudeNext < 0 )
-				velMagnitudeNext = 0;
-			var velUnitVector = currentVelVector.normalize();
-			var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
-			self.velocity = nextVelVector;
-		}
+		self.velocity = slowVelocity(self.velocity, 0.5);
 		self.bulletLimit--;
     
-    if (self.immunitySteps > 0) {
-      self.immunitySteps--;
-    }
-		//console.log(self.x + " " + self.y)
-		//console.log(directionX + " " + directionY)
+		if (self.immunitySteps > 0) {
+			self.immunitySteps--;
+		}
+		if(self.moving){
+			self.sprite = spr_rocketfire;
+		}
+		else{
+			self.sprite = spr_rocket;
+		}
+		self.moving = false;
 	}
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
@@ -204,14 +201,33 @@ function Rocket(){
 	
 }
 
+function slowVelocity(velocity, decelerationAmt){
+	var currentVelVector = velocity;
+	var velMagnitudeCurrent = currentVelVector.magnitude();
+	if(velMagnitudeCurrent != 0){
+		var velMagnitudeNext = velMagnitudeCurrent - decelerationAmt;
+		if(velMagnitudeNext < 0 )
+			velMagnitudeNext = 0;
+		var velUnitVector = currentVelVector.normalize();
+		var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
+		return nextVelVector;
+	}
+	return velocity;
+}
+
+function calculateVelocity(speed, angle){
+	return tempVel = new Vector(speed*Math.sin(angle * (Math.PI/180)), -speed*Math.cos(angle * (Math.PI/180)))
+}
+
 function Bullet(angle, positionX, positionY){
 	var self = this;
 	var bulletSpeed = 25;
 	var bulletLife = 13;
 	self.constructor = function(){
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
-		self.direction[0] = bulletSpeed*Math.cos(angle * (Math.PI/180));
-		self.direction[1] = bulletSpeed*Math.sin(angle * (Math.PI/180));
+		self.velocity = calculateVelocity(bulletSpeed, angle);
+		self.direction[0] = self.velocity.x;
+		self.direction[1] = self.velocity.y;
 	}
 	self.constructor();
 	self.oldupdate = self.update;
