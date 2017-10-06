@@ -50,7 +50,7 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
   }
   self.draw = function(context) {
-    if (doDraw) {
+    if (self.doDraw) {
       if (self.drawDirection == "backwards") {
         self.forEachReverse(function(e) {e.draw(context);});
       } else {

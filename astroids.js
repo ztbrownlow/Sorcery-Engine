@@ -22,7 +22,7 @@ var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var rocket;
 
-game.objects.push(new AsteroidSpawner());
+game.objects.push(new GameManager());
 var lives = new Lives(3, spr_life_rocket);
 
 game.postDraw = function(){
@@ -57,6 +57,7 @@ else
 
 game.setup = function(){
 	score.score = 0;
+  obj_rocket.doDraw = true;
 	for (var i = 0; i < score.highScoreMax; i++) {
 	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
@@ -80,10 +81,10 @@ function Lives(numberOfLives, sprite){
 			self.livesArray.push(life);
 			startX += sprite.width;
 		}
+    self.isCollidable = false;
 	}
 	self.constructor(numberOfLives, sprite);
 	self.update = function(game) {
-    
 	}
 	self.loseLife = function(){
 		var poppedLife = self.livesArray.pop();
@@ -144,6 +145,7 @@ function Rocket(){
 		Key.bind(Key.LEFT, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){changeAngle(angleChange)});
 		Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
+    self.immunitySteps = 0;
 	}
 	self.constructor();
 	function move(){
@@ -200,6 +202,10 @@ function Rocket(){
 		}
 		self.bulletLimit--;
 		moving = false;
+    
+    if (self.immunitySteps > 0) {
+      self.immunitySteps--;
+    }
 		//console.log(self.x + " " + self.y)
 		//console.log(directionX + " " + directionY)
 	}
@@ -237,19 +243,30 @@ function Bullet(angle, positionX, positionY){
 	}
 }
 
-function AsteroidSpawner() {
+function GameManager() {
   var self = this;
   self.constructor = function() {
-    GameObject.call(self, "asteroidSpawner", null, 0, 0);
+    GameObject.call(self, "GameManager", null, 0, 0);
     self.isCollidable=false;
+    self.countdownUntilRespawn = null;
   }
   self.constructor();
   
   self.update = function(game) {
     if (obj_astroids.isEmpty()) {
-		level++;
+      level++;
 	    var amtSpawn = 4 + Math.floor(level/2)
-		for(i = 0; i < amtSpawn; i++){ spawnAsteroids(rocket.x, rocket.y); }
+      for(i = 0; i < amtSpawn; i++){ spawnAsteroids(rocket.x, rocket.y); }
+    }
+    if (obj_rocket.isEmpty()) {
+      if (self.countdownUntilRespawn == null) {
+        self.countdownUntilRespawn = 20;
+      }
+      if (self.countdownUntilRespawn-- == 0) {
+        self.countdownUntilRespawn = null;
+        rocket = obj_rocket.push(new Rocket());
+        rocket.immunitySteps = 20;
+      }
     }
   }
 }
@@ -280,10 +297,12 @@ function Astroid(x, y, angle, speed, size, sprite){
 	}
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
-		if(other instanceof Bullet){
+		if(other instanceof Bullet || ((other instanceof Rocket) && (other.immunitySteps <= 0))){
 			//small astroid
 			if(self.size == 1){
-				score.addScore(100);
+        if (other instanceof Bullet) {
+          score.addScore(100);
+        }
 				obj_astroids.remove(self);
 			}
 			else{
@@ -294,9 +313,11 @@ function Astroid(x, y, angle, speed, size, sprite){
 				if(self.size == 2){
 					tempSprite = smallAstroid;
 					tempSize = 1;
-					score.addScore(50);
+          if (other instanceof Bullet) {
+            score.addScore(50);
+          }
 				}
-				else{
+				else if (other instanceof Bullet) {
 					//destroyed big astroid
 					score.addScore(40);
 				}
@@ -306,18 +327,24 @@ function Astroid(x, y, angle, speed, size, sprite){
 				//remove astroid that got hit
 				obj_astroids.remove(self);
 			}
+      
+      if(other instanceof Rocket){
+        lives.loseLife();
+        if(lives.amountLivesLeft() == 0){
+          game.lose()
+        }
+        else 
+        {
+          obj_rocket.removeAll();
+          //rocket = obj_rocket.push(new Rocket());
+          //rocket.immunitySteps = 10;
+          //rocket.x = rocket_start_x;
+          //rocket.y = rocket_start_y;
+        }
+      }
+      
 			//remove bullet that hit
 			obj_bullet.remove(self);
-		}
-		else if(other instanceof Rocket){
-			lives.loseLife();
-			if(lives.amountLivesLeft() == 0){
-				game.lose()
-			}
-			else{
-				rocket.x = rocket_start_x;
-				rocket.y = rocket_start_y;
-			}
 		}
 	}
 }
