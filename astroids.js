@@ -181,10 +181,36 @@ function Rocket(){
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
 		//slow down the movement of the rocket
-		if(self.directionX > 0){ self.directionX -= 1 }
-		else if (self.directionX < 0){self.directionX += 1}
-		if(self.directionY > 0){ self.directionY -= 1 }
-		else if (self.directionY < 0){self.directionY += 1}
+		var velXCurrent = self.directionX;
+    var velYCurrent = self.directionX;
+    console.log("current: (" + velXCurrent + "," + velYCurrent + ")");
+    //calculate the magnitude of the velocity with pythagorean theorem.
+		var xSqr = velXCurrent * velXCurrent;
+    var ySqr = velYCurrent * velYCurrent;
+    var additionSqr = xSqr + ySqr;
+		var velMagnitudeCurrent = Math.sqrt( ( velXCurrent * velXCurrent ) + ( velYCurrent * velYCurrent ) );
+    //var velMagnitudeCurrent = Math.sqrt( additionSqr);
+    console.log(velMagnitudeCurrent);
+		//Use this to calculate a unit vector with the same direction, but a magnitude of exactly 1.
+		if(velMagnitudeCurrent != 0) {
+      var xBar = velXCurrent / velMagnitudeCurrent;
+      var yBar = velYCurrent / velMagnitudeCurrent; //These two are the x and y components of the unit vector.
+      //We can use this to uniformly scale down velocity between x and y.
+      //first, say how much we decelerate.
+      var velMagnitudeNext = velMagnitudeCurrent - 1;
+			console.log()
+      //Don't decelerate past 0 velocity, instead come to a stop
+      if (velMagnitudeNext < 0)
+        velMagnitudeNext = 0;
+      //calculate the new x and y velocities.
+      var velXNext = xBar * velMagnitudeNext;
+      var velYNext = yBar * velMagnitudeNext;
+      console.log("current Vel: (" + velXCurrent + "," + velYCurrent + ")\nnext Vel: (" + velXNext + "," + velYNext + ")");
+      //apply this new velocity vector
+      self.directionX = velXNext;
+      self.directionY = velYNext;
+    }
+
 		//if you don't have W down, then check if direction is less than one so it can fully stop.
 		if(!moving){
 			if(Math.abs(self.directionX) < 1){ self.directionX = 0 }
