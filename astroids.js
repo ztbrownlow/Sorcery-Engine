@@ -244,7 +244,7 @@ function GameManager() {
     if (obj_astroids.isEmpty()) {
       level++;
 	    var amtSpawn = 4 + Math.floor(level/2)
-      for(i = 0; i < amtSpawn; i++){ spawnAsteroids(rocket.x, rocket.y); }
+      for(i = 0; i < amtSpawn; i++){ spawnAsteroid(rocket.x, rocket.y); }
     }
     if (obj_rocket.isEmpty()) {
       if (self.countdownUntilRespawn == null) {
