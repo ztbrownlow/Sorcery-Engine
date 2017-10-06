@@ -36,9 +36,9 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         self.pos.y = val;
       }},
     
-    'width': { get: function() {return sprite.width}},
-    'height': { get: function() {return sprite.height}},
-    'src': { get: function() {return sprite.src}}
+    'width': { get: function() {if(sprite == null){return null} else{return sprite.width}}},
+    'height': { get: function() {if(sprite == null){ return null} else{return sprite.height}}},
+    'src': { get: function() {if(sprite == null){ return null} else{return sprite.src}}}
   });  
   
   self.setSquareHitbox = function(xRange=[0,1], yRange=[0,1]) {
@@ -46,11 +46,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   }
   
   self.setCircleHitbox = function(center=new Vector(self.width/2, self.height/2), radius=Math.max(self.width, self.height)/2) {
-    console.log(self.hitbox)
-    console.log(center)
-    console.log(radius)
     self.hitbox = {type: 'circle', radius: radius, center: center};
-    console.log(self.hitbox)
   }
   
   self.mouseDown = function(game, event) {

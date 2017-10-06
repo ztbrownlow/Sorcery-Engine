@@ -5,11 +5,15 @@ var smallAstroidSize = 30;
 var rocketSize = 40;
 var bulletSize = 5;
 var level = 0;
+var rocket_start_x = 250;
+var rocket_start_y = 200;
+
 
 var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var smallAstroid = game.sprites.push(new Sprite("astroid", smallAstroidSize, smallAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", 90));
+var spr_life_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png"));
 var rocketfire = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
 
@@ -19,21 +23,22 @@ var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var rocket;
 
 game.objects.push(new AsteroidSpawner());
+var lives = new Lives(3, spr_life_rocket);
 
 game.postDraw = function(){
   game.context.fillStyle = "white";
   game.context.font = "bold 12px Palatino Linotype";
-  game.context.fillText("Score: " + score.score, 0, 10);
+  game.context.fillText("Score: " + score.score, 0, 50);
 }
 
 game.lose = function() {
-	console.log("Game lost");
 	if(score.isHighScore(score.score)){
 		tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
 		score.addHighScore(tempName,score.score);
 		score.saveHighScores("asteroids");
 	}
-  game.setup();
+    game.setup();
+	lives.restart();
 }
 
 var rocket;
@@ -64,6 +69,47 @@ game.setup = function(){
     Key.reset();
 }
 
+function Lives(numberOfLives, sprite){
+	var self = this;
+	self.constructor = function(numberOfLives, sprite){
+		GameObject.call(self,"lives",null,0,0);
+		var startX = 0;
+		self.livesArray = new Array();
+		for(var i = 0; i < numberOfLives; i++){
+			life = game.objects.push(new Life(sprite, startX, 0));
+			self.livesArray.push(life);
+			startX += sprite.width;
+		}
+	}
+	self.constructor(numberOfLives, sprite);
+	self.update = function(game) {
+    
+	}
+	self.loseLife = function(){
+		var poppedLife = self.livesArray.pop();
+		game.objects.remove(poppedLife);
+	}
+	self.amountLivesLeft = function(){
+		return self.livesArray.length;
+	}
+	self.restart = function(){
+		var startX = 0;
+		for(var i = 0; i < numberOfLives; i++){
+			life = game.objects.push(new Life(sprite, startX, 0));
+			self.livesArray.push(life);
+			startX += sprite.width;
+		}
+	}
+}
+
+function Life(sprite, x, y){
+	var self = this;
+	self.constructor = function(sprite, x, y){
+		GameObject.call(self,"life",sprite, x, y);
+	}
+	self.constructor(sprite, x, y);
+}
+
 function spawnAsteroid(rocketx, rockety) {
 	var x = rocket.x;
 	var y = rocket.y;
@@ -83,14 +129,14 @@ function Rocket(){
 	var self = this;
 	var maxSpeed = 15;
 	var rocketSpeed = 2;
-	var bulletLimit = 0;
 	var angleChange = 15;
 	var moving = false;
 	
 	self.constructor = function(){
-		GameObject.call(self,"rocket",spr_rocket,250,200);
+		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
 		self.directionX = 0;
 		self.directionY = 0;
+		self.bulletLimit = 0;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
 		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(angleChange)});
@@ -115,9 +161,10 @@ function Rocket(){
 		self.angle += angle;
 	}
 	self.shootBullet = function(){
-		if(bulletLimit <= 0){
+		if(self.bulletLimit <= 0){
 			obj_bullet.push(new Bullet(self.angle, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
-			bulletLimit = 10;
+			self.bulletCount++;
+			self.bulletLimit = 2;
 		}
 	}
 	self.oldupdate = self.update;
@@ -143,7 +190,7 @@ function Rocket(){
 			if(Math.abs(self.directionX) < 1){ self.directionX = 0 }
 			if(Math.abs(self.directionY) < 1) {self.directionY = 0 }
 		}
-		bulletLimit--;
+		self.bulletLimit--;
 		moving = false;
 		//console.log(self.x + " " + self.y)
 		//console.log(directionX + " " + directionY)
@@ -255,7 +302,14 @@ function Astroid(x, y, angle, speed, size, sprite){
 			obj_bullet.remove(self);
 		}
 		else if(other instanceof Rocket){
-			game.lose()
+			lives.loseLife();
+			if(lives.amountLivesLeft() == 0){
+				game.lose()
+			}
+			else{
+				rocket.x = rocket_start_x;
+				rocket.y = rocket_start_y;
+			}
 		}
 	}
 }
