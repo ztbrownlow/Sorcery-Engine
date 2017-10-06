@@ -181,35 +181,49 @@ function Rocket(){
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
 		//slow down the movement of the rocket
-		var velXCurrent = self.directionX;
-    var velYCurrent = self.directionX;
-    console.log("current: (" + velXCurrent + "," + velYCurrent + ")");
-    //calculate the magnitude of the velocity with pythagorean theorem.
-		var xSqr = velXCurrent * velXCurrent;
-    var ySqr = velYCurrent * velYCurrent;
-    var additionSqr = xSqr + ySqr;
-		var velMagnitudeCurrent = Math.sqrt( ( velXCurrent * velXCurrent ) + ( velYCurrent * velYCurrent ) );
-    //var velMagnitudeCurrent = Math.sqrt( additionSqr);
-    console.log(velMagnitudeCurrent);
-		//Use this to calculate a unit vector with the same direction, but a magnitude of exactly 1.
-		if(velMagnitudeCurrent != 0) {
-      var xBar = velXCurrent / velMagnitudeCurrent;
-      var yBar = velYCurrent / velMagnitudeCurrent; //These two are the x and y components of the unit vector.
-      //We can use this to uniformly scale down velocity between x and y.
-      //first, say how much we decelerate.
-      var velMagnitudeNext = velMagnitudeCurrent - 1;
-			console.log()
-      //Don't decelerate past 0 velocity, instead come to a stop
-      if (velMagnitudeNext < 0)
-        velMagnitudeNext = 0;
-      //calculate the new x and y velocities.
-      var velXNext = xBar * velMagnitudeNext;
-      var velYNext = yBar * velMagnitudeNext;
-      console.log("current Vel: (" + velXCurrent + "," + velYCurrent + ")\nnext Vel: (" + velXNext + "," + velYNext + ")");
-      //apply this new velocity vector
-      self.directionX = velXNext;
-      self.directionY = velYNext;
-    }
+		var currentVelVector = new Vector(self.directionX, self.directionY);
+    var velMagnitudeCurrent = currentVelVector.magnitude();
+    if(velMagnitudeCurrent != 0){
+    	var velMagnitudeNext = velMagnitudeCurrent - 1;
+    	if(velMagnitudeNext < 0 )
+    		velMagnitudeNext = 0;
+    	var velUnitVector = currentVelVector.normalize();
+    	var velXNext = velUnitVector.x * velMagnitudeNext;
+    	var velYNext = velUnitVector.y * velMagnitudeNext;
+    	var nextVelVector = new Vector(velXNext, velYNext);
+    	console.log("Current: (" + currentVelVector.x + "," + currentVelVector.y + ") " + velMagnitudeCurrent + "\nNext: (" + velXNext + "," + velYNext + ") " + velMagnitudeNext + "\nUnit: (" + velUnitVector.x + "," + velUnitVector.y + ")");
+
+
+    	self.directionX = nextVelVector.x;
+      self.directionY = nextVelVector.y;
+		}
+
+
+
+    // var velXCurrent = self.directionX;
+    // var velYCurrent = self.directionY;
+    // //calculate the magnitude of the velocity with pythagorean theorem.
+    // var velMagnitudeCurrent = Math.sqrt( ( velXCurrent * velXCurrent ) + ( velYCurrent * velYCurrent ) );
+    // //var velMagnitudeCurrent = Math.sqrt( additionSqr);
+    // //Use this to calculate a unit vector with the same direction, but a magnitude of exactly 1.
+    // if(velMagnitudeCurrent != 0) {
+    //   var xBar = velXCurrent / velMagnitudeCurrent;
+    //   var yBar = velYCurrent / velMagnitudeCurrent; //These two are the x and y components of the unit vector.
+    //   //We can use this to uniformly scale down velocity between x and y.
+    //   //first, say how much we decelerate.
+    //   var velMagnitudeNext = velMagnitudeCurrent - 1;
+    //
+    //   //Don't decelerate past 0 velocity, instead come to a stop
+    //   if (velMagnitudeNext < 0)
+    //     velMagnitudeNext = 0;
+    //   //calculate the new x and y velocities.
+    //   var velXNext = xBar * velMagnitudeNext;
+    //   var velYNext = yBar * velMagnitudeNext;
+    //   console.log("current Vel: (" + velXCurrent + "," + velYCurrent + ")\nnext Vel: (" + velXNext + "," + velYNext + ")\nMagCurrent: " + velMagnitudeCurrent + "\n" + "MagNext: " + velMagnitudeNext);
+    //   //apply this new velocity vector
+    //   self.directionX = velXNext;
+    //   self.directionY = velYNext;
+    // }
 
 		//if you don't have W down, then check if direction is less than one so it can fully stop.
 		if(!moving){

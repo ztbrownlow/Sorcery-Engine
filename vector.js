@@ -1,4 +1,4 @@
-function Vector(x, y, z=0) { 
+function Vector(x, y, z = 0) {
   var self = this;
   self.constructor = function(x, y, z) {
     self.x = x;
@@ -29,7 +29,7 @@ function Vector(x, y, z=0) {
   }
   
   self.normalize = function() {
-    return self.divide(self.magnitude)
+    return self.divide(self.magnitude())
   }
   
   self.magnitude = function() {
