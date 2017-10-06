@@ -130,12 +130,10 @@ function Rocket(){
 	var maxSpeed = 15;
 	var rocketSpeed = 2;
 	var angleChange = 15;
-	var moving = false;
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
-		self.directionX = 0;
-		self.directionY = 0;
+		self.velocity = new Vector(0,0);
 		self.bulletLimit = 0;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
 		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
@@ -147,15 +145,13 @@ function Rocket(){
 	}
 	self.constructor();
 	function move(){
-		var tempx = self.directionX + rocketSpeed*Math.cos(self.angle * (Math.PI/180))
-		var tempy = self.directionY + rocketSpeed*Math.sin(self.angle * (Math.PI/180));
-		if(tempx > 0 && tempx > maxSpeed){ tempx = maxSpeed;}
-		else if(tempx < 0 && tempx < -maxSpeed){ tempx = -maxSpeed;}
-		if(tempy > 0 && tempy > maxSpeed){ tempy = maxSpeed;}
-		else if(tempy < 0 && tempy < -maxSpeed){ tempy = -maxSpeed;}
-		self.directionX = tempx;
-		self.directionY = tempy;
-		moving = true;
+		var tempVel = self.velocity;
+		tempVel = tempVel.add(new Vector(rocketSpeed*Math.cos(self.angle * (Math.PI/180)), rocketSpeed*Math.sin(self.angle * (Math.PI/180))));
+		if(tempVel.x > 0 && tempVel.x > maxSpeed){ tempVel.x = maxSpeed;}
+		else if(tempVel.x < 0 && tempVel.x < -maxSpeed){ tempVel.x = -maxSpeed;}
+		if(tempVel.y > 0 && tempVel.y > maxSpeed){ tempVel.y = maxSpeed;}
+		else if(tempVel.y < 0 && tempVel.y < -maxSpeed){ tempVel.y = -maxSpeed;}
+		self.velocity = tempVel;
 	}
 	function changeAngle(angle){
 		self.angle += angle;
@@ -170,8 +166,8 @@ function Rocket(){
 	self.oldupdate = self.update;
 	self.update = function(game){
 		self.oldupdate(game);
-		self.direction[0] = self.directionX;
-		self.direction[1] = self.directionY;
+		self.direction[0] = self.velocity.x;
+		self.direction[1] = self.velocity.y;
 		//if the rocket is out of bounds move it to the other side
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
@@ -181,27 +177,17 @@ function Rocket(){
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
 		//slow down the movement of the rocket
-		var currentVelVector = new Vector(self.directionX, self.directionY);
+		var currentVelVector = self.velocity;
 		var velMagnitudeCurrent = currentVelVector.magnitude();
 		if(velMagnitudeCurrent != 0){
-			var velMagnitudeNext = velMagnitudeCurrent - 1;
+			var velMagnitudeNext = velMagnitudeCurrent - 0.5;
 			if(velMagnitudeNext < 0 )
 				velMagnitudeNext = 0;
 			var velUnitVector = currentVelVector.normalize();
 			var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
-			self.directionX = nextVelVector.x;
-			self.directionY = nextVelVector.y;
-		}
-
-		//if you don't have W down, then check if direction is less than one so it can fully stop.
-		if(!moving){
-			if(Math.abs(self.directionX) < 1){ self.directionX = 0 }
-			if(Math.abs(self.directionY) < 1) {self.directionY = 0 }
+			self.velocity = nextVelVector;
 		}
 		self.bulletLimit--;
-		moving = false;
-		//console.log(self.x + " " + self.y)
-		//console.log(directionX + " " + directionY)
 	}
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
