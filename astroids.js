@@ -4,6 +4,7 @@ var mediumAstroidSize = 50;
 var smallAstroidSize = 30;
 var rocketSize = 40;
 var bulletSize = 5;
+var alienSize = 40;
 var level = 0;
 var rocket_start_x = 250;
 var rocket_start_y = 200;
@@ -16,14 +17,29 @@ var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, 
 var spr_life_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png"));
 var spr_rocketfire = game.sprites.push(new Sprite("rocketfire", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocketwfire.png"));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
+var spr_alien = game.sprites.push(new Sprite("smallAlien", alienSize, alienSize, "http://www4.ncsu.edu/~alrichma/images/alien.png"));
 
 var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
 var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
+var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
 var rocket;
 
 game.objects.push(new GameManager());
 var lives = new Lives(3, spr_life_rocket);
+var rocket;
+var score = new Score(3);
+var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
+var localHighScore = score.getHighScores("asteroids");
+if(!localHighScore){
+  score.addHighScore("ztbrownl",30);
+  score.addHighScore("alrichma",20);
+  score.addHighScore("rnpettit",10);  
+}
+else
+{
+  score.highScores = localHighScore;
+}
 
 game.postDraw = function(){
   game.context.fillStyle = "white";
@@ -41,20 +57,6 @@ game.lose = function() {
 	lives.restart();
 }
 
-var rocket;
-var score = new Score(3);
-var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = score.getHighScores("asteroids");
-if(!localHighScore){
-  score.addHighScore("ztbrownl",30);
-  score.addHighScore("alrichma",20);
-  score.addHighScore("rnpettit",10);  
-}
-else
-{
-  score.highScores = localHighScore;
-}
-
 game.setup = function(){
 	score.score = 0;
   obj_rocket.doDraw = true;
@@ -65,6 +67,7 @@ game.setup = function(){
 	obj_astroids.removeAll();
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
+	obj_alien.removeAll();
 	rocket = obj_rocket.push(new Rocket());
 	for(i = 0; i < 4; i++){ spawnAsteroid(rocket.x, rocket.y); }
     Key.reset();
@@ -162,7 +165,7 @@ function Rocket(){
 	}
 	self.shootBullet = function(){
 		if(self.bulletLimit <= 0){
-			obj_bullet.push(new Bullet(self.angle, self.x + (rocketSize/2), self.y + (rocketSize/2) ))
+			obj_bullet.push(new Bullet(self.angle, 25, 13, self.x + (rocketSize/2), self.y + (rocketSize/2), "rocket"))
 			self.bulletCount++;
 			self.bulletLimit = 2;
 		}
@@ -193,10 +196,20 @@ function Rocket(){
 			self.sprite = spr_rocket;
 		}
 		self.moving = false;
+		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
 	}
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
-		
+		if(other instanceof Alien){
+			lives.loseLife();
+			if(lives.amountLivesLeft() == 0){
+				game.lose()
+			}
+			else{
+				obj_rocket.removeAll();
+			}
+			obj_bullet.remove(self)
+		}
 	}
 	
 }
@@ -219,13 +232,14 @@ function calculateVelocity(speed, angle){
 	return tempVel = new Vector(speed*Math.sin(angle * (Math.PI/180)), -speed*Math.cos(angle * (Math.PI/180)))
 }
 
-function Bullet(angle, positionX, positionY){
+function Bullet(angle, speed, life, positionX, positionY, owner){
 	var self = this;
-	var bulletSpeed = 25;
-	var bulletLife = 13;
 	self.constructor = function(){
+		self.owner = owner;
+		self.bulletSpeed = speed;
+		self.bulletLife = life;
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
-		self.velocity = calculateVelocity(bulletSpeed, angle);
+		self.velocity = calculateVelocity(self.bulletSpeed, angle);
 		self.direction[0] = self.velocity.x;
 		self.direction[1] = self.velocity.y;
 	}
@@ -240,9 +254,28 @@ function Bullet(angle, positionX, positionY){
 			if(self.y > game.canvas.height){self.y = 0}
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
-		bulletLife--;
-		if(bulletLife < 0){
+		self.bulletLife--;
+		if(self.bulletLife < 0){
 			obj_bullet.remove(self);  
+		}
+		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+	}
+	self.canCollideWith = function(other) { return true; }
+	self.collideWith = function(other){
+		if(other instanceof Alien && self.owner == "rocket"){
+			score.addScore(50);
+			obj_bullet.remove(self)
+			obj_alien.remove(self);	
+		}
+		if(other instanceof Rocket && self.owner == "alien"){
+			lives.loseLife();
+			if(lives.amountLivesLeft() == 0){
+				game.lose()
+			}
+			else{
+				obj_rocket.removeAll();
+			}
+			obj_bullet.remove(self)
 		}
 	}
 }
@@ -253,6 +286,8 @@ function GameManager() {
     GameObject.call(self, "GameManager", null, 0, 0);
     self.isCollidable=false;
     self.countdownUntilRespawn = null;
+	self.alienRate = 300;
+	self.alienTimer = Math.random() * self.alienRate;
   }
   self.constructor();
   
@@ -272,7 +307,48 @@ function GameManager() {
         rocket.immunitySteps = 20;
       }
     }
+	 if(self.alienTimer < 0){
+		var randomx = 1;
+		var rando = Math.random()
+		if(rando > 0.5){
+			randomx = game.canvas.width - alienSize;
+		}
+		obj_alien.push(new Alien(randomx, Math.random() * game.canvas.height))
+		self.alienTimer = Math.random() * self.alienRate;
+	}
+	self.alienTimer--;
   }
+}
+
+function Alien(x, y){
+	var self = this;
+	var shootTimeLimit = 50;
+	var alienSpeed =  3;
+	self.constructor = function(x, y){
+		self.shootTime = shootTimeLimit;
+		GameObject.call(self,"alien",spr_alien,x,y);
+		self.angle = Math.random() * 360;
+		self.velocity = calculateVelocity(alienSpeed, self.angle);
+		self.direction[0] = self.velocity.x;
+		self.direction[1] = self.velocity.y;
+	}
+	self.constructor(x, y);
+	self.oldupdate = self.update;
+	self.update = function(game){
+		self.oldupdate()
+		if(game.outOfBounds(self.x, self.y)){
+			if(self.x > game.canvas.width){self.x = 0}
+			else if(self.x < 0){self.x = game.canvas.width}
+			if(self.y > game.canvas.height){self.y = 0}
+			else if(self.y < 0){self.y = game.canvas.height}
+		}
+		if(self.shootTime < 0){
+			var angle = Math.random() * 360;
+			obj_bullet.push(new Bullet(angle, 5, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
+			self.shootTime = shootTimeLimit;
+		}
+		self.shootTime--;
+	}
 }
 
 function Astroid(x, y, angle, speed, size, sprite){
@@ -282,8 +358,9 @@ function Astroid(x, y, angle, speed, size, sprite){
 		self.size = size;
 		self.astroidSpeed = speed;
 		GameObject.call(self,"astroid",sprite,x,y);
-		self.direction[0] = speed*Math.cos(angle * (Math.PI/180));
-		self.direction[1] = speed*Math.sin(angle * (Math.PI/180));
+		self.velocity = calculateVelocity(speed, angle);
+		self.direction[0] = self.velocity.x;
+		self.direction[1] = self.velocity.y;
     self.setCircleHitbox();
 	}
 	self.constructor(x,y, angle, speed, size, sprite);
@@ -301,55 +378,50 @@ function Astroid(x, y, angle, speed, size, sprite){
 	}
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
-		if(other instanceof Bullet || ((other instanceof Rocket) && (other.immunitySteps <= 0))){
-			//small astroid
-			if(self.size == 1){
-        if (other instanceof Bullet) {
-          score.addScore(100);
-        }
-				obj_astroids.remove(self);
-			}
-			else{
-				//default assume big astroid
-				var tempSprite = mediumAstroid;
-				var tempSize = 2;
-				//medium astroid
-				if(self.size == 2){
-					tempSprite = smallAstroid;
-					tempSize = 1;
-          if (other instanceof Bullet) {
-            score.addScore(50);
-          }
+		if(other instanceof Bullet){
+			if(other.owner == "rocket"){
+				if(self.size == 1){
+					score.addScore(100);
 				}
-				else if (other instanceof Bullet) {
-					//destroyed big astroid
+				else if(self.size == 2){
+					score.addScore(50);
+				}
+				else{
 					score.addScore(40);
 				}
-				//create two astroids in two different directions
-				obj_astroids.push(new Astroid(self.x,self.y,angle+90, self.astroidSpeed*2, tempSize, tempSprite));
-				obj_astroids.push(new Astroid(self.x,self.y,angle-90, self.astroidSpeed*2, tempSize, tempSprite));
-				//remove astroid that got hit
-				obj_astroids.remove(self);
+				//splits the asteroids based on size
+				self.splitAsteroids(self.size);
 			}
-      
-      if(other instanceof Rocket){
-        lives.loseLife();
-        if(lives.amountLivesLeft() == 0){
-          game.lose()
-        }
-        else 
-        {
-          obj_rocket.removeAll();
-          //rocket = obj_rocket.push(new Rocket());
-          //rocket.immunitySteps = 10;
-          //rocket.x = rocket_start_x;
-          //rocket.y = rocket_start_y;
-        }
-      }
-      
 			//remove bullet that hit
 			obj_bullet.remove(self);
 		}
+		if(other instanceof Rocket  && (other.immunitySteps >= 0)){
+			lives.loseLife();
+			//splits the asteroids based on size
+			self.splitAsteroids(self.size);
+			if(lives.amountLivesLeft() == 0){
+				game.lose()
+			}
+			else{
+				obj_rocket.removeAll();
+			}
+			//remove bullet that hit
+			obj_bullet.remove(self);
+		}
+	}
+	
+	self.splitAsteroids = function(size){
+		var tempSize = 2;
+		var tempSprite = mediumAstroid;
+		if(size != 1){
+			if(size == 2){
+				tempSize = 1;
+				tempSprite = smallAstroid;
+			}
+			obj_astroids.push(new Astroid(self.x,self.y,angle+90, self.astroidSpeed*2, tempSize, tempSprite));
+			obj_astroids.push(new Astroid(self.x,self.y,angle-90, self.astroidSpeed*2, tempSize, tempSprite));
+		}
+		obj_astroids.remove(self);
 	}
 }
 
