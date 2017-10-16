@@ -7,15 +7,17 @@ function Drawable(name) {
   self.draw = function(context, x, y) { }  
 }
 
-function Sprite(name, width, height, src, defAngle=0) {
+function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   var self = this;
-  self.constructor = function(name, width, height, src, defAngle=0) {
+  self.constructor = function(name, width, height, src, isSpriteSheet=false, defAngle=0) {
     Drawable.call(self, name);
     self.image = new Image();
     self.image.width = width;
     self.image.height = height;
     self.image.src = src;
     self.image.angle = defAngle;
+	self.isSpriteSheet = isSpriteSheet;
+	self.currentSprite = 0;
   }
   self.constructor(name, width, height, src, defAngle);
   
@@ -31,11 +33,22 @@ function Sprite(name, width, height, src, defAngle=0) {
       context.save()
       context.translate(x + (self.image.width / 2), y + (self.image.height / 2));
       context.rotate((angle + self.image.angle) * RADIANS);
-      context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height);
+	  if(isSpriteSheet){
+		context.drawImage(self.image, 0 + (self.image.width * self.currentSprite), 0, self.image.width, self.image.height, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height);
+	  }
+	  else{
+		context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height); 
+	  }
       context.restore();
     }
     else{
-      context.drawImage(self.image, x, y, self.image.width, self.image.height);
+		if(isSpriteSheet){
+			context.drawImage(self.image,0 + (self.image.width * self.currentSprite),0,self.image.width, self.image.height,x, y, self.image.width, self.image.height);
+		}
+		else{
+			context.drawImage(self.image, x, y, self.image.width, self.image.height);
+
+		}
     }
   }
 }
