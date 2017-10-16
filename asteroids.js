@@ -5,25 +5,27 @@ var smallAstroidSize = 30;
 var rocketSize = 45;
 var bulletSize = 5;
 var alienSize = 40;
-var rocket_start_x = 250;
-var rocket_start_y = 200;
+var rocket_start_x = canvas.width/2;
+var rocket_start_y = canvas.height/2;
 
 
 var bigAstroid = game.sprites.push(new Sprite("astroid", bigAstroidSize, bigAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var mediumAstroid = game.sprites.push(new Sprite("astroid", mediumAstroidSize, mediumAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var smallAstroid = game.sprites.push(new Sprite("astroid", smallAstroidSize, smallAstroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
 var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", true));
+var spr_liferocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png",true));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
 var spr_alien = game.sprites.push(new Sprite("smallAlien", alienSize, alienSize, "http://www4.ncsu.edu/~alrichma/images/alien.png"));
 
-var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
+
 var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
+var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
 var rocket;
 
 game.objects.push(new GameManager());
-var lives = new Lives(3, spr_rocket);
+var lives = new Lives(3, spr_liferocket);
 var rocket;
 var score = new Score(3);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
@@ -187,10 +189,10 @@ function Rocket(){
 			self.immunitySteps--;
 		}
 		if(self.moving){
-			self.sprite.currentSprite = 1;
+			self.changeSpriteSheetNumber(1);
 		}
 		else{
-			self.sprite.currentSprite = 0;
+			self.changeSpriteSheetNumber(0);
 		}
 		self.moving = false;
 		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);

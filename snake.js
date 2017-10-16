@@ -84,6 +84,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
+	self.calculateAngleFromDirection(self.direction[0], self.direction[1])
   }
   self.canCollideWith = function(other) { 
     return true;

@@ -68,7 +68,6 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       }
     }
     if (self.direction[0] != 0 || self.direction[1] != 0) {
-      //self.calculateAngleFromDirection(self.direction[0], self.direction[1])
       self.x += self.direction[0];
       self.y += self.direction[1];
     }
@@ -137,6 +136,10 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       }
     }
     return false;
+  }
+  
+  self.changeSpriteSheetNumber = function(number) {
+	  self.sprite.currentSprite = number;
   }
   
   self.canCollideWith = function(other) {
