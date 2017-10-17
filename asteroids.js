@@ -164,7 +164,7 @@ function Rocket(){
 	}
 	self.shootBullet = function(){
 		if(self.bulletLimit <= 0){
-			obj_bullet.push(new Bullet(self.angle, 25, 13, self.x + (rocketSize/2), self.y + (rocketSize/2), "rocket"))
+			obj_bullet.push(new Bullet(self.angle, 25, 16, self.x + (rocketSize/2), self.y + (rocketSize/2), "rocket"))
 			self.bulletCount++;
 			self.bulletLimit = 2;
 		}
@@ -347,7 +347,7 @@ function Alien(x, y){
 		}
 		if(self.shootTime < 0){
 			var angle = Math.random() * 360;
-			obj_bullet.push(new Bullet(angle, 5, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
+			obj_bullet.push(new Bullet(angle, 10, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
 			self.shootTime = shootTimeLimit;
 		}
 		self.shootTime--;

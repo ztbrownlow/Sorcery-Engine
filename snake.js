@@ -73,6 +73,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push([-snakeSize, 0])});
     Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push([0, snakeSize])});
     Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push([snakeSize, 0])});
+    Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push([0, -snakeSize])});
+    Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push([-snakeSize, 0])});
+    Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push([0, snakeSize])});
+    Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push([snakeSize, 0])});
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   
