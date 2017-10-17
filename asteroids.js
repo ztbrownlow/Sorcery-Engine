@@ -115,7 +115,7 @@ function spawnAsteroid(rocketx, rockety, speed) {
 	var x = rocket.x;
 	var y = rocket.y;
 	//choose a number that will not be around the rocket
-	while(x > (rocket.x - 100) && x < (rocket.x + 100)){
+	while(x > (rocket.x - 200) && x < (rocket.x + 200)){
 		x = Math.random() * (game.canvas.width)
 	}
 	while(y > (rocket.y - 100) && y < (rocket.y - 100)){
@@ -134,6 +134,7 @@ function Rocket(){
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
+    self.setCircleHitbox();
 		self.velocity = new Vector(0,0);
 		self.bulletLimit = 0;
 		self.angle = 0;
@@ -238,6 +239,7 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 		self.bulletSpeed = speed;
 		self.bulletLife = life;
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
+    self.setCircleHitbox();
 		self.velocity = calculateVelocity(self.bulletSpeed, angle);
 		self.direction[0] = self.velocity.x;
 		self.direction[1] = self.velocity.y;
@@ -334,6 +336,7 @@ function Alien(x, y){
 		self.velocity = calculateVelocity(alienSpeed, self.angle);
 		self.direction[0] = self.velocity.x;
 		self.direction[1] = self.velocity.y;
+    self.setCircleHitbox();
 	}
 	self.constructor(x, y);
 	self.oldupdate = self.update;
@@ -421,8 +424,8 @@ function Astroid(x, y, angle, speed, size, sprite){
 				tempSize = 1;
 				tempSprite = smallAstroid;
 			}
-			obj_astroids.push(new Astroid(self.x,self.y,angle+90, self.astroidSpeed*2, tempSize, tempSprite));
-			obj_astroids.push(new Astroid(self.x,self.y,angle-90, self.astroidSpeed*2, tempSize, tempSprite));
+			obj_astroids.push(new Astroid(self.x,self.y,angle+30, self.astroidSpeed*2, tempSize, tempSprite));
+			obj_astroids.push(new Astroid(self.x,self.y,angle-30, self.astroidSpeed*2, tempSize, tempSprite));
 		}
 		obj_astroids.remove(self);
 	}

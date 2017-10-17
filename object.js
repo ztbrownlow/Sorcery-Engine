@@ -110,12 +110,14 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       var minY = self.y - self.yOffset + self.hitbox.yRange[0] * self.height;
       var maxY = self.y - self.yOffset + self.hitbox.yRange[1] * self.height;
       if (other.hitbox.type == 'square') {
+        //TODO account for angle
         var otherMinX = other.x - other.xOffset + other.hitbox.xRange[0] * other.width;
         var otherMaxX = other.x - other.xOffset + other.hitbox.xRange[1] * other.width;
         var otherMinY = other.y - other.yOffset + other.hitbox.yRange[0] * other.height;
         var otherMaxY = other.y - other.yOffset + other.hitbox.yRange[1] * other.height;
         return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
       } else if (other.hitbox.type == 'circle') {
+        //TODO account for angle
         var centerX = self.x - self.xOffset + self.hitbox.center[0] * self.width;
         var centerY = self.y - self.yOffset + self.hitbox.center[1] * self.height;
         var diffCentX = Math.abs(other.hitbox.center.x + other.x - other.xOffset - centerX);
@@ -132,7 +134,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       if (other.hitbox.type == 'square') {
         return other.checkForObjectCollide(self);
       } else if (other.hitbox.type == 'circle') {
-        return other.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset)).subtract(self.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
+        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
       }
     }
     return false;
