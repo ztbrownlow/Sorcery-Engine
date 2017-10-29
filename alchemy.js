@@ -66,9 +66,7 @@ game.mouseUp = function(e) {
 var oldMove = game.mouseMove;
 game.mouseMove = function(e) {
   oldMove(e)
-  console.log("MOVE");
   if (selected) {
-    console.log(selected);
     obj_onScreen.unshift(new DraggableElement(selected.sprite, selected.name, selected.unlocked, selected.x, selected.y));
     selected = null;
   }
@@ -105,10 +103,8 @@ function DraggableElement(spr, name, unlocked, x, y) {
   }
   
   self.collideWith = function(other) {
-    //console.log([self, other]);
     var combined = self.canCollideWith(other); //find new element
     if (combined) { //if new element exists (valid formula)
-      ////console.log(o_self.element.name + "+" + other.element.name + "=" + combined.name); //log formula in console
       self.name = combined.name; //set self Draggable's element to the new element
       self.sprite = combined.sprite;
       if (!combined.unlocked) { //if we haven't unlocked the new element yet, unlock it
@@ -122,7 +118,7 @@ function DraggableElement(spr, name, unlocked, x, y) {
 }
 
 //text
-game.preDraw = function() {
+game.customPreDraw = function() {
   game.context.fillStyle = "black";
   game.context.font = "bold 12px Arial";
   game.context.fillText("Place items here", 0, 10);

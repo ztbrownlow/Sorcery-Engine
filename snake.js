@@ -12,12 +12,6 @@ var obj_snake_tree = game.objects.push(new SceneGraph("snake", true, true, false
 var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false));
 var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false));
 
-game.postDraw = function(){
-  game.context.fillStyle = "black";
-  game.context.font = "bold 12px Consolas";
-  game.context.fillText("Score: " + score.score, 0, 10);
-}
-
 game.lose = function() {
   console.log("Game lost");
   if(score.isHighScore(score.score)){
@@ -30,7 +24,6 @@ game.lose = function() {
 
 var head;
 var score;
-
 score = new Score(3);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
 var localHighScore = score.getHighScores();
@@ -58,37 +51,48 @@ game.setup = function() {
   //other stuff probably
 }
 
+
 function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   var self = this;
+  self.direcQueue = new Array();
   self.constructor = function(sprite, snakeSize, tree, body_sprite, tail_sprite) {
     GameObject.call(self, "snake_head", sprite, snakeSize, snakeSize)
     self.snakeSize = snakeSize;
-    self.lastX = 0;
-    self.lastY = snakeSize;
     self.tree = tree;
-    self.direction = [snakeSize,0];
+    self.direction = new Vector(snakeSize,0);
+	self.lastX = 0;
+	self.lastY = 0;
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
-    Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push([0, -snakeSize])});
-    Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push([-snakeSize, 0])});
-    Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push([0, snakeSize])});
-    Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push([snakeSize, 0])});
-    Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push([0, -snakeSize])});
-    Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push([-snakeSize, 0])});
-    Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push([0, snakeSize])});
-    Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push([snakeSize, 0])});
+    Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
+    Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
+    Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
+    Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});
+    Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
+    Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
+    Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
+    Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   
   self.oldupdate = self.update;
   self.update = function(game) {
 	self.oldupdate(game);
+	while (self.direcQueue.length) {
+      var temp = self.direcQueue.shift();
+      if (temp.x != self.direction.x * -1 || temp.y != self.direction.y * -1) {
+        self.direction = temp;
+        break;
+      }
+    }
+	self.lastX = self.x;
+	self.lastY = self.y;
     if (game.outOfBounds(self.x, self.y)) {
       game.lose();
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-	self.calculateAngleFromDirection(self.direction[0], self.direction[1])
+	self.calculateAngleFromDirection(self.direction.x, self.direction.y)
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -113,7 +117,11 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
         if (last != self) {
           last.sprite = self.body_sprite;
         }
+		console.log(last.x)
+		console.log(last.y)
         self.tree.push(new Body(self.tail_sprite, last));
+		console.log(last.x)
+		console.log(last.y)
         other.reset(); //place food again
       }
     } else {
@@ -124,6 +132,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
 
 function Body(sprite, follow) {
   var self = this;
+  self.direcQueue = new Array();
   self.constructor = function(sprite, follow) {
     GameObject.call(self, "body", sprite, follow.x, follow.y); //I would expect this to use lastX/lastY but it doesn't so yeah
     self.follow = follow;
@@ -133,13 +142,11 @@ function Body(sprite, follow) {
   self.constructor(sprite, follow);
   self.oldupdate = self.update;
   self.update = function(game) {
-    self.direcQueue.push([self.follow.lastX - self.x,self.follow.lastY - self.y]);
-    self.oldupdate();
-  }
-  self.olddraw = self.draw;
-  self.draw = function(context) {
-    self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)
-    self.olddraw(context);
+	self.oldupdate();
+    self.direction = new Vector(self.follow.lastX - self.x,self.follow.lastY - self.y);
+	self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)
+	self.lastX = self.x;
+    self.lastY = self.y;
   }
 }
 

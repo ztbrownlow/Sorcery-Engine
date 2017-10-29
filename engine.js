@@ -3,7 +3,7 @@ document.write('<script type="text/javascript" src="Sprites.js"></script>');
 document.write('<script type="text/javascript" src="object.js"></script>');
 document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
-document.write('<script type="text/javascript" src="score.js"></script>');
+document.write('<script type="text/javascript" src="gameManager.js"></script>');
 
 function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
@@ -18,7 +18,14 @@ function Game(canvas) {
     self.context = canvas.getContext('2d');
     self.timer = null;
     self.sprites = new SceneGraph("sprites");
-    self.objects = new SceneGraph("objects"); 
+    self.objects = new SceneGraph("objects");
+	self.displayScore = false;
+	self.scoreColor = "black";
+	self.scoreFont = "bold 12px Palatino Linotype"
+	self.scoreX = 0;
+	self.scoreY = 10;
+	self.gameManager = new GameManager();
+	self.objects.push(self.gameManager);
     canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
     canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
     canvas.addEventListener("mouseup", function(e) {self.mouseUp(e)});
@@ -86,11 +93,20 @@ function Game(canvas) {
     self.objects.draw(self.context);
   }
   
+  self.customPreDraw = function(){}
   self.preDraw = function() {
+	self.customPreDraw();
     
   }
+  
+  self.customPostDraw = function(){}
   self.postDraw = function() {
-    
+	self.customPostDraw();
+	if(game.displayScore){
+		game.context.fillStyle = game.scoreColor;
+		game.context.font = game.scoreFont;
+		game.context.fillText("Score: " + score.score, game.scoreX, game.scoreY);
+	}
   }
   self.loop = function() {
     self.canvas.width = self.canvas.width;

@@ -15,8 +15,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isClickable = true;
     self.isCollidable = true;
     self.setSquareHitbox([0, 1], [0, 1]);
-    self.direction = [0, 0];
-    self.direcQueue = new Array();
+    self.direction = new Vector(0,0);
+	self.velocity = new Vector(0,0);
     self.angle = 0;
   }
   Object.defineProperties(self, {
@@ -56,20 +56,13 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.mouseUp = function(game, event) {
     self.isClicked = false;
   }
+  self.customUpdate = function(game){ }
   
-  self.update = function(game) { 
-    self.lastX = self.x;
-    self.lastY = self.y;
-    while (self.direcQueue.length) {
-      var temp = self.direcQueue.shift();
-      if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
-        self.direction = temp;
-        break;
-      }
-    }
-    if (self.direction[0] != 0 || self.direction[1] != 0) {
-      self.x += self.direction[0];
-      self.y += self.direction[1];
+  self.update = function(game) {
+	self.customUpdate(game);
+    if (self.direction.x != 0 || self.direction.y != 0) {
+      self.x += self.direction.x;
+      self.y += self.direction.y;
     }
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX;
@@ -143,6 +136,31 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.changeSpriteSheetNumber = function(number) {
 	  self.sprite.currentSprite = number;
   }
+  
+  //calculates velocity based on the angle
+  self.calculateVelocity = function(speed, angle){
+	return tempVel = new Vector(speed*Math.sin(angle * (Math.PI/180)), -speed*Math.cos(angle * (Math.PI/180)))
+   }
+   
+   //slows velocity by some amount
+   self.slowVelocity = function(velocity, decelerationAmt){
+	var currentVelVector = velocity;
+	var velMagnitudeCurrent = currentVelVector.magnitude();
+	if(velMagnitudeCurrent != 0){
+		var velMagnitudeNext = velMagnitudeCurrent - decelerationAmt;
+		if(velMagnitudeNext < 0 )
+			velMagnitudeNext = 0;
+		var velUnitVector = currentVelVector.normalize();
+		var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
+		return nextVelVector;
+	}
+	return velocity;
+}
+   
+   //adds angle param to the current angle
+   self.changeAngle = function(angle){
+		self.angle += angle;
+	}
   
   self.canCollideWith = function(other) {
     return false;

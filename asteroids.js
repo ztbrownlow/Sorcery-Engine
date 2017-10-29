@@ -24,12 +24,15 @@ var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
 var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
 var rocket;
 
-game.objects.push(new GameManager());
 var lives = new Lives(3, spr_liferocket);
 var rocket;
 var score = new Score(3);
+score.setColor("white")
+score.setY(50);
+
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
 var localHighScore = score.getHighScores("asteroids");
+
 if(!localHighScore){
   score.addHighScore("ztbrownl",30);
   score.addHighScore("alrichma",20);
@@ -39,13 +42,40 @@ else
 {
   score.highScores = localHighScore;
 }
+var countdownUntilRespawn = null;
+var alienRate = 300;
+var alienTimer = Math.random() *alienRate;
 
-game.postDraw = function(){
-  game.context.fillStyle = "white";
-  game.context.font = "bold 12px Palatino Linotype";
-  game.context.fillText("Score: " + score.score, 0, 50);
+game.gameManager.customUpdate = function(game){
+	if (obj_astroids.isEmpty()) {
+      self.level++;
+	  var amtSpawn = 4 + Math.floor(self.level/2)
+	  var speed = 2 * self.level;
+      for(i = 0; i < amtSpawn; i++){ spawnAsteroid(rocket.x, rocket.y, speed); }
+    }
+    if (obj_rocket.isEmpty()) {
+      if (countdownUntilRespawn == null) {
+        countdownUntilRespawn = 20;
+      }
+      if (countdownUntilRespawn-- == 0) {
+        countdownUntilRespawn = null;
+        rocket = obj_rocket.push(new Rocket());
+        rocket.immunitySteps = 20;
+      }
+    }
+	 if(alienTimer < 0){
+		var randomx = 1;
+		var rando = Math.random()
+		if(rando > 0.5){
+			randomx = game.canvas.width - alienSize;
+		}
+		obj_alien.push(new Alien(randomx, Math.random() * game.canvas.height))
+		alienTimer = Math.random() * alienRate;
+	}
+	if(obj_alien.length == 0){
+		alienTimer--;
+	}
 }
-
 game.lose = function() {
 	if(score.isHighScore(score.score)){
 		tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
@@ -72,44 +102,7 @@ game.setup = function(){
     Key.reset();
 }
 
-function Lives(numberOfLives, sprite){
-	var self = this;
-	self.constructor = function(numberOfLives, sprite){
-		GameObject.call(self,"lives",null,0,0);
-		var startX = 0;
-		self.livesArray = new Array();
-		for(var i = 0; i < numberOfLives; i++){
-			life = game.objects.push(new Life(sprite, startX, 0));
-			self.livesArray.push(life);
-			startX += sprite.width;
-		}
-    self.isCollidable = false;
-	}
-	self.constructor(numberOfLives, sprite);
-	self.loseLife = function(){
-		var poppedLife = self.livesArray.pop();
-		game.objects.remove(poppedLife);
-	}
-	self.amountLivesLeft = function(){
-		return self.livesArray.length;
-	}
-	self.restart = function(){
-		var startX = 0;
-		for(var i = 0; i < numberOfLives; i++){
-			life = game.objects.push(new Life(sprite, startX, 0));
-			self.livesArray.push(life);
-			startX += sprite.width;
-		}
-	}
-}
 
-function Life(sprite, x, y){
-	var self = this;
-	self.constructor = function(sprite, x, y){
-		GameObject.call(self,"life",sprite, x, y);
-	}
-	self.constructor(sprite, x, y);
-}
 
 function spawnAsteroid(rocketx, rockety, speed) {
 	var x = rocket.x;
@@ -134,24 +127,23 @@ function Rocket(){
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
-    self.setCircleHitbox();
-		self.velocity = new Vector(0,0);
+		self.setCircleHitbox();
 		self.bulletLimit = 0;
-		self.angle = 0;
 		self.moving = false;
 		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
-		Key.bind(Key.A, Key.KEY_HELD, function(){changeAngle(-angleChange)});
-		Key.bind(Key.D, Key.KEY_HELD, function(){changeAngle(angleChange)});
+		Key.bind(Key.A, Key.KEY_HELD, function(){self.changeAngle(-angleChange)});
+		Key.bind(Key.D, Key.KEY_HELD, function(){self.changeAngle(angleChange)});
 		Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
-		Key.bind(Key.LEFT, Key.KEY_HELD, function(){changeAngle(-angleChange)});
-		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){changeAngle(angleChange)});
+		Key.bind(Key.LEFT, Key.KEY_HELD, function(){self.changeAngle(-angleChange)});
+		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){self.changeAngle(angleChange)});
 		Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
-    self.immunitySteps = 0;
+		self.immunitySteps = 0;
 	}
 	self.constructor();
+	
 	function move(){
 		var tempVel = self.velocity;
-		var speed = calculateVelocity(rocketSpeed,self.angle);
+		var speed = self.calculateVelocity(rocketSpeed,self.angle);
 		tempVel = tempVel.add(speed);
 		if(tempVel.x > 0 && tempVel.x > maxSpeed){ tempVel.x = maxSpeed;}
 		else if(tempVel.x < 0 && tempVel.x < -maxSpeed){ tempVel.x = -maxSpeed;}
@@ -160,9 +152,7 @@ function Rocket(){
 		self.velocity = tempVel;
 		self.moving = true;
 	}
-	function changeAngle(angle){
-		self.angle += angle;
-	}
+	
 	self.shootBullet = function(){
 		if(self.bulletLimit <= 0){
 			obj_bullet.push(new Bullet(self.angle, 25, 16, self.x + (rocketSize/2), self.y + (rocketSize/2), "rocket"))
@@ -170,11 +160,8 @@ function Rocket(){
 			self.bulletLimit = 2;
 		}
 	}
-	self.oldupdate = self.update;
-	self.update = function(game){
-		self.oldupdate(game);
-		self.direction[0] = self.velocity.x;
-		self.direction[1] = self.velocity.y;
+	self.customUpdate = function(game){
+		self.direction = self.velocity;
 		//if the rocket is out of bounds move it to the other side
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
@@ -183,7 +170,7 @@ function Rocket(){
 			if(self.y > game.canvas.height){self.y = 0}
 			else if(self.y < 0){self.y = game.canvas.height}
 		}
-		self.velocity = slowVelocity(self.velocity, 0.5);
+		self.velocity = self.slowVelocity(self.velocity, 0.5);
 		self.bulletLimit--;
     
 		if (self.immunitySteps > 0) {
@@ -198,6 +185,7 @@ function Rocket(){
 		self.moving = false;
 		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
 	}
+	
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
 		if(other instanceof Alien){
@@ -214,24 +202,6 @@ function Rocket(){
 	
 }
 
-function slowVelocity(velocity, decelerationAmt){
-	var currentVelVector = velocity;
-	var velMagnitudeCurrent = currentVelVector.magnitude();
-	if(velMagnitudeCurrent != 0){
-		var velMagnitudeNext = velMagnitudeCurrent - decelerationAmt;
-		if(velMagnitudeNext < 0 )
-			velMagnitudeNext = 0;
-		var velUnitVector = currentVelVector.normalize();
-		var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
-		return nextVelVector;
-	}
-	return velocity;
-}
-
-function calculateVelocity(speed, angle){
-	return tempVel = new Vector(speed*Math.sin(angle * (Math.PI/180)), -speed*Math.cos(angle * (Math.PI/180)))
-}
-
 function Bullet(angle, speed, life, positionX, positionY, owner){
 	var self = this;
 	self.constructor = function(){
@@ -239,15 +209,12 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 		self.bulletSpeed = speed;
 		self.bulletLife = life;
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
-    self.setCircleHitbox();
-		self.velocity = calculateVelocity(self.bulletSpeed, angle);
-		self.direction[0] = self.velocity.x;
-		self.direction[1] = self.velocity.y;
+		self.setCircleHitbox();
+		self.velocity = self.calculateVelocity(self.bulletSpeed, angle);
+		self.direction = self.velocity;
 	}
 	self.constructor();
-	self.oldupdate = self.update;
-	self.update = function(game){
-		self.oldupdate(game);
+	self.customUpdate = function(game){
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
 			else if(self.x < 0){self.x = game.canvas.width}
@@ -281,50 +248,6 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 	}
 }
 
-function GameManager() {
-  var self = this;
-  self.constructor = function() {
-    GameObject.call(self, "GameManager", null, 0, 0);
-    self.isCollidable=false;
-    self.countdownUntilRespawn = null;
-	self.alienRate = 300;
-	self.alienTimer = Math.random() * self.alienRate;
-	self.level = 0;
-  }
-  self.constructor();
-  
-  self.update = function(game) {
-    if (obj_astroids.isEmpty()) {
-      self.level++;
-	  var amtSpawn = 4 + Math.floor(self.level/2)
-	  var speed = 2 * self.level;
-      for(i = 0; i < amtSpawn; i++){ spawnAsteroid(rocket.x, rocket.y, speed); }
-    }
-    if (obj_rocket.isEmpty()) {
-      if (self.countdownUntilRespawn == null) {
-        self.countdownUntilRespawn = 20;
-      }
-      if (self.countdownUntilRespawn-- == 0) {
-        self.countdownUntilRespawn = null;
-        rocket = obj_rocket.push(new Rocket());
-        rocket.immunitySteps = 20;
-      }
-    }
-	 if(self.alienTimer < 0){
-		var randomx = 1;
-		var rando = Math.random()
-		if(rando > 0.5){
-			randomx = game.canvas.width - alienSize;
-		}
-		obj_alien.push(new Alien(randomx, Math.random() * game.canvas.height))
-		self.alienTimer = Math.random() * self.alienRate;
-	}
-	if(obj_alien.length == 0){
-		self.alienTimer--;
-	}
-  }
-}
-
 function Alien(x, y){
 	var self = this;
 	var shootTimeLimit = 50;
@@ -333,15 +256,12 @@ function Alien(x, y){
 		self.shootTime = shootTimeLimit;
 		GameObject.call(self,"alien",spr_alien,x,y);
 		self.angle = Math.random() * 360;
-		self.velocity = calculateVelocity(alienSpeed, self.angle);
-		self.direction[0] = self.velocity.x;
-		self.direction[1] = self.velocity.y;
+		self.velocity = self.calculateVelocity(alienSpeed, self.angle);
+		self.direction = self.velocity;
     self.setCircleHitbox();
 	}
 	self.constructor(x, y);
-	self.oldupdate = self.update;
-	self.update = function(game){
-		self.oldupdate()
+	self.customUpdate = function(game){
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
 			else if(self.x < 0){self.x = game.canvas.width}
@@ -364,15 +284,12 @@ function Astroid(x, y, angle, speed, size, sprite){
 		self.size = size;
 		self.astroidSpeed = speed;
 		GameObject.call(self,"astroid",sprite,x,y);
-		self.velocity = calculateVelocity(speed, angle);
-		self.direction[0] = self.velocity.x;
-		self.direction[1] = self.velocity.y;
+		self.velocity = self.calculateVelocity(speed, angle);
+		self.direction = self.velocity;
     self.setCircleHitbox();
 	}
 	self.constructor(x,y, angle, speed, size, sprite);
-	self.oldupdate = self.update;
-	self.update = function(game){
-		self.oldupdate(game);
+	self.customUpdate = function(game){
 		if(game.outOfBounds(self.x, self.y)){
 			if(self.x > game.canvas.width){self.x = 0}
 			else if(self.x < 0){self.x = game.canvas.width}
