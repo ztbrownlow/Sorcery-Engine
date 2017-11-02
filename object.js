@@ -14,10 +14,10 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isDraggable = false;
     self.isClickable = true;
     self.isCollidable = true;
-	self.isLooping = false;
+    self.isLooping = false;
     self.setSquareHitbox([0, 1], [0, 1]);
     self.direction = new Vector(0,0);
-	self.velocity = new Vector(0,0);
+    self.velocity = new Vector(0,0);
     self.angle = 0;
   }
   Object.defineProperties(self, {

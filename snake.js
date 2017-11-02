@@ -60,8 +60,8 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.snakeSize = snakeSize;
     self.tree = tree;
     self.direction = new Vector(snakeSize,0);
-    self.lastX = 0;
-    self.lastY = 0;
+    self.lastX = self.x - self.direction.x;
+    self.lastY = self.y - self.direction.y;
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
     Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
