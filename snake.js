@@ -1,4 +1,4 @@
-var game = new Game(document.getElementById("canvas"));
+var game = new Game(document.getElementById("canvas"), "snake");
 var snakeSize = 20;
 
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
@@ -24,7 +24,7 @@ game.lose = function() {
 
 var head;
 var score;
-score = new Score(3);
+score = new Score(3, game);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
 var localHighScore = score.getHighScores();
 if(!localHighScore){

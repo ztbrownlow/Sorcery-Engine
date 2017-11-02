@@ -9,23 +9,24 @@ function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
 }
 
-function Game(canvas) {
+function Game(canvas, name) {
   var self = this
-  self.constructor = function(canvas) {
+  self.constructor = function(canvas, name) {
     self.canvas = canvas;
     self.mouseX = 0;
     self.mouseY = 0;
+    self.name = name;
     self.context = canvas.getContext('2d');
     self.timer = null;
     self.sprites = new SceneGraph("sprites");
     self.objects = new SceneGraph("objects");
-	self.displayScore = false;
-	self.scoreColor = "black";
-	self.scoreFont = "bold 12px Palatino Linotype"
-	self.scoreX = 0;
-	self.scoreY = 10;
-	self.gameManager = new GameManager();
-	self.objects.push(self.gameManager);
+    self.displayScore = false;
+    self.scoreColor = "black";
+    self.scoreFont = "bold 12px Palatino Linotype"
+    self.scoreX = 0;
+    self.scoreY = 10;
+    self.gameManager = new GameManager();
+    self.objects.push(self.gameManager);
     canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
     canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
     canvas.addEventListener("mouseup", function(e) {self.mouseUp(e)});
@@ -95,18 +96,21 @@ function Game(canvas) {
   
   self.customPreDraw = function(){}
   self.preDraw = function() {
-	self.customPreDraw();
-    
+    if (self.customPreDraw) {
+      self.customPreDraw();
+    }
   }
   
   self.customPostDraw = function(){}
   self.postDraw = function() {
-	self.customPostDraw();
-	if(game.displayScore){
-		game.context.fillStyle = game.scoreColor;
-		game.context.font = game.scoreFont;
-		game.context.fillText("Score: " + score.score, game.scoreX, game.scoreY);
-	}
+    if (self.customPostDraw) {
+      self.customPostDraw();
+    }
+    if(game.displayScore){
+      game.context.fillStyle = game.scoreColor;
+      game.context.font = game.scoreFont;
+      game.context.fillText("Score: " + self.score.score, game.scoreX, game.scoreY);
+    }
   }
   self.loop = function() {
     self.canvas.width = self.canvas.width;
@@ -121,5 +125,5 @@ function Game(canvas) {
   self.stop = function() {
     clearInterval(self.timer);
   }
-  self.constructor(canvas);
+  self.constructor(canvas, name);
 }

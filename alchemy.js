@@ -1,4 +1,4 @@
-var game = new Game(document.getElementById("canvas"));
+var game = new Game(document.getElementById("canvas"), "alchemy");
 //graphical options
 var imageSize = 64;
 var numRows = 3;

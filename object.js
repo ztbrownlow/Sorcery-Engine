@@ -59,7 +59,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.customUpdate = function(game){ }
   
   self.update = function(game) {
-	self.customUpdate(game);
+    self.customUpdate(game);
     if (self.direction.x != 0 || self.direction.y != 0) {
       self.x += self.direction.x;
       self.y += self.direction.y;
