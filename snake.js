@@ -60,8 +60,8 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
     self.snakeSize = snakeSize;
     self.tree = tree;
     self.direction = new Vector(snakeSize,0);
-	self.lastX = 0;
-	self.lastY = 0;
+    self.lastX = 0;
+    self.lastY = 0;
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
     Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
@@ -75,24 +75,22 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
   }
   self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite);
   
-  self.oldupdate = self.update;
-  self.update = function(game) {
-	self.oldupdate(game);
-	while (self.direcQueue.length) {
+  self.customUpdate = function(game) {
+    while (self.direcQueue.length) {
       var temp = self.direcQueue.shift();
       if (temp.x != self.direction.x * -1 || temp.y != self.direction.y * -1) {
         self.direction = temp;
         break;
       }
     }
-	self.lastX = self.x;
-	self.lastY = self.y;
+    self.lastX = self.x;
+    self.lastY = self.y;
     if (game.outOfBounds(self.x, self.y)) {
       game.lose();
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
-	self.calculateAngleFromDirection(self.direction.x, self.direction.y)
+    self.calculateAngleFromDirection(self.direction.x, self.direction.y)
   }
   self.canCollideWith = function(other) { 
     return true;
@@ -117,11 +115,11 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree) {
         if (last != self) {
           last.sprite = self.body_sprite;
         }
-		console.log(last.x)
-		console.log(last.y)
+        console.log(last.x)
+        console.log(last.y)
         self.tree.push(new Body(self.tail_sprite, last));
-		console.log(last.x)
-		console.log(last.y)
+        console.log(last.x)
+        console.log(last.y)
         other.reset(); //place food again
       }
     } else {
@@ -140,13 +138,13 @@ function Body(sprite, follow) {
     self.lastY = self.y;
   }
   self.constructor(sprite, follow);
-  self.oldupdate = self.update;
-  self.update = function(game) {
-	self.oldupdate();
+  self.customUpdate = function(game) {
     self.direction = new Vector(self.follow.lastX - self.x,self.follow.lastY - self.y);
-	self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)
-	self.lastX = self.x;
+    self.lastX = self.x;
     self.lastY = self.y;
+  }
+  self.customPreDraw = function(game) {
+    self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)
   }
 }
 

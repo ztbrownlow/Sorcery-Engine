@@ -58,6 +58,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isClicked = false;
   }
   self.customUpdate = function(game){ }
+  self.customPreDraw = null;
   
   self.update = function(game) {
     self.customUpdate(game);
@@ -83,6 +84,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   }
   
   self.draw = function(context) {
+    if (self.customPreDraw)
+      self.customPreDraw(context);
     if (self.sprite) {
       self.sprite.draw(context, self.x - self.xOffset, self.y - self.yOffset, self.angle);
       return true;
