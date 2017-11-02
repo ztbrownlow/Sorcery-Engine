@@ -22,10 +22,10 @@ var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
 var obj_astroids = game.objects.push(new SceneGraph("astroids",true,true,false));
-var rocket;
 
 var lives = new Lives(3, spr_liferocket);
 var rocket;
+
 var score = new Score(3);
 score.setColor("white")
 score.setY(50);
@@ -48,9 +48,9 @@ var alienTimer = Math.random() *alienRate;
 
 game.gameManager.customUpdate = function(game){
 	if (obj_astroids.isEmpty()) {
-      self.level++;
-	  var amtSpawn = 4 + Math.floor(self.level/2)
-	  var speed = 2 * self.level;
+      gameManager.level++;
+	  var amtSpawn = 4 + Math.floor(gameManager.level/2)
+	  var speed = 2 * gameManager.level;
       for(i = 0; i < amtSpawn; i++){ spawnAsteroid(rocket.x, rocket.y, speed); }
     }
     if (obj_rocket.isEmpty()) {
@@ -102,8 +102,6 @@ game.setup = function(){
     Key.reset();
 }
 
-
-
 function spawnAsteroid(rocketx, rockety, speed) {
 	var x = rocket.x;
 	var y = rocket.y;
@@ -127,6 +125,7 @@ function Rocket(){
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
+		self.isLooping = true;
 		self.setCircleHitbox();
 		self.bulletLimit = 0;
 		self.moving = false;
@@ -162,14 +161,6 @@ function Rocket(){
 	}
 	self.customUpdate = function(game){
 		self.direction = self.velocity;
-		//if the rocket is out of bounds move it to the other side
-		if(game.outOfBounds(self.x, self.y)){
-			if(self.x > game.canvas.width){self.x = 0}
-			else if(self.x < 0){self.x = game.canvas.width}
-			
-			if(self.y > game.canvas.height){self.y = 0}
-			else if(self.y < 0){self.y = game.canvas.height}
-		}
 		self.velocity = self.slowVelocity(self.velocity, 0.5);
 		self.bulletLimit--;
     
@@ -210,18 +201,12 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 		self.bulletLife = life;
 		GameObject.call(self,"bullet",bullet,positionX,positionY);
 		self.setCircleHitbox();
+		self.isLooping = true;
 		self.velocity = self.calculateVelocity(self.bulletSpeed, angle);
 		self.direction = self.velocity;
 	}
 	self.constructor();
 	self.customUpdate = function(game){
-		if(game.outOfBounds(self.x, self.y)){
-			if(self.x > game.canvas.width){self.x = 0}
-			else if(self.x < 0){self.x = game.canvas.width}
-			
-			if(self.y > game.canvas.height){self.y = 0}
-			else if(self.y < 0){self.y = game.canvas.height}
-		}
 		self.bulletLife--;
 		if(self.bulletLife < 0){
 			obj_bullet.remove(self);  
@@ -255,19 +240,14 @@ function Alien(x, y){
 	self.constructor = function(x, y){
 		self.shootTime = shootTimeLimit;
 		GameObject.call(self,"alien",spr_alien,x,y);
+		self.isLooping = true;
 		self.angle = Math.random() * 360;
 		self.velocity = self.calculateVelocity(alienSpeed, self.angle);
 		self.direction = self.velocity;
-    self.setCircleHitbox();
+		self.setCircleHitbox();
 	}
 	self.constructor(x, y);
 	self.customUpdate = function(game){
-		if(game.outOfBounds(self.x, self.y)){
-			if(self.x > game.canvas.width){self.x = 0}
-			else if(self.x < 0){self.x = game.canvas.width}
-			if(self.y > game.canvas.height){self.y = 0}
-			else if(self.y < 0){self.y = game.canvas.height}
-		}
 		if(self.shootTime < 0){
 			var angle = Math.random() * 360;
 			obj_bullet.push(new Bullet(angle, 10, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
@@ -286,17 +266,11 @@ function Astroid(x, y, angle, speed, size, sprite){
 		GameObject.call(self,"astroid",sprite,x,y);
 		self.velocity = self.calculateVelocity(speed, angle);
 		self.direction = self.velocity;
-    self.setCircleHitbox();
+		self.isLooping = true;
+		self.setCircleHitbox();
 	}
 	self.constructor(x,y, angle, speed, size, sprite);
 	self.customUpdate = function(game){
-		if(game.outOfBounds(self.x, self.y)){
-			if(self.x > game.canvas.width){self.x = 0}
-			else if(self.x < 0){self.x = game.canvas.width}
-			
-			if(self.y > game.canvas.height){self.y = 0}
-			else if(self.y < 0){self.y = game.canvas.height}
-		}
 		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
 	}
 	self.canCollideWith = function(other) { return true; }
