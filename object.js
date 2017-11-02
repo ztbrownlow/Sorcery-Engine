@@ -14,6 +14,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isDraggable = false;
     self.isClickable = true;
     self.isCollidable = true;
+	self.isLooping = false;
     self.setSquareHitbox([0, 1], [0, 1]);
     self.direction = new Vector(0,0);
 	self.velocity = new Vector(0,0);
@@ -60,6 +61,13 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   self.update = function(game) {
     self.customUpdate(game);
+    if(self.isLooping && game.outOfBounds(self.x, self.y)){
+      if(self.x > game.canvas.width){self.x = 0}
+      else if(self.x < 0){self.x = game.canvas.width}
+        
+      if(self.y > game.canvas.height){self.y = 0}
+      else if(self.y < 0){self.y = game.canvas.height}
+    }
     if (self.direction.x != 0 || self.direction.y != 0) {
       self.x += self.direction.x;
       self.y += self.direction.y;
