@@ -1,13 +1,14 @@
-window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
-window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
-
+window.addEventListener('keyup', function(event) { if (!event.repeat) { Key.onKeyup(event); } }, false);
+window.addEventListener('keydown', function(event) { if (!event.repeat) { Key.onKeydown(event); } }, false);
 
 var Key = {
   _pressed: {},
   
   keyDownFuncs: [],
   keyUpFuncs: [],
+  keyHeldFuncs: [],
 
+  SPACE: 32,
   LEFT: 37,
   UP: 38,
   RIGHT: 39,
@@ -21,8 +22,13 @@ var Key = {
     return this._pressed[keyCode];
   },
   
+  reset: function() {
+    this._pressed = {};
+  },
+  
   KEY_UP: 0,
   KEY_DOWN: 1,
+  KEY_HELD: 2,
   
   bind: function(key, keyDir, func) {
     if (keyDir == this.KEY_UP) {
@@ -36,6 +42,21 @@ var Key = {
         this.keyDownFuncs[key] = [func];
       } else {
         this.keyDownFuncs[key].push(func);
+      }
+    } else if (keyDir == this.KEY_HELD) {
+      var temp = this.keyHeldFuncs.filter(function(k) {return k.key == key});
+      if (temp.length == 0) {
+        this.keyHeldFuncs.push({key: key, funcs: [func]});
+      } else {
+        temp[0].funcs.push(func);
+      }
+    }
+  },
+  
+  update: function() {
+    for (var i = 0; i < this.keyHeldFuncs.length; ++i) {
+      if (this.isDown(this.keyHeldFuncs[i].key)) {
+        this.keyHeldFuncs[i].funcs.forEach(function(f) {f();})
       }
     }
   },

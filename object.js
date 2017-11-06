@@ -6,17 +6,19 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.pos = new Vector();
     self.x = x;
     self.y = y;
-	self.lastX = x;
+    self.lastX = x;
     self.lastY = y;
     self.xOffset = xOffset;
     self.yOffset = yOffset;
     self.isClicked = false;
     self.isDraggable = false;
     self.isClickable = true;
+    self.isCollidable = true;
+    self.isLooping = false;
     self.setSquareHitbox([0, 1], [0, 1]);
-	self.direction = [0, 0];
-	self.direcQueue = new Array();
-	self.angle = 0;
+    self.direction = new Vector(0,0);
+    self.velocity = new Vector(0,0);
+    self.angle = 0;
   }
   Object.defineProperties(self, {
     'x': { 
@@ -35,16 +37,16 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         self.pos.y = val;
       }},
     
-    'width': { get: function() {return sprite.width}},
-    'height': { get: function() {return sprite.height}},
-    'src': { get: function() {return sprite.src}}
+    'width': { get: function() {if(sprite == null){return null} else{return sprite.width}}},
+    'height': { get: function() {if(sprite == null){ return null} else{return sprite.height}}},
+    'src': { get: function() {if(sprite == null){ return null} else{return sprite.src}}}
   });  
   
-  self.setSquareHitbox = function(xRange, yRange) {
+  self.setSquareHitbox = function(xRange=[0,1], yRange=[0,1]) {
     self.hitbox = {type: 'square', xRange: xRange, yRange: yRange, center: [(xRange[1]+xRange[0])/2, (yRange[1]+yRange[0])/2], halfWidth: (xRange[1]-xRange[0])/2, halfHeight: (yRange[1]-yRange[0])/2};
   }
   
-  self.setCircleHitbox = function(center, radius) {
+  self.setCircleHitbox = function(center=new Vector(self.width/2, self.height/2), radius=Math.max(self.width, self.height)/2) {
     self.hitbox = {type: 'circle', radius: radius, center: center};
   }
   
@@ -55,20 +57,22 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.mouseUp = function(game, event) {
     self.isClicked = false;
   }
+  self.customUpdate = function(game){ }
+  self.customPreDraw = null;
   
-  self.update = function(game) { 
-    self.lastX = self.x;
-    self.lastY = self.y;
-    while (self.direcQueue.length) {
-      var temp = self.direcQueue.shift();
-      if (temp[0] != self.direction[0] * -1 || temp[1] != self.direction[1] * -1) {
-        self.direction = temp;
-        self.calculateAngleFromDirection(self.direction[0], self.direction[1])
-        break;
-      }
+  self.update = function(game) {
+    self.customUpdate(game);
+    if(self.isLooping && game.outOfBounds(self.x, self.y)){
+      if(self.x > game.canvas.width){self.x = 0}
+      else if(self.x < 0){self.x = game.canvas.width}
+        
+      if(self.y > game.canvas.height){self.y = 0}
+      else if(self.y < 0){self.y = game.canvas.height}
     }
-    self.x += self.direction[0];
-    self.y += self.direction[1];
+    if (self.direction.x != 0 || self.direction.y != 0) {
+      self.x += self.direction.x;
+      self.y += self.direction.y;
+    }
     if (self.isDraggable && self.isClicked) {
       self.x = game.mouseX;
       self.y = game.mouseY;
@@ -80,6 +84,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   }
   
   self.draw = function(context) {
+    if (self.customPreDraw)
+      self.customPreDraw(context);
     if (self.sprite) {
       self.sprite.draw(context, self.x - self.xOffset, self.y - self.yOffset, self.angle);
       return true;
@@ -108,16 +114,18 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       var minY = self.y - self.yOffset + self.hitbox.yRange[0] * self.height;
       var maxY = self.y - self.yOffset + self.hitbox.yRange[1] * self.height;
       if (other.hitbox.type == 'square') {
+        //TODO account for angle
         var otherMinX = other.x - other.xOffset + other.hitbox.xRange[0] * other.width;
         var otherMaxX = other.x - other.xOffset + other.hitbox.xRange[1] * other.width;
         var otherMinY = other.y - other.yOffset + other.hitbox.yRange[0] * other.height;
         var otherMaxY = other.y - other.yOffset + other.hitbox.yRange[1] * other.height;
         return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
       } else if (other.hitbox.type == 'circle') {
+        //TODO account for angle
         var centerX = self.x - self.xOffset + self.hitbox.center[0] * self.width;
         var centerY = self.y - self.yOffset + self.hitbox.center[1] * self.height;
-        var diffCentX = Math.abs(other.center.x - centerX);
-        var diffCentY = Math.abs(other.center.y - centerY);
+        var diffCentX = Math.abs(other.hitbox.center.x + other.x - other.xOffset - centerX);
+        var diffCentY = Math.abs(other.hitbox.center.y + other.y - other.yOffset - centerY);
         if (diffCentX >= self.hitbox.halfWidth + other.hitbox.radius || diffCentY >= self.hitbox.halfHeight + other.hitbox.radius) {
           return false;
         }
@@ -128,13 +136,42 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       }
     } else if (self.hitbox.type == 'circle') {
       if (other.hitbox.type == 'square') {
-        return other.objectCollide(self);
+        return other.checkForObjectCollide(self);
       } else if (other.hitbox.type == 'circle') {
-        return other.hitbox.center.subtract(self.hitbox.center).magnitude() < self.hitbox.radius + other.hitbox.radius
+        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
       }
     }
     return false;
   }
+  
+  self.changeSpriteSheetNumber = function(number) {
+	  self.sprite.currentSprite = number;
+  }
+  
+  //calculates velocity based on the angle
+  self.calculateVelocity = function(speed, angle){
+	return tempVel = new Vector(speed*Math.sin(angle * (Math.PI/180)), -speed*Math.cos(angle * (Math.PI/180)))
+   }
+   
+   //slows velocity by some amount
+   self.slowVelocity = function(velocity, decelerationAmt){
+	var currentVelVector = velocity;
+	var velMagnitudeCurrent = currentVelVector.magnitude();
+	if(velMagnitudeCurrent != 0){
+		var velMagnitudeNext = velMagnitudeCurrent - decelerationAmt;
+		if(velMagnitudeNext < 0 )
+			velMagnitudeNext = 0;
+		var velUnitVector = currentVelVector.normalize();
+		var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
+		return nextVelVector;
+	}
+	return velocity;
+}
+   
+   //adds angle param to the current angle
+   self.changeAngle = function(angle){
+		self.angle += angle;
+	}
   
   self.canCollideWith = function(other) {
     return false;
@@ -145,7 +182,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   }
   
   self.tryCollide = function(other) {
-    if (self !== other && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
+    if (self !== other && other.isCollidable && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
       return self.collideWith(other);
     }
     return false;
