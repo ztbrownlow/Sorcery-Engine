@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8" />
+        <title> Snake </title>
+    </head>
+    <body>
+<p> Move with WASD. After 4 seconds the fruit goes bad! </p>
+<canvas id="canvas" width="580" height="460" style="border:1px solid #000000;">
+  Canvas not supported
+</canvas>
+<table>
+  <thead>
+    <tr>
+      <th>High Scores</th>
+      <!--We can add more columns like for name, etc. if we want later-->
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="hs1">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+    <tr id="hs2">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+    <tr id="hs3">
+      <td class="score"></td>
+			<td class="name"></td>
+    </tr>
+  </tbody>
+</table>
+<script src="engine.js"></script>
+<script src="multisnake.js"></script>
+</body>
+</html>

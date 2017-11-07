@@ -126,31 +126,38 @@ function GameManager(){
   * @param {int} max - the max number of high scores to keep track of.
   * @param {game} game - the game to associate with the score
   */
-function Score(max, game){
+function Score(max, players, game){
 	var self = this;
   /** Creates a Score object 
 	 *  @constructs Score
 	 *  @param {int} max - the max number of high scores to keep track of.
    *  @param {game} game - the game to associate with the score
 	 */
-	self.constructor = function(max, game){
-		self.score = 0;
-		self.highScoreMax = max;
+	self.constructor = function(max, players, game){
+		GameObject.call(self, "score", null, 0, 0);
+		self.isCollidable=false;
+		self.score = new Array();
+		self.players = players;
+		for(var i = 0; i < players; i++){
+			self.score.push(0);
+		}
 		
-    if (game) {
-      self.game = game;
-      game.score = self;
-      /** @default true */
-      game.displayScore = true;
-    }
+		if (game) {
+			self.game = game;
+			game.score = self;
+			/** @default true */
+			game.displayScore = true;
+		}
+		
+		self.highScoreMax = max;
 		self.highScores = new Array();
 		for(var i = 0; i < self.highScoreMax; i++){
-		  self.highScores.push(["empty",0]);	
+		 self.highScores.push(["empty",0]);	
 		}
 	}
 	
 	/** Creates the Score object */
-	self.constructor(max, game);
+	self.constructor(max, players, game);
 	
 	/** Sets if the score is showing on the canvas 
 	 *  @memberof Score
@@ -202,8 +209,8 @@ function Score(max, game){
 	 *  @function addScore
 	 *  @param {number} score - adds this number to the current score
 	 */
-	self.addScore = function(score){ 
-		self.score += score;
+	self.addScore = function(score, player){ 
+		self.score[player] += score;
 	}
 	
 	/** Subtracts a number to the score
@@ -211,8 +218,18 @@ function Score(max, game){
 	 *  @function substractScore
 	 *  @param {number} score - subtracts this number to the current score
 	 */
-	self.subtractScore = function(score){
-		self.score -= score;
+	self.subtractScore = function(score, player){
+		self.score[player] -= score;
+	}
+	
+	self.getScore = function(player){
+		return self.score[player];
+	}
+	
+	self.restart = function(){
+		for(var i = 0; i < self.players; i++){
+			self.score[i] = 0;
+		}
 	}
 	/** Returns the high score at some index
 	 *  @memberof Score
