@@ -37,9 +37,10 @@ else
   score.highScores = localHighScore;
 }
 
-game.gameManager.addConditionEvent((function() {obj_snake_tree_player1.isEmpty() && obj_snake_tree_player2.isEmpty()}), 
+game.gameManager.addConditionEvent((function() {return obj_snake_tree_player1.isEmpty() && obj_snake_tree_player2.isEmpty()}), 
   function() {
     console.log("Game lost");
+    game.lose();
   }, true);
   
 game.setup = function() {
@@ -63,25 +64,25 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
   var self = this;
   self.direcQueue = new Array();
   self.constructor = function(sprite, snakeSize, tree, body_sprite, tail_sprite) {
-	if(playerNumber == 1){
-		GameObject.call(self, "snake_head", sprite, snakeSize, snakeSize);
-		self.direction = new Vector(snakeSize,0);	
-		Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
-		Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
-		Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
-		Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});
-	}
-	if(playerNumber == 2){
-		GameObject.call(self, "snake_head", sprite, game.canvas.width - snakeSize, snakeSize)
-		self.direction = new Vector(-snakeSize,0);
-		Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
-		Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
-		Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
-		Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});		
-	}
+    if(playerNumber == 1){
+      GameObject.call(self, "snake_head", sprite, snakeSize, snakeSize);
+      self.direction = new Vector(snakeSize,0);	
+      Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
+      Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
+      Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
+      Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});
+    }
+    if(playerNumber == 2){
+      GameObject.call(self, "snake_head", sprite, game.canvas.width - snakeSize, snakeSize)
+      self.direction = new Vector(-snakeSize,0);
+      Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
+      Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
+      Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
+      Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});		
+    }
     self.snakeSize = snakeSize;
     self.tree = tree;
-	self.last = null;
+    self.last = null;
     self.lastX = self.x - self.direction.x;
     self.lastY = self.y - self.direction.y;
     self.body_sprite = body_sprite;
@@ -97,10 +98,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
         break;
       }
     }
-    self.lastX = self.x;
-    self.lastY = self.y;
+  }
+  self.postUpdate = function() {
     if (game.outOfBounds(self.x, self.y)) {
-      self.tree.removeAll();
+      self.die();
     } else {
       game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
     }
@@ -115,7 +116,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
         obj_food_tree.remove(other);
         score.addScore(-1, playerNumber);
         if (self.tree.length == 1) {
-          game.lose();
+          self.die();
         } else {
           self.tree.pop();
           if (self.tree.length != 1)
@@ -133,8 +134,12 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
         other.reset(); //place food again
       }
     } else {
-      game.lose()
+      self.die();
     }
+  }
+  
+  self.die = function() {
+    game.gameManager.addPostUpdateEvent(self.tree.removeAll, false);
   }
 }
 
@@ -144,14 +149,10 @@ function Body(sprite, follow) {
   self.constructor = function(sprite, follow) {
     GameObject.call(self, "body", sprite, follow.lastX, follow.lastY);
     self.follow = follow;
-    self.lastX = self.x;
-    self.lastY = self.y;
   }
   self.constructor(sprite, follow);
   self.customUpdate = function(game) {
-    self.direction = new Vector(self.follow.lastX - self.x,self.follow.lastY - self.y);
-    self.lastX = self.x;
-    self.lastY = self.y;
+    self.direction = new Vector(self.follow.x - self.x,self.follow.y - self.y);
   }
   self.customPreDraw = function(game) {
     self.calculateAngleFromDirection(self.follow.x - self.x,self.follow.y - self.y)

@@ -49,6 +49,11 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       }
     }
   }
+  
+  self.updatePosition = function() {
+    self.forEach(function(e) {e.updatePosition();});
+  }
+  
   self.draw = function(context) {
     if (self.doDraw) {
       if (self.drawDirection == "backwards") {

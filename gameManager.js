@@ -71,6 +71,15 @@ function GameManager(){
       }
     }
   }
+  
+  self.postUpdate = function() {
+    for (var i = self.postEvents.length - 1; i >= 0; --i) {
+      self.postEvents[i].func();
+      if (!self.postEvents[i].repeat) {
+        self.postEvents.splice(i, 1);
+      }
+    }
+  }
   /** 
     * Adds a timed event to the game manager. Can trigger just once or repeatedly.
 	  * @memberof GameManager
@@ -117,6 +126,17 @@ function GameManager(){
 	  */
   self.addRandomCooldownConditionEvent = function(cond, func, repeat, cooldownStart, cooldownEnd, runFuncAtEndOfCooldown = false) {
     self.events.push({type: "condition", cond: cond, func: func, repeat: repeat, cooldownStart: cooldownStart, cooldownEnd: cooldownEnd, random: true, coolingDown: false, runFuncAtEndOfCooldown: runFuncAtEndOfCooldown});
+  }
+  
+  self.postEvents = [];
+  
+  /**
+   * Adds a event that triggers at the end of the update, before any objects are updated
+   * @memberof GameManager
+   * @param {function} func - the function to run when the event is triggered
+   */
+  self.addPostUpdateEvent = function(func, repeat) {
+    self.postEvents.push({func: func, repeat: repeat});
   }
 }
 

@@ -3,9 +3,9 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   self.constructor = function(name, sprite, x, y, xOffset, yOffset) {
     self.name = name;
     self.sprite = sprite;
-    self.pos = new Vector();
-    self.x = x;
-    self.y = y;
+    self.pos = new Vector(x, y);
+    self.nextX = x;
+    self.nextY = y;
     self.lastX = x;
     self.lastY = y;
     self.xOffset = xOffset;
@@ -26,16 +26,17 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         return self.pos.x;
       },
       set: function(val) {
-        self.pos.x = val;
-      }},
-    
+        self.nextX = val;
+      }
+    },
     'y': { 
       get: function() {
         return self.pos.y;
       },
       set: function(val) {
-        self.pos.y = val;
-      }},
+        self.nextY = val;
+      }
+    },
     
     'width': { get: function() {if(sprite == null){return null} else{return sprite.width}}},
     'height': { get: function() {if(sprite == null){ return null} else{return sprite.height}}},
@@ -77,6 +78,16 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       self.x = game.mouseX;
       self.y = game.mouseY;
     }
+    self.postUpdate(game);
+  }
+  
+  self.postUpdate = function() {}
+  
+  self.updatePosition = function() {
+    self.lastX = self.x;
+    self.lastY = self.y;
+    self.pos.x = self.nextX;
+    self.pos.y = self.nextY;
   }
   
   self.calculateAngleFromDirection = function(dirX, dirY) {
@@ -109,10 +120,10 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   self.checkForObjectCollide = function(other) {
     if (self.hitbox.type == 'square') {
-      var minX = self.x - self.xOffset + self.hitbox.xRange[0] * self.width;
-      var maxX = self.x - self.xOffset + self.hitbox.xRange[1] * self.width;
-      var minY = self.y - self.yOffset + self.hitbox.yRange[0] * self.height;
-      var maxY = self.y - self.yOffset + self.hitbox.yRange[1] * self.height;
+      var minX = self.nextX - self.xOffset + self.hitbox.xRange[0] * self.width;
+      var maxX = self.nextX - self.xOffset + self.hitbox.xRange[1] * self.width;
+      var minY = self.nextY - self.yOffset + self.hitbox.yRange[0] * self.height;
+      var maxY = self.nextY - self.yOffset + self.hitbox.yRange[1] * self.height;
       if (other.hitbox.type == 'square') {
         //TODO account for angle
         var otherMinX = other.x - other.xOffset + other.hitbox.xRange[0] * other.width;
@@ -122,8 +133,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
       } else if (other.hitbox.type == 'circle') {
         //TODO account for angle
-        var centerX = self.x - self.xOffset + self.hitbox.center[0] * self.width;
-        var centerY = self.y - self.yOffset + self.hitbox.center[1] * self.height;
+        var centerX = self.nextX - self.xOffset + self.hitbox.center[0] * self.width;
+        var centerY = self.nextY - self.yOffset + self.hitbox.center[1] * self.height;
         var diffCentX = Math.abs(other.hitbox.center.x + other.x - other.xOffset - centerX);
         var diffCentY = Math.abs(other.hitbox.center.y + other.y - other.yOffset - centerY);
         if (diffCentX >= self.hitbox.halfWidth + other.hitbox.radius || diffCentY >= self.hitbox.halfHeight + other.hitbox.radius) {
@@ -138,7 +149,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       if (other.hitbox.type == 'square') {
         return other.checkForObjectCollide(self);
       } else if (other.hitbox.type == 'circle') {
-        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.x - self.xOffset, self.y-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
+        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.nextX - self.xOffset, self.nextY-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
       }
     }
     return false;

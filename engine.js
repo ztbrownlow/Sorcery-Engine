@@ -4,6 +4,14 @@ document.write('<script type="text/javascript" src="object.js"></script>');
 document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
 document.write('<script type="text/javascript" src="gameManager.js"></script>');
+/*document.write('<script src="http://cdn.peerjs.com/0.3/peer.js"></script>');
+
+var peer = {
+  peer: new Peer('pick-an-id', {key: '14acplyauelv7vi'}),
+  getConnection: function() {
+    if
+  }
+}*/
 
 function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
@@ -26,7 +34,6 @@ function Game(canvas, name) {
     self.scoreX = 0;
     self.scoreY = 10;
     self.gameManager = new GameManager();
-    self.objects.push(self.gameManager);
     canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
     canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
     canvas.addEventListener("mouseup", function(e) {self.mouseUp(e)});
@@ -87,7 +94,10 @@ function Game(canvas, name) {
   self.update = function() {
     //self.handleMouseActions();
     Key.update();
+    self.gameManager.update();
     self.objects.update(self);
+    self.objects.updatePosition();
+    self.gameManager.postUpdate();
   }
   
   self.draw = function() {
