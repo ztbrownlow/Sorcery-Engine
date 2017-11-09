@@ -146,38 +146,28 @@ function GameManager(){
   * @param {int} max - the max number of high scores to keep track of.
   * @param {game} game - the game to associate with the score
   */
-function Score(max, players, game){
+function Score(game){
 	var self = this;
-  /** Creates a Score object 
+    /** Creates a Score object 
 	 *  @constructs Score
 	 *  @param {int} max - the max number of high scores to keep track of.
-   *  @param {game} game - the game to associate with the score
+	 *  @param {game} game - the game to associate with the score
 	 */
-	self.constructor = function(max, players, game){
+	self.constructor = function(game){
 		GameObject.call(self, "score", null, 0, 0);
 		self.isCollidable=false;
-		self.score = new Array();
-		self.players = players;
-		for(var i = 0; i < players; i++){
-			self.score.push(0);
-		}
-		
-		if (game) {
-			self.game = game;
-			game.score = self;
-			/** @default true */
-			game.displayScore = true;
-		}
-		
-		self.highScoreMax = max;
-		self.highScores = new Array();
-		for(var i = 0; i < self.highScoreMax; i++){
-		 self.highScores.push(["empty",0]);	
-		}
+		self.score = 0;
+		self.game = game;
+		self.displayScore = true;
+		self.scoreColor = "black";
+		self.scoreFont = "bold 12px Palatino Linotype"
+		self.scoreX = 0;
+		self.scoreY = 10;
+		self.game.score.push(self);
 	}
 	
 	/** Creates the Score object */
-	self.constructor(max, players, game);
+	self.constructor(game);
 	
 	/** Sets if the score is showing on the canvas 
 	 *  @memberof Score
@@ -185,7 +175,7 @@ function Score(max, players, game){
 	 *  @param {boolean} display - true if you want score to show, false if you want it to disappear, default true
 	 */
 	self.setDisplay = function(display){
-		self.game.displayScore = display;
+		self.displayScore = display;
 	}
 	
 	/** Sets the color of the Score
@@ -194,7 +184,7 @@ function Score(max, players, game){
 	 *  @param {string} color - the name of the color you want the score to be
 	 */
 	self.setColor = function(color){
-		self.game.scoreColor = color;
+		self.scoreColor = color;
 	}
 	
 	/** Sets the font of the Score
@@ -203,7 +193,7 @@ function Score(max, players, game){
 	 *  @param {string} font - the font of the color
 	 */
 	self.setFont = function(font){
-		self.game.scoreFont = font;
+		self.scoreFont = font;
 	}
 	
 	/** Sets the x coordinate of the Score
@@ -212,7 +202,7 @@ function Score(max, players, game){
 	 *  @param {number} x - the x coordinate of the Score
 	 */
 	self.setX = function(x){
-		self.game.scoreX = x;
+		self.scoreX = x;
 	}
 	
 	/** Sets the y coordinate of the Score
@@ -221,7 +211,7 @@ function Score(max, players, game){
 	 *  @param {number} y - the y coordinate of the Score
 	 */
 	self.setY = function(y){
-		self.game.scoreY = y;
+		self.scoreY = y;
 	}
 	
 	/** Adds a number to the score
@@ -229,8 +219,8 @@ function Score(max, players, game){
 	 *  @function addScore
 	 *  @param {number} score - adds this number to the current score
 	 */
-	self.addScore = function(score, player){ 
-		self.score[player] += score;
+	self.addScore = function(score){ 
+		self.score += score;
 	}
 	
 	/** Subtracts a number to the score
@@ -238,19 +228,35 @@ function Score(max, players, game){
 	 *  @function substractScore
 	 *  @param {number} score - subtracts this number to the current score
 	 */
-	self.subtractScore = function(score, player){
-		self.score[player] -= score;
+	self.subtractScore = function(score){
+		self.score -= score;
 	}
 	
-	self.getScore = function(player){
-		return self.score[player];
+	self.getScore = function(){
+		return self.score;
 	}
 	
 	self.restart = function(){
-		for(var i = 0; i < self.players; i++){
-			self.score[i] = 0;
-		}
+		self.score = 0;
 	}
+}
+
+function HighScore(max){
+	var self = this;
+	 /** Creates a HighScore object 
+	 *  @constructs HighSCore
+	 *  @param {int} max - the max number of high scores to keep track of.
+	 */
+	self.constructor = function(max){
+		self.highScoreMax = max;
+		self.highScores = new Array();
+		for(var i = 0; i < self.highScoreMax; i++){
+		 self.highScores.push(["empty",0]);	
+		}	
+	}
+	
+	self.constructor(max);
+	
 	/** Returns the high score at some index
 	 *  @memberof Score
 	 *  @function getHighScoreAt

@@ -4,6 +4,9 @@ var snakeSize = 20;
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
 var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
 var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail.png"));
+var spr_snake_headP2 = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakeheadp2.png"));
+var spr_snake_bodyP2 = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebodyp2.png"));
+var spr_snake_tailP2 = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail2.png"));
 var spr_food = game.sprites.push(new Sprite("food", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruit.png"));
 var spr_food_rotten = game.sprites.push(new Sprite("food_rotten", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruitrotten.png"));
 var spr_wall = game.sprites.push(new FilledRect("wall", snakeSize, snakeSize, "#000000"));
@@ -14,27 +17,34 @@ var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false))
 var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false));
 
 game.lose = function() {
-  if(score.isHighScore(score.score)){
-    tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
-    score.addHighScore(tempName,score.score);
-    score.saveHighScores();
+  if(highscore.isHighScore(score1.score)){
+    tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
+    highscore.addHighScore(tempName,score1.score);
+    highscore.saveHighScores();
+  }
+  if(highscore.isHighScore(score2.score)){
+    tempName = prompt("New high score for Player 2: " + score2.score + "!\nEnter your name.","");
+    highscore.addHighScore(tempName,score2.score);
+    highscore.saveHighScores();
   }
   game.setup();
 }
 
 var head;
-var score;
-score = new Score(3, 2, game);
+var score1 = new Score(game);
+var score2 = new Score(game);
+score2.setX(530);
+var highscore = new HighScore(3);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = score.getHighScores();
+var localHighScore = highscore.getHighScores();
 if(!localHighScore){
-  score.addHighScore("ztbrownl",23);
-  score.addHighScore("alrichma",8);
-  score.addHighScore("rnpettit",3);  
+  highscore.addHighScore("ztbrownl",23);
+  highscore.addHighScore("alrichma",8);
+  highscore.addHighScore("rnpettit",3);  
 }
 else
 {
-  score.highScores = localHighScore;
+  highscore.highScores = localHighScore;
 }
 
 game.gameManager.addConditionEvent((function() {return obj_snake_tree_player1.isEmpty() && obj_snake_tree_player2.isEmpty()}), 
@@ -44,23 +54,24 @@ game.gameManager.addConditionEvent((function() {return obj_snake_tree_player1.is
   }, true);
   
 game.setup = function() {
-  score.restart();
-  for (var i = 0; i < score.highScoreMax; i++) {
-	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
+  score1.restart();
+  score2.restart();
+  for (var i = 0; i < highscore.highScoreMax; i++) {
+	  var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
   }
   obj_snake_tree_player1.removeAll();
   obj_snake_tree_player2.removeAll();
   obj_food_tree.removeAll();
-  headPlayer1 = obj_snake_tree_player1.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree_player1, 1));
-  headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_head, spr_snake_body, 			spr_snake_tail, snakeSize, obj_snake_tree_player2, 2));
+  headPlayer1 = obj_snake_tree_player1.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree_player1, 1, score1));
+  headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_headP2, spr_snake_bodyP2, spr_snake_tailP2, snakeSize, obj_snake_tree_player2, 2, score2));
   obj_snake_tree_player1.push(new Body(spr_snake_tail, headPlayer1));
-  obj_snake_tree_player2.push(new Body(spr_snake_tail, headPlayer2));
+  obj_snake_tree_player2.push(new Body(spr_snake_tailP2, headPlayer2));
   obj_food_tree.push(new Food());
 }
 
 
-function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
+function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, score) {
   var self = this;
   self.direcQueue = new Array();
   self.constructor = function(sprite, snakeSize, tree, body_sprite, tail_sprite) {
@@ -80,6 +91,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
       Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
       Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});		
     }
+	self.score = score;
     self.snakeSize = snakeSize;
     self.tree = tree;
     self.last = null;
@@ -88,7 +100,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber) {
     self.body_sprite = body_sprite;
     self.tail_sprite = tail_sprite;
   }
-  self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite, playerNumber);
+  self.constructor(sprite, snakeSize, tree, body_sprite, tail_sprite, playerNumber, score);
   
   self.customUpdate = function(game) {
     while (self.direcQueue.length) {

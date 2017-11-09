@@ -14,33 +14,34 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 
 game.lose = function() {
   console.log("Game lost");
-  if(score.isHighScore(score.score)){
+  if(highscore.isHighScore(score.score)){
     tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
-    score.addHighScore(tempName,score.score);
-    score.saveHighScores();
+    highscore.addHighScore(tempName,score.score);
+    highscore.saveHighScores();
   }
   game.setup();
 }
 
 var head;
-var score;
-score = new Score(3, game);
+var score = new Score(game);
+var highscore = new HighScore(3);
+
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = score.getHighScores();
+var localHighScore = highscore.getHighScores();
 if(!localHighScore){
-  score.addHighScore("ztbrownl",23);
-  score.addHighScore("alrichma",8);
-  score.addHighScore("rnpettit",3);  
+  highscore.addHighScore("ztbrownl",23);
+  highscore.addHighScore("alrichma",8);
+  highscore.addHighScore("rnpettit",3);  
 }
 else
 {
-  score.highScores = localHighScore;
+  highscore.highScores = localHighScore;
 }
 
 game.setup = function() {
   score.score = 0;
-  for (var i = 0; i < score.highScoreMax; i++) {
-	  var text = score.getNameAt(i) + " " + score.getHighScoreAt(i);
+  for (var i = 0; i < highscore.highScoreMax; i++) {
+	  var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
   }
   obj_snake_tree.removeAll();

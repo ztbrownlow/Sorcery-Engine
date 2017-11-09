@@ -28,11 +28,7 @@ function Game(canvas, name) {
     self.timer = null;
     self.sprites = new SceneGraph("sprites");
     self.objects = new SceneGraph("objects");
-    self.displayScore = false;
-    self.scoreColor = "black";
-    self.scoreFont = "bold 12px Palatino Linotype"
-    self.scoreX = 0;
-    self.scoreY = 10;
+	self.score = new SceneGraph("score");
     self.gameManager = new GameManager();
     canvas.addEventListener("mousemove", function(e) {self.mouseMove(e)});
     canvas.addEventListener("mousedown", function(e) {self.mouseDown(e)});
@@ -116,11 +112,14 @@ function Game(canvas, name) {
     if (self.customPostDraw) {
       self.customPostDraw();
     }
-    if(game.displayScore){
-      game.context.fillStyle = game.scoreColor;
-      game.context.font = game.scoreFont;
-      game.context.fillText("Score: " + self.score.score, game.scoreX, game.scoreY);
-    }
+	for(var i = 0; i < self.score.length; i++){
+		var currentScore = self.score.children[i];
+		if(currentScore.displayScore){
+			game.context.fillStyle = currentScore.scoreColor;
+			game.context.font = currentScore.scoreFont;
+			game.context.fillText("Score: " + currentScore.score, currentScore.scoreX, currentScore.scoreY);
+		}
+	}
   }
   self.loop = function() {
     self.canvas.width = self.canvas.width;
