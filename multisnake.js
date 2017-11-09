@@ -1,4 +1,4 @@
-var game = new Game(document.getElementById("canvas"), "snake");
+var game = new Game(document.getElementById("canvas"), "multisnake");
 var snakeSize = 20;
 
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
@@ -34,7 +34,7 @@ game.lose = function() {
   if(highscore.isHighScore(score2.score)){
     tempName = prompt("New high score for Player 2: " + score2.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score2.score);
-    highscore.saveHighScores();
+    highscore.saveHighScores("multisnake");
   }
   game.setup();
 }
@@ -45,7 +45,7 @@ var score2 = new Score(game);
 score2.setX(530);
 var highscore = new HighScore(3);
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = highscore.getHighScores();
+var localHighScore = highscore.getHighScores("multisnake");
 if(!localHighScore){
   highscore.addHighScore("ztbrownl",23);
   highscore.addHighScore("alrichma",8);
@@ -139,11 +139,13 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, s
         if (self.tree.length == 1) {
           self.die();
         } else {
-          self.tree.pop();
-          if (self.tree.length != 1)
-          {
-            self.tree.last().sprite = self.tail_sprite;
-          }
+          game.gameManager.addPostUpdateEvent(function() {
+            self.tree.pop();
+            if (self.tree.length != 1)
+            {
+              self.tree.last().sprite = self.tail_sprite;
+            }
+          }, false);          
         }
       } else {
         score.addScore(1, playerNumber);
@@ -151,8 +153,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, s
         if (last != self) {
           last.sprite = self.body_sprite;
         }
-        self.tree.push(new Body(self.tail_sprite, last));
-        other.reset(); //place food again
+        game.gameManager.addPostUpdateEvent(function() {
+          self.tree.push(new Body(self.tail_sprite, last));
+          other.reset(); //place food again
+        }, false);
       }
     } else {
       self.die();

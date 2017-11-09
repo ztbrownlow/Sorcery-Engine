@@ -71,7 +71,10 @@ function GameManager(){
       }
     }
   }
-  
+  /**
+   * Calls the events that run at the end of the update
+   * @memberof GameManager
+   */
   self.postUpdate = function() {
     for (var i = self.postEvents.length - 1; i >= 0; --i) {
       self.postEvents[i].func();
@@ -128,6 +131,10 @@ function GameManager(){
     self.events.push({type: "condition", cond: cond, func: func, repeat: repeat, cooldownStart: cooldownStart, cooldownEnd: cooldownEnd, random: true, coolingDown: false, runFuncAtEndOfCooldown: runFuncAtEndOfCooldown});
   }
   
+  /**
+   * @memberof GameManager
+   * events that are ran after the updates (instead of before)
+   */
   self.postEvents = [];
   
   /**

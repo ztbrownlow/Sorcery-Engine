@@ -17,7 +17,7 @@ game.lose = function() {
   if(highscore.isHighScore(score.score)){
     tempName = prompt("New high score: " + score.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score.score);
-    highscore.saveHighScores();
+    highscore.saveHighScores("snake");
   }
   game.setup();
 }
@@ -27,7 +27,7 @@ var score = new Score(game);
 var highscore = new HighScore(3);
 
 var hs_elems = [document.getElementById("hs1"), document.getElementById("hs2"), document.getElementById("hs3")];
-var localHighScore = highscore.getHighScores();
+var localHighScore = highscore.getHighScores("snake");
 if(!localHighScore){
   highscore.addHighScore("ztbrownl",23);
   highscore.addHighScore("alrichma",8);
@@ -135,8 +135,6 @@ function Body(sprite, follow) {
   self.constructor = function(sprite, follow) {
     GameObject.call(self, "body", sprite, follow.x, follow.y); //I would expect this to use lastX/lastY but it doesn't so yeah
     self.follow = follow;
-    self.lastX = self.x;
-    self.lastY = self.y;
   }
   self.constructor(sprite, follow);
   self.customUpdate = function(game) {

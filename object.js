@@ -63,20 +63,20 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   self.update = function(game) {
     self.customUpdate(game);
-    if(self.isLooping && game.outOfBounds(self.x, self.y)){
-      if(self.x > game.canvas.width){self.x = 0}
-      else if(self.x < 0){self.x = game.canvas.width}
+    if(self.isLooping && game.outOfBounds(self.nextX, self.nextY)){
+      if(self.nextX > game.canvas.width){self.nextX = 0}
+      else if(self.nextX < 0){self.nextX = game.canvas.width}
         
-      if(self.y > game.canvas.height){self.y = 0}
-      else if(self.y < 0){self.y = game.canvas.height}
+      if(self.nextY > game.canvas.height){self.nextY = 0}
+      else if(self.nextY < 0){self.nextY = game.canvas.height}
     }
     if (self.direction.x != 0 || self.direction.y != 0) {
-      self.x += self.direction.x;
-      self.y += self.direction.y;
+      self.nextX += self.direction.x;
+      self.nextY += self.direction.y;
     }
     if (self.isDraggable && self.isClicked) {
-      self.x = game.mouseX;
-      self.y = game.mouseY;
+      self.nextX = game.mouseX;
+      self.nextY = game.mouseY;
     }
     self.postUpdate(game);
   }
