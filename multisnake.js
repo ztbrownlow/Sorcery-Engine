@@ -17,6 +17,15 @@ var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false))
 var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false));
 
 game.lose = function() {
+  if(score1.score > score2.score ){
+	alert("Player 1 has won with a score of " + score1.score + "! Congrats!");
+  }
+  else if(score2.score  > score1.score ){
+	alert("Player 2 has won with a score of " + score2.score + "! Congrats!");
+  }
+  else{
+	alert("A tie?! Good job you both win");
+  }
   if(highscore.isHighScore(score1.score)){
     tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score1.score);
