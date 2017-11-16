@@ -1,1 +1,15 @@
 Hello world
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+  //client.js
+  var socket = io('http://localhost:2000');
+
+  // Add a connect listener
+  socket.on('connect', function (socket) {
+      console.log('Connected!');
+  });
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>

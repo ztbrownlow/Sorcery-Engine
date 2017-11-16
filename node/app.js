@@ -2,12 +2,17 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 app.get('/', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendfile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
-server.listen(2000 /* port */);
+var port = 2000
+
+server.listen(port /* port */, function () {
+  console.log('listening on port '+port);
+});
 
 var io = require('socket.io')(server,{});
+/*
 var Sock_List = {};
 io.sockets.on('connection', function(socket) {
   console.log('socket connection');
@@ -18,5 +23,12 @@ io.sockets.on('connection', function(socket) {
   });
   socket.on('keyPress', function(data){ //socket.emit
     console.log(data)
+  });
+});*/
+
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
   });
 });
