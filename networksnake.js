@@ -1,20 +1,3 @@
-//NOTES:
-// Idea for how we handle multiplayer if we have time to implement this, which we probably won't right now: no limit on amount of snakes, add snakes as players connect
-//  ^ what's probably easier: Just wait to start game until there's two players
-
-//TODO
-/*
- * Sync high scores
- * Make game site tell you which player you are (1 or 2) (in "player" variable)
- * make game tell you when you're waiting on a player or have an extra player and are waiting on someone to leave
- * replace alert boxes since they don't work well with local testing?
- * clean stuff up
- * there's possibly some bugs
- * fix bug where two apples are spawned - low priority
- * low priority: improve the way we handle having < or > 2 players
- */
-
-//NEW STUFF
 var socket = io('http://localhost:2000');
 socket.on('connect', function (socket) {
   console.log('Connected!');
@@ -100,6 +83,9 @@ var snakeSize = 20;
 var spr_waiting = game.sprites.push(new FilledRect("waiting", game.canvas.width, game.canvas.height, '#00FF00'));
 var obj_wait = new GameObject("waiting", spr_waiting, 0, 0);
 
+var spr_win = game.sprites.push(new FilledRect("waiting", game.canvas.width, game.canvas.height, 'RGBA(128,128,128,0)'));
+var obj_win = new GameObject("waiting", spr_win, 0, 0);
+
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
 var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
 var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail.png"));
@@ -117,28 +103,33 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 
 game.lose = function() {
   socket.emit("pause", true)
+  obj_win.draw(game.context);
+  game.context.fillStyle = '#000099';
+  game.context.font = '20px Arial';
   if(score1.score > score2.score ){
-    alert("Player 1 has won with a score of " + score1.score + "! Congrats!");
+    game.context.fillText("Player 1 has won with a score of " + score1.score + "! Congrats!", 10, 30);
   }
   else if(score2.score  > score1.score ){
-    alert("Player 2 has won with a score of " + score2.score + "! Congrats!");
+    game.context.fillText("Player 2 has won with a score of " + score2.score + "! Congrats!", 10, 30);
   }
   else{
-    alert("A tie?! Good job you both win");
+    game.context.fillText("A tie?! Good job you both win", 10, 30);
   }
-  if(player == 2){
-	socket.emit("setup", null);
-  }
-  if(highscore.isHighScore(score1.score)){
-    tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
-    highscore.addHighScore(tempName,score1.score);
-    highscore.saveHighScores();
-  }
-  if(highscore.isHighScore(score2.score)){
-    tempName = prompt("New high score for Player 2: " + score2.score + "!\nEnter your name.","");
-    highscore.addHighScore(tempName,score2.score);
-    highscore.saveHighScores("multisnake");
-  }
+  setTimeout(function() {
+    if(highscore.isHighScore(score1.score) && player==1){
+      tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
+      highscore.addHighScore(tempName,score1.score);
+      highscore.saveHighScores();
+    }
+    if(highscore.isHighScore(score2.score) && player==1){
+      tempName = prompt("New high score for Player 2: " + score2.score + "!\nEnter your name.","");
+      highscore.addHighScore(tempName,score2.score);
+      highscore.saveHighScores("multisnake");
+    }
+    if(player == 1){
+      socket.emit("setup", null);
+    }
+  }, 1000);
 }
 
 var head;
@@ -175,10 +166,17 @@ game.setup = function() {
   obj_snake_tree_player1.removeAll();
   obj_snake_tree_player2.removeAll();
   obj_food_tree.removeAll();
-  headPlayer1 = obj_snake_tree_player1.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree_player1, 1, score1));
-  headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_headP2, spr_snake_bodyP2, spr_snake_tailP2, snakeSize, obj_snake_tree_player2, 2, score2));
-  obj_snake_tree_player1.push(new Body(spr_snake_tail, headPlayer1));
-  obj_snake_tree_player2.push(new Body(spr_snake_tailP2, headPlayer2));
+  if (player == 1) {
+    headPlayer1 = obj_snake_tree_player1.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree_player1, 1, score1));
+    headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_headP2, spr_snake_bodyP2, spr_snake_tailP2, snakeSize, obj_snake_tree_player2, 2, score2));
+    obj_snake_tree_player1.push(new Body(spr_snake_tail, headPlayer1));
+    obj_snake_tree_player2.push(new Body(spr_snake_tailP2, headPlayer2));
+  } else {
+    headPlayer1 = obj_snake_tree_player1.push(new Head(spr_snake_headP2, spr_snake_bodyP2, spr_snake_tailP2, snakeSize, obj_snake_tree_player1, 1, score1));
+    headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_head, spr_snake_body, spr_snake_tail, snakeSize, obj_snake_tree_player2, 2, score2));
+    obj_snake_tree_player1.push(new Body(spr_snake_tailP2, headPlayer1));
+    obj_snake_tree_player2.push(new Body(spr_snake_tail, headPlayer2));
+  }
   if (player == 1) {
 	console.log("FOOD");
     socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
