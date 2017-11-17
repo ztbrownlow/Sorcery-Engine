@@ -117,7 +117,9 @@ game.lose = function() {
   else{
     alert("A tie?! Good job you both win");
   }
-  socket.emit("setup", null);
+  if(player == 2){
+	socket.emit("setup", null);
+  }
   if(highscore.isHighScore(score1.score)){
     tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score1.score);
@@ -160,6 +162,7 @@ game.setup = function() {
 	  var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
   }
+  document.getElementById("player").innerHTML = "Player " + player;
   obj_snake_tree_player1.removeAll();
   obj_snake_tree_player2.removeAll();
   obj_food_tree.removeAll();
@@ -168,6 +171,7 @@ game.setup = function() {
   obj_snake_tree_player1.push(new Body(spr_snake_tail, headPlayer1));
   obj_snake_tree_player2.push(new Body(spr_snake_tailP2, headPlayer2));
   if (player == 1) {
+	console.log("FOOD");
     socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
   }
 }
