@@ -1,3 +1,19 @@
+//NOTES:
+// Idea for how we handle multiplayer if we have time to implement this, which we probably won't right now: no limit on amount of snakes, add snakes as players connect
+//  ^ what's probably easier: Just wait to start game until there's two players
+
+//TODO
+/*
+ * Sync high scores
+ * Make game site tell you which player you are (1 or 2) (in "player" variable)
+ * make game tell you when you're waiting on a player or have an extra player and are waiting on someone to leave
+ * replace alert boxes since they don't work well with local testing?
+ * clean stuff up
+ * there's possibly some bugs
+ * fix bug where two apples are spawned - low priority
+ * low priority: improve the way we handle having < or > 2 players
+ */
+
 //NEW STUFF
 var socket = io('http://localhost:2000');
 socket.on('connect', function (socket) {
@@ -6,8 +22,37 @@ socket.on('connect', function (socket) {
 function JsonifyKeyEvent(e) {
   return {simulated:true,keyCode: e.keyCode, altKey: e.altKey, code: e.code, ctrlKey: e.ctrlKey, key: e.key, repeat: e.repeat, shiftKey: e.shiftKey, type: e.type, which: e.which} //there are other fields but they don't matter
 }
+window.onload = function () { socket.emit('load', null) }
 Key.bind(Key.ANY, Key.KEY_DOWN, function(e) {
-  socket.emit('keyDown', JsonifyKeyEvent(e));
+  e = JsonifyKeyEvent(e);
+  if (player == 1) {
+    if (e.keyCode == Key.UP) {
+      e.keyCode = Key.W
+    }
+    if (e.keyCode == Key.LEFT) {
+      e.keyCode = Key.A
+    }
+    if (e.keyCode == Key.RIGHT) {
+      e.keyCode = Key.D
+    }
+    if (e.keyCode == Key.DOWN) {
+      e.keyCode = Key.S
+    }
+  } else {
+    if (e.keyCode == Key.W) {
+      e.keyCode = Key.UP
+    }
+    if (e.keyCode == Key.A) {
+      e.keyCode = Key.LEFT
+    }
+    if (e.keyCode == Key.D) {
+      e.keyCode = Key.RIGHT
+    }
+    if (e.keyCode == Key.S) {
+      e.keyCode = Key.DOWN
+    }
+  }
+  socket.emit('keyDown', e);
 });
 Key.bind(Key.ANY, Key.KEY_UP, function(e) {
   socket.emit('keyUp', JsonifyKeyEvent(e));
@@ -16,17 +61,24 @@ socket.on('keyDown', function(data) {
   Key.onKeydown(data, false); //eventually we should separate movement from the Key class and call that separately from here
 });
 socket.on('keyUp', function(data) {
-  console.log(data);
   Key.onKeyup(data, false);
 });
 socket.on('setup', function(data) {
   game.setup();
-  game.loop();
-  game.setup();
+  socket.emit("pause", false);
+  hasBeenSetup = true;
 });
+
 socket.on('tick', function(data) {
   game.loop();
 });
+socket.on('food', function(data) {
+  game.gameManager.addPostUpdateEvent(function() {
+    obj_food_tree.push(new Food(data[0], data[1]));
+  });
+});
+
+var hasBeenSetup = false;
 
 var player;
 
@@ -34,12 +86,6 @@ socket.on('player', function(data) {
   player=data;
   console.log('Player '+data);
 });
-
-//NOTES:
-// A lot of logic will be need to be moved into the app.js file
-// Idea for how we handle multiplayer, but with less priority: no limit on amount of snakes, add snakes as players connect
-//  ^ what's probably easier: Just wait to start game until there's two players
-// switch from alerts to something else, they get in the way when testing on same computer
 
 var game = new Game(document.getElementById("canvas"), "multisnake");
 var snakeSize = 20;
@@ -55,8 +101,6 @@ var spr_food = game.sprites.push(new Sprite("food", snakeSize, snakeSize, "http:
 var spr_food_rotten = game.sprites.push(new Sprite("food_rotten", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruitrotten.png"));
 var spr_wall = game.sprites.push(new FilledRect("wall", snakeSize, snakeSize, "#000000"));
 
-//OLD STUFF
-
 var obj_snake_tree_player1 = game.objects.push(new SceneGraph("snake", true, true, false));
 var obj_snake_tree_player2 = game.objects.push(new SceneGraph("snake", true, true, false));
 var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false));
@@ -64,7 +108,6 @@ var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false))
 
 game.lose = function() {
   socket.emit("pause", true)
-  socket.emit("setup", null);
   if(score1.score > score2.score ){
     alert("Player 1 has won with a score of " + score1.score + "! Congrats!");
   }
@@ -74,7 +117,7 @@ game.lose = function() {
   else{
     alert("A tie?! Good job you both win");
   }
-  socket.emit("pause", false);
+  socket.emit("setup", null);
   if(highscore.isHighScore(score1.score)){
     tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score1.score);
@@ -104,7 +147,7 @@ else
   highscore.highScores = localHighScore;
 }
 
-game.gameManager.addConditionEvent((function() {return obj_snake_tree_player1.isEmpty() && obj_snake_tree_player2.isEmpty()}), 
+game.gameManager.addConditionEvent((function() {return obj_snake_tree_player1.isEmpty() && obj_snake_tree_player2.isEmpty() && hasBeenSetup}), 
   function() {
     console.log("Game lost");
     game.lose();
@@ -124,7 +167,9 @@ game.setup = function() {
   headPlayer2 = obj_snake_tree_player2.push(new Head(spr_snake_headP2, spr_snake_bodyP2, spr_snake_tailP2, snakeSize, obj_snake_tree_player2, 2, score2));
   obj_snake_tree_player1.push(new Body(spr_snake_tail, headPlayer1));
   obj_snake_tree_player2.push(new Body(spr_snake_tailP2, headPlayer2));
-  obj_food_tree.push(new Food());
+  if (player == 1) {
+    socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
+  }
 }
 
 
@@ -148,7 +193,7 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, s
       Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(0, snakeSize))}});
       Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(snakeSize, 0))}});		
     }
-	self.score = score;
+    self.score = score;
     self.snakeSize = snakeSize;
     self.tree = tree;
     self.last = null;
@@ -203,7 +248,10 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, s
         }
         game.gameManager.addPostUpdateEvent(function() {
           self.tree.push(new Body(self.tail_sprite, last));
-          other.reset(); //place food again
+          obj_food_tree.remove(other);
+          if (player == 1) {
+            socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
+          }
         }, false);
       }
     } else {
@@ -232,31 +280,34 @@ function Body(sprite, follow) {
   }
 }
 
-function Food() {
+function Food(x, y) {
   var self = this;
-  self.reset = function() {
-    var temp = game.findRandomUnoccupiedPoint(game.objects, snakeSize);
-    self.x = temp[0];
-    self.y = temp[1];
+  self.reset = function(x, y) {
+    if (x == null || x == undefined || y == null || y == undefined) {
+      var temp = game.findRandomUnoccupiedPoint(game.objects, snakeSize);
+    }
+    self.x = (x != undefined && x != null) ? x : temp[0];
+    self.y = (y != undefined && y != null) ? y : temp[1];
     self.steps = 0;
     self.rotten = false;
     self.sprite = self.mainSprite;
   }
-  self.constructor = function() {
-    self.reset();
+  self.constructor = function(x, y) {
+    self.reset(x, y);
     GameObject.call(self, "food", spr_food, self.x, self.y);
     self.mainSprite = self.sprite;
     self.stepsUntilRotten = 40;
     self.rottenSprite = spr_food_rotten;
   }
-  self.constructor();
+  self.constructor(x, y);
   self.update = function(game) {
     self.steps += 1;
     if (self.steps == self.stepsUntilRotten) {
       self.sprite = self.rottenSprite;
       self.rotten = true;
-      obj_food_tree.push(new Food());
+      if (player == 1) {
+        socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
+      }
     }
   }
 }
-game.setup();
