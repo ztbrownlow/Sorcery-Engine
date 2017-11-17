@@ -36,26 +36,24 @@ server.listen(port /* port */, function () {
 });
 
 var io = require('socket.io')(server,{});
-/*
-var Sock_List = {};
-io.sockets.on('connection', function(socket) {
-  console.log('socket connection');
-  socket.id = Math.random();
-  Sock_List[socket.id] = socket;
-  socket.on('gameloop', function(data){
-    console.log(data);
-  });
-  socket.on('keyPress', function(data){ //socket.emit
-    console.log(data)
-  });
-});*/
 
-var Sock_List = [];
+var Sock_List = {};
 var connected = 0;
+var running = false;
 
 io.sockets.on('connection', function (socket) {
-  ++connected;
+  running = (++connected == 2);
+  socket.paused = false;
   socket.id = Math.random();
+  if (running) {
+    socket.emit('setup', null);
+    socket.emit('setPlayer', 2);
+    for (var key in Sock_List) {
+      if (Sock_List[key].id != socket.id) {
+        Sock_List[key].emit('player', 1);
+      }
+    }
+  }
   console.log('socket connection: ' + socket.id);
   Sock_List[socket.id] = socket;
   socket.on('keyDown', function (data) {
@@ -68,10 +66,40 @@ io.sockets.on('connection', function (socket) {
       Sock_List[key].emit('keyUp', data);
     }
   });
+  socket.on('setup', function (data) {
+    for (var key in Sock_List) {
+      Sock_List[key].emit('setup', data);
+    }
+  });
   socket.on('disconnect', function() {
     console.log('socket disconnect: ' + socket.id);
-    --connected;
     delete Sock_List[socket.id];
+    running = (--connected == 2);
+    if (running) {
+      socket.emit('setup', null);
+      Object.keys(Sock_List).forEach(function(k,i) { Sock_List[k].emit('player', i+1); });
+    }
+  });
+  socket.on('pause', function(data) {
+    socket.paused = data;
+    running = !data;
+    if (!data) {
+      for (var key in Sock_List) {
+        var sock = Sock_List[key];
+        if (sock.paused) {
+          running = false;
+          break;
+        }
+      }
+    }
   });
   //Object.keys(Sock_List);
 });
+
+setInterval(function(){
+  if (running) {
+    for (var key in Sock_List) {
+      Sock_List[key].emit('tick', null);
+    }
+  }
+}, 100);

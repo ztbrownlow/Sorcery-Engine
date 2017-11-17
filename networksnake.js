@@ -4,7 +4,7 @@ socket.on('connect', function (socket) {
   console.log('Connected!');
 });
 function JsonifyKeyEvent(e) {
-  return {keyCode: e.keyCode, altKey: e.altKey, code: e.code, ctrlKey: e.ctrlKey, key: e.key, repeat: e.repeat, shiftKey: e.shiftKey, type: e.type, which: e.which} //there are other fields but they don't matter
+  return {simulated:true,keyCode: e.keyCode, altKey: e.altKey, code: e.code, ctrlKey: e.ctrlKey, key: e.key, repeat: e.repeat, shiftKey: e.shiftKey, type: e.type, which: e.which} //there are other fields but they don't matter
 }
 Key.bind(Key.ANY, Key.KEY_DOWN, function(e) {
   socket.emit('keyDown', JsonifyKeyEvent(e));
@@ -19,11 +19,20 @@ socket.on('keyUp', function(data) {
   console.log(data);
   Key.onKeyup(data, false);
 });
-socket.on('start', function(data) {
-  game.start(100);
+socket.on('setup', function(data) {
+  game.setup();
+  game.loop();
+  game.setup();
 });
-socket.on('stop'), function(data) {
-  game.stop();
+socket.on('tick', function(data) {
+  game.loop();
+});
+
+var player;
+
+socket.on('player', function(data) {
+  player=data;
+  console.log('Player '+data);
 });
 
 //NOTES:
@@ -32,10 +41,10 @@ socket.on('stop'), function(data) {
 //  ^ what's probably easier: Just wait to start game until there's two players
 // switch from alerts to something else, they get in the way when testing on same computer
 
-//OLD STUFF (currently unmodified);
 var game = new Game(document.getElementById("canvas"), "multisnake");
 var snakeSize = 20;
 
+//SPRITES
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
 var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
 var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail.png"));
@@ -46,21 +55,26 @@ var spr_food = game.sprites.push(new Sprite("food", snakeSize, snakeSize, "http:
 var spr_food_rotten = game.sprites.push(new Sprite("food_rotten", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruitrotten.png"));
 var spr_wall = game.sprites.push(new FilledRect("wall", snakeSize, snakeSize, "#000000"));
 
+//OLD STUFF
+
 var obj_snake_tree_player1 = game.objects.push(new SceneGraph("snake", true, true, false));
 var obj_snake_tree_player2 = game.objects.push(new SceneGraph("snake", true, true, false));
 var obj_food_tree = game.objects.push(new SceneGraph("food", true, true, false));
 var obj_wall_tree = game.objects.push(new SceneGraph("wall", true, true, false));
 
 game.lose = function() {
+  socket.emit("pause", true)
+  socket.emit("setup", null);
   if(score1.score > score2.score ){
-	alert("Player 1 has won with a score of " + score1.score + "! Congrats!");
+    alert("Player 1 has won with a score of " + score1.score + "! Congrats!");
   }
   else if(score2.score  > score1.score ){
-	alert("Player 2 has won with a score of " + score2.score + "! Congrats!");
+    alert("Player 2 has won with a score of " + score2.score + "! Congrats!");
   }
   else{
-	alert("A tie?! Good job you both win");
+    alert("A tie?! Good job you both win");
   }
+  socket.emit("pause", false);
   if(highscore.isHighScore(score1.score)){
     tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
     highscore.addHighScore(tempName,score1.score);
@@ -71,7 +85,6 @@ game.lose = function() {
     highscore.addHighScore(tempName,score2.score);
     highscore.saveHighScores("multisnake");
   }
-  game.setup();
 }
 
 var head;
@@ -122,18 +135,18 @@ function Head(sprite, body_sprite, tail_sprite, snakeSize, tree, playerNumber, s
     if(playerNumber == 1){
       GameObject.call(self, "snake_head", sprite, snakeSize, snakeSize);
       self.direction = new Vector(snakeSize,0);	
-      Key.bind(Key.W, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
-      Key.bind(Key.A, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
-      Key.bind(Key.S, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
-      Key.bind(Key.D, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});
+      Key.bind(Key.W, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(0, -snakeSize))}});
+      Key.bind(Key.A, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(-snakeSize, 0))}});
+      Key.bind(Key.S, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(0, snakeSize))}});
+      Key.bind(Key.D, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(snakeSize, 0))}});
     }
     if(playerNumber == 2){
       GameObject.call(self, "snake_head", sprite, game.canvas.width - snakeSize, snakeSize)
       self.direction = new Vector(-snakeSize,0);
-      Key.bind(Key.UP, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, -snakeSize))});
-      Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(-snakeSize, 0))});
-      Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(0, snakeSize))});
-      Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){self.direcQueue.push(new Vector(snakeSize, 0))});		
+      Key.bind(Key.UP, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(0, -snakeSize))}});
+      Key.bind(Key.LEFT, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(-snakeSize, 0))}});
+      Key.bind(Key.DOWN, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(0, snakeSize))}});
+      Key.bind(Key.RIGHT, Key.KEY_DOWN, function(event){if (event.simulated) {self.direcQueue.push(new Vector(snakeSize, 0))}});		
     }
 	self.score = score;
     self.snakeSize = snakeSize;
