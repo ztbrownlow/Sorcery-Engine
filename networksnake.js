@@ -30,6 +30,7 @@ socket.on('stop'), function(data) {
 // A lot of logic will be need to be moved into the app.js file
 // Idea for how we handle multiplayer, but with less priority: no limit on amount of snakes, add snakes as players connect
 //  ^ what's probably easier: Just wait to start game until there's two players
+// switch from alerts to something else, they get in the way when testing on same computer
 
 //OLD STUFF (currently unmodified);
 var game = new Game(document.getElementById("canvas"), "multisnake");
