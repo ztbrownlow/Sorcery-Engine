@@ -17,6 +17,7 @@ var Key = {
   A: 65,
   S: 83,
   D: 68,
+  ANY: -1,
   
   isDown: function(keyCode) {
     return this._pressed[keyCode];
@@ -55,22 +56,28 @@ var Key = {
   
   update: function() {
     for (var i = 0; i < this.keyHeldFuncs.length; ++i) {
-      if (this.isDown(this.keyHeldFuncs[i].key)) {
+      if (this.keyHeldFuns[i].key == this.ANY || this.isDown(this.keyHeldFuncs[i].key)) {
         this.keyHeldFuncs[i].funcs.forEach(function(f) {f();})
       }
     }
   },
   
-  onKeydown: function(event) {
+  onKeydown: function(event, activateAny=true) {
     if (this.keyDownFuncs[event.keyCode]) {
       this.keyDownFuncs[event.keyCode].forEach(function(f) {f(event);});
+    }
+    if (activateAny && this.keyDownFuncs[this.ANY]) {
+      this.keyDownFuncs[this.ANY].forEach(function(f) {f(event);});
     }
     this._pressed[event.keyCode] = true;
   },
   
-  onKeyup: function(event) {
+  onKeyup: function(event, activateAny=true) {
     if (this.keyUpFuncs[event.keyCode]) {
       this.keyUpFuncs[event.keyCode].forEach(function(f) {f(event);});
+    }
+    if (activateAny && this.keyUpFuncs[this.ANY]) {
+      this.keyUpFuncs[this.ANY].forEach(function(f) {f(event);});
     }
     delete this._pressed[event.keyCode];
   }

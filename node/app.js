@@ -26,9 +26,19 @@ io.sockets.on('connection', function(socket) {
   });
 });*/
 
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
+var Sock_List = {};
+
+io.sockets.on('connection', function (socket) {
+  socket.id = Math.random();
+  console.log('socket connection: ' + socket.id);
+  Sock_List[socket.id] = socket;
+  socket.emit('news', {hello:'world'});
   socket.on('my other event', function (data) {
     console.log(data);
   });
+  socket.on('disconnect', function() {
+    console.log('socket disconnect: ' + socket.id);
+    Sock_List[socket.id] = undefined;
+  });
 });
+
