@@ -68,7 +68,13 @@ socket.on('setup', function(data) {
   socket.emit("pause", false);
   hasBeenSetup = true;
 });
-
+socket.on('waiting', function(data) {
+  obj_wait.draw(game.context);
+  game.context.fillStyle = '#000099';
+  game.context.font = '20px Arial';
+  game.context.fillText('This game needs exactly 2 players to run, but there '+ (data==1?'is':'are'), 10, 20);
+  game.context.fillText('currently '+(data==1?'only ':'')+data+' player' + (data==1?'':'s') + '. Waiting on ' + (data == 1?'1 more player...':data-2+' player'+(data==3?'':'s')+' to leave...'), 10, 50);
+});
 socket.on('tick', function(data) {
   game.loop();
 });
@@ -91,6 +97,9 @@ var game = new Game(document.getElementById("canvas"), "multisnake");
 var snakeSize = 20;
 
 //SPRITES
+var spr_waiting = game.sprites.push(new FilledRect("waiting", game.canvas.width, game.canvas.height, '#00FF00'));
+var obj_wait = new GameObject("waiting", spr_waiting, 0, 0);
+
 var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
 var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
 var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail.png"));

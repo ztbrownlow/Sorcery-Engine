@@ -66,6 +66,10 @@ io.sockets.on('connection', function (socket) {
       for (var key in Sock_List) {
         Sock_List[key].emit('setup', null);
       }
+    } else {
+      for (var key in Sock_List) {
+        Sock_List[key].emit('waiting', connected);
+      }
     }
     console.log('socket connection: ' + socket.id);
     forwardToAllSockets(socket, 'keyDown');
@@ -86,6 +90,9 @@ io.sockets.on('connection', function (socket) {
         running = true;
       } else {
         running = false;
+        for (var key in Sock_List) {
+          Sock_List[key].emit('waiting', connected);
+        }
       }
     });
     socket.on('pause', function(data) {
