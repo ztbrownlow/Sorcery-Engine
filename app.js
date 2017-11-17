@@ -36,7 +36,7 @@ server.listen(port /* port */, function () {
 });
 
 var io = require('socket.io')(server,{});
-
+var highscoresJSON = require('./highscores.json');
 var Sock_List = {};
 var connected = 0;
 var running = false;
@@ -76,6 +76,7 @@ io.sockets.on('connection', function (socket) {
     forwardToAllSockets(socket, 'keyUp');
     forwardToAllSockets(socket, 'setup');
     forwardToAllSockets(socket, 'food');
+	forwardToAllSockets(socket, 'highscore');
     socket.on('disconnect', function() {
       console.log('socket disconnect: ' + socket.id);
       delete Sock_List[socket.id];

@@ -66,6 +66,9 @@ socket.on('food', function(data) {
     obj_food_tree.push(new Food(data[0], data[1]));
   });
 });
+socket.on('highscore', function(data){
+  highscore.highScores = data;
+});
 
 var hasBeenSetup = false;
 
@@ -119,9 +122,10 @@ game.lose = function() {
     if(highscore.isHighScore(score1.score) && player==1){
       tempName = prompt("New high score for Player 1: " + score1.score + "!\nEnter your name.","");
       highscore.addHighScore(tempName,score1.score);
+	  socket.emit("highscore", highscore.highScores);
       highscore.saveHighScores();
     }
-    if(highscore.isHighScore(score2.score) && player==1){
+    if(highscore.isHighScore(score2.score) && player==2){
       tempName = prompt("New high score for Player 2: " + score2.score + "!\nEnter your name.","");
       highscore.addHighScore(tempName,score2.score);
       highscore.saveHighScores("multisnake");
@@ -159,8 +163,8 @@ game.setup = function() {
   score1.restart();
   score2.restart();
   for (var i = 0; i < highscore.highScoreMax; i++) {
-	  var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
-      hs_elems[i].innerHTML = text;
+	var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
+    hs_elems[i].innerHTML = text;
   }
   document.getElementById("player").innerHTML = "Player " + player;
   obj_snake_tree_player1.removeAll();
@@ -178,7 +182,6 @@ game.setup = function() {
     obj_snake_tree_player2.push(new Body(spr_snake_tail, headPlayer2));
   }
   if (player == 1) {
-	console.log("FOOD");
     socket.emit('food', game.findRandomUnoccupiedPoint(game.objects, snakeSize));
   }
 }
