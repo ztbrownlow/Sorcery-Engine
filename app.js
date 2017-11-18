@@ -29,6 +29,11 @@ app.get('/gameManager.js', function(req /* request */, res /* resource */) { //s
   res.sendFile(__dirname + '/gameManager.js');
 });
 
+//app.get("/highscores.json', function(req /* request */, res /* resource */) {
+//  res.sendFile(__dirname + '/highscores.json');
+//});
+
+
 var port = 2000
 
 server.listen(port /* port */, function () {
@@ -84,6 +89,13 @@ io.sockets.on('connection', function (socket) {
     forwardToAllSockets(socket, 'highscore', function(data){
       highScores=data;
       //optionally add code here to save json file
+      var highScoresJSON = JSON.stringify({highscores:highScores})
+      var fs = require('fs');
+      fs.writeFile("highscores.json", highScoresJSON, function(err) {
+        if(err) {
+          return console.log(err);
+        }
+      });
     });
     socket.on('disconnect', function() {
       console.log('socket disconnect: ' + socket.id);
