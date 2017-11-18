@@ -37,8 +37,7 @@ server.listen(port /* port */, function () {
 
 var io = require('socket.io')(server,{});
 var highscoresJSON = require('./highscores.json'); // ^ may need to do the app.get thing up top
-var highScores = [["empty", 0],["empty", 0],["empty", 0]]
-//optionally add code here to load highscores from json
+var highScores = highscoresJSON.highscores
 var Sock_List = {};
 var connected = 0;
 var running = false;
