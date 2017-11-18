@@ -239,11 +239,11 @@ function Score(game){
 		self.score -= score;
 	}
 	
-	self.getScore = function(){
+	self.getScore = function() {
 		return self.score;
 	}
 	
-	self.restart = function(){
+	self.restart = function() {
 		self.score = 0;
 	}
 }

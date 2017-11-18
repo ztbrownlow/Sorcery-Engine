@@ -43,8 +43,13 @@ var running = false;
 
 var foodPlacement = null;
 
-function forwardToAllSockets(sock, type) {
+var highScores = [["empty", 0],["empty", 0],["empty", 0]]
+
+function forwardToAllSockets(sock, type, process) {
   sock.on(type, function (data) {
+    if (process) {
+      process(data);
+    }
     for (var key in Sock_List) {
       Sock_List[key].emit(type, data);
     }
@@ -53,6 +58,7 @@ function forwardToAllSockets(sock, type) {
 
 io.sockets.on('connection', function (socket) {
   socket.on('load', function (data) {
+    socket.emit('highscore',highScores)
     socket.id = Math.random();
     Sock_List[socket.id] = socket;
     socket.paused = true;
@@ -76,7 +82,7 @@ io.sockets.on('connection', function (socket) {
     forwardToAllSockets(socket, 'keyUp');
     forwardToAllSockets(socket, 'setup');
     forwardToAllSockets(socket, 'food');
-	forwardToAllSockets(socket, 'highscore');
+    forwardToAllSockets(socket, 'highscore', function(data){highScores=data;});
     socket.on('disconnect', function() {
       console.log('socket disconnect: ' + socket.id);
       delete Sock_List[socket.id];
