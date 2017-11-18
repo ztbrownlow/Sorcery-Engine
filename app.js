@@ -36,14 +36,14 @@ server.listen(port /* port */, function () {
 });
 
 var io = require('socket.io')(server,{});
-var highscoresJSON = require('./highscores.json');
+var highscoresJSON = require('./highscores.json'); // ^ may need to do the app.get thing up top
+var highScores = [["empty", 0],["empty", 0],["empty", 0]]
+//optionally add code here to load highscores from json
 var Sock_List = {};
 var connected = 0;
 var running = false;
 
 var foodPlacement = null;
-
-var highScores = [["empty", 0],["empty", 0],["empty", 0]]
 
 function forwardToAllSockets(sock, type, process) {
   sock.on(type, function (data) {
@@ -82,7 +82,10 @@ io.sockets.on('connection', function (socket) {
     forwardToAllSockets(socket, 'keyUp');
     forwardToAllSockets(socket, 'setup');
     forwardToAllSockets(socket, 'food');
-    forwardToAllSockets(socket, 'highscore', function(data){highScores=data;});
+    forwardToAllSockets(socket, 'highscore', function(data){
+      highScores=data;
+      //optionally add code here to save json file
+    });
     socket.on('disconnect', function() {
       console.log('socket disconnect: ' + socket.id);
       delete Sock_List[socket.id];
