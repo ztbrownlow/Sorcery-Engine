@@ -1,3 +1,6 @@
+/**
+  *
+  */
 function Drawable(name) {
   var self = this;
   
@@ -7,8 +10,16 @@ function Drawable(name) {
   self.draw = function(context, x, y) { }  
 }
 
+/** A sprite is the image of an object
+  * @class 
+  * @namespace Sprite
+  */
 function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   var self = this;
+  
+  /** Creates the Sprite
+	* @constructs Sprite
+	*/
   self.constructor = function(name, width, height, src, isSpriteSheet=false, defAngle=0) {
     Drawable.call(self, name);
     self.image = new Image();
@@ -19,6 +30,7 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
 	self.isSpriteSheet = isSpriteSheet;
 	self.currentSprite = 0;
   }
+  /** Creates Sprite */
   self.constructor(name, width, height, src, defAngle);
   
   Object.defineProperties(self, {
@@ -27,6 +39,13 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
     'height': { get: function() { return self.image.height }, set: function(v) { self.image.height = v } }
   });
   
+  /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
+	* @memberof Sprite
+	* @param {context} context - the context
+	* @param {int} x - the x position on the canvas
+	* @param {int} y - the y position on the canvas
+	* @param {int} angle - the angle of the sprite
+	*/
   self.draw = function(context, x, y, angle) {
     if(angle + self.image.angle != 0){
       var RADIANS = Math.PI/180; 

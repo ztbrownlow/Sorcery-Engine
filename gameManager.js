@@ -1,6 +1,9 @@
 /** A game manager that will run any updates that you need to keep track of. Also it keeps track of levels.
   * @class
   * @namespace GameManager
+  * @property {boolean} isCollidable - value if the object can be collided with. Defaults false.
+  * @property {int} level - the current level of the game. Defaults zero. 
+  * @property {array} events - the array of events to be carried out by the game manager.
   */
 function GameManager(){
 	var self = this;
@@ -151,6 +154,13 @@ function GameManager(){
   * @constructor
   * @namespace Score
   * @param {game} game - the game to associate with the score
+  * @property {boolean} isCollidable - value if the object can be collided with. Defaults false. 
+  * @property {int} score - the value that holds the score number
+  * @property {boolean} displayScore - value if the score should be shown or not. Defaults to true.
+  * @property {string} scoreColor - value of the color that score wil be draw in. Can be word colors or hex values. Defaults to "black"
+  * @property {string} scoreFont - value of the font that score will draw in. Defaults to "bold 12px Palatino Linotype"
+  * @property {int} scoreX - the x coordinate of the score. Defaults to zero.
+  * @property {int} scoreY - the y coordinate of the score. Defaults to 10.
   */
 function Score(game){
 	var self = this;
@@ -250,9 +260,12 @@ function Score(game){
   * @constructor
   * @namespace HighScore
   * @param {int} max - the max number of high scores to keep track of.
+  * @property {int} highScoreMax - the maximum number of high scores to keep track of.
+  * @property {array} highScores - the array that holds the high score. Each position in the array holds another array with the value ["name", score].
   */
 function HighScore(max){
 	var self = this;
+	
 	 /** Creates a HighScore object 
 	 *  @constructs HighScore
 	 *  @param {int} max - the max number of high scores to keep track of.
@@ -265,6 +278,7 @@ function HighScore(max){
 		}	
 	}
 	
+	/** Constructs HighScore */
 	self.constructor(max);
 	
 	/** Returns the high score at some index
@@ -365,6 +379,8 @@ function Lives(numberOfLives, sprite){
 	  * @constructs Lives
 	  * @param {number} numberOfLives - the maximum number of lives
 	  * @param {sprite} sprite - the sprite that the lives will look like
+	  * @property {int} startX - the starting X value to draw the live sprites at 
+	  * @property {array} livesArray - the array that holds the sprites of each life. 
 	  */
 	self.constructor = function(numberOfLives, sprite){
 		GameObject.call(self,"lives",null,0,0);
