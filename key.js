@@ -56,7 +56,7 @@ var Key = {
   
   update: function() {
     for (var i = 0; i < this.keyHeldFuncs.length; ++i) {
-      if (this.keyHeldFuns[i].key == this.ANY || this.isDown(this.keyHeldFuncs[i].key)) {
+      if (this.keyHeldFuncs[i].key == this.ANY || this.isDown(this.keyHeldFuncs[i].key)) {
         this.keyHeldFuncs[i].funcs.forEach(function(f) {f();})
       }
     }
