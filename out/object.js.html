@@ -1,4 +1,32 @@
-/** A game object creates an object with a sprite at a certain position. Once the object is added to a SceneGraph it will be drawn on the canvas.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: object.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: object.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** A game object creates an object with a sprite at a certain position. Once the object is added to a SceneGraph it will be drawn on the canvas.
   * @class
   * @namespace GameObject
   */
@@ -112,18 +140,18 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
 	*/
   self.update = function(game) {
     self.customUpdate(game);
-    if(self.isLooping && game.outOfBounds(self.nextX, self.nextY)){
+    if(self.isLooping &amp;&amp; game.outOfBounds(self.nextX, self.nextY)){
       if(self.nextX > game.canvas.width){self.nextX = 0}
-      else if(self.nextX < 0){self.nextX = game.canvas.width}
+      else if(self.nextX &lt; 0){self.nextX = game.canvas.width}
         
       if(self.nextY > game.canvas.height){self.nextY = 0}
-      else if(self.nextY < 0){self.nextY = game.canvas.height}
+      else if(self.nextY &lt; 0){self.nextY = game.canvas.height}
     }
     if (self.direction.x != 0 || self.direction.y != 0) {
       self.nextX += self.direction.x;
       self.nextY += self.direction.y;
     }
-    if (self.isDraggable && self.isClicked) {
+    if (self.isDraggable &amp;&amp; self.isClicked) {
       self.nextX = game.mouseX;
       self.nextY = game.mouseY;
     }
@@ -182,9 +210,9 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       var maxX = self.x - self.xOffset + self.hitbox.xRange[1] * self.width;
       var minY = self.y - self.yOffset + self.hitbox.yRange[0] * self.height;
       var maxY = self.y - self.yOffset + self.hitbox.yRange[1] * self.height;
-      return x >= minX && x <= maxX && y >= minY && y <= maxY;
+      return x >= minX &amp;&amp; x &lt;= maxX &amp;&amp; y >= minY &amp;&amp; y &lt;= maxY;
     } else if (self.hitbox.type == 'circle') {
-      return pos.subtract(self.hitbox.center).magnitude() < self.hitbox.radius;
+      return pos.subtract(self.hitbox.center).magnitude() &lt; self.hitbox.radius;
     } 
     return false;
   }
@@ -206,7 +234,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         var otherMaxX = other.x - other.xOffset + other.hitbox.xRange[1] * other.width;
         var otherMinY = other.y - other.yOffset + other.hitbox.yRange[0] * other.height;
         var otherMaxY = other.y - other.yOffset + other.hitbox.yRange[1] * other.height;
-        return minX < otherMaxX && maxX > otherMinX && minY < otherMaxY && maxY > otherMinY
+        return minX &lt; otherMaxX &amp;&amp; maxX > otherMinX &amp;&amp; minY &lt; otherMaxY &amp;&amp; maxY > otherMinY
       } else if (other.hitbox.type == 'circle') {
         //TODO account for angle
         var centerX = self.nextX - self.xOffset + self.hitbox.center[0] * self.width;
@@ -216,16 +244,16 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         if (diffCentX >= self.hitbox.halfWidth + other.hitbox.radius || diffCentY >= self.hitbox.halfHeight + other.hitbox.radius) {
           return false;
         }
-        if (diffCentX < self.hitbox.halfWidth || diffCentY < self.hitbox.halfHeight) {
+        if (diffCentX &lt; self.hitbox.halfWidth || diffCentY &lt; self.hitbox.halfHeight) {
           return true;
         }
-        return Math.hypot(diffCentX - self.hitbox.halfWidth, diffCentY - self.hitbox.halfHeight) < other.hitbox.radius;
+        return Math.hypot(diffCentX - self.hitbox.halfWidth, diffCentY - self.hitbox.halfHeight) &lt; other.hitbox.radius;
       }
     } else if (self.hitbox.type == 'circle') {
       if (other.hitbox.type == 'square') {
         return other.checkForObjectCollide(self);
       } else if (other.hitbox.type == 'circle') {
-        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.nextX - self.xOffset, self.nextY-self.yOffset))).magnitude() < self.hitbox.radius + other.hitbox.radius
+        return other.hitbox.center.add(new Vector(other.x - other.xOffset, other.y-other.yOffset)).subtract(self.hitbox.center.add(new Vector(self.nextX - self.xOffset, self.nextY-self.yOffset))).magnitude() &lt; self.hitbox.radius + other.hitbox.radius
       }
     }
     return false;
@@ -260,7 +288,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
 	var velMagnitudeCurrent = currentVelVector.magnitude();
 	if(velMagnitudeCurrent != 0){
 		var velMagnitudeNext = velMagnitudeCurrent - decelerationAmt;
-		if(velMagnitudeNext < 0 )
+		if(velMagnitudeNext &lt; 0 )
 			velMagnitudeNext = 0;
 		var velUnitVector = currentVelVector.normalize();
 		var nextVelVector = velUnitVector.multiply(velMagnitudeNext);
@@ -299,7 +327,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
 	* @returns {boolean} returns true if the object is colliding with another object
 	*/
    self.tryCollide = function(other) {
-		if (self !== other && other.isCollidable && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
+		if (self !== other &amp;&amp; other.isCollidable &amp;&amp; self.checkForObjectCollide(other) &amp;&amp; self.canCollideWith(other)) {
 			return self.collideWith(other);
 		}
 		return false;
@@ -308,3 +336,26 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
    self.constructor(name, sprite, x, y, xOffset, yOffset);
 };
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GameManager.html">GameManager</a></li><li><a href="GameObject.html">GameObject</a></li><li><a href="HighScore.html">HighScore</a></li><li><a href="Lives.html">Lives</a></li><li><a href="Score.html">Score</a></li></ul><h3>Mixins</h3><ul><li><a href="Life.html">Life</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 21 2017 11:44:49 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

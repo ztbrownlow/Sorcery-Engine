@@ -4,21 +4,23 @@ document.write('<script type="text/javascript" src="object.js"></script>');
 document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
 document.write('<script type="text/javascript" src="gameManager.js"></script>');
-/*document.write('<script src="http://cdn.peerjs.com/0.3/peer.js"></script>');
 
-var peer = {
-  peer: new Peer('pick-an-id', {key: '14acplyauelv7vi'}),
-  getConnection: function() {
-    if
-  }
-}*/
-
+/**
+    *
+	*/
 function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
 }
 
+/**
+    *
+	*/
 function Game(canvas, name) {
   var self = this
+  
+  /**
+    *
+	*/
   self.constructor = function(canvas, name) {
     self.canvas = canvas;
     self.mouseX = 0;
@@ -36,6 +38,9 @@ function Game(canvas, name) {
     canvas.addEventListener("mouseout", function(e) {self.mouseOut(e)});
   }
   
+  /**
+    *
+	*/
   self.findRandomUnoccupiedPoint = function(objectTree, step) {
     var x;
     var y;
@@ -50,10 +55,16 @@ function Game(canvas, name) {
     return [x, y];
   }
   
+  /**
+    *
+	*/
   self.outOfBounds = function(x, y) {
     return x >= self.canvas.width || x < 0 || y >= self.canvas.height || y < 0;
   }
   
+  /**
+    *
+	*/
   self.getObjectsUnderMouse = function() {
     var temp = self.objects.pointCollide(self.mouseX, self.mouseY, true);
     if (temp) {
@@ -64,6 +75,9 @@ function Game(canvas, name) {
     return [];
   }
   
+  /**
+    *
+	*/
   self.mouseDown = function(e) {
     var temp = self.getObjectsUnderMouse();
     if (temp.length > 0) {
@@ -71,6 +85,9 @@ function Game(canvas, name) {
     }
   }
   
+  /**
+    *
+	*/
   self.mouseUp = function(e) {
     var temp = self.getObjectsUnderMouse();
     if (temp.length > 0) {
@@ -78,15 +95,24 @@ function Game(canvas, name) {
     }
   }
   
+  /**
+    *
+	*/
   self.mouseOut = function(e) {
     self.mouseUp(e);
   }
   
+  /**
+    *
+	*/
   self.mouseMove = function(e) {
     self.mouseX = e.offsetX;
     self.mouseY = e.offsetY;
   }
   
+  /**
+    *
+	*/
   self.update = function() {
     //self.handleMouseActions();
     Key.update();
@@ -96,18 +122,35 @@ function Game(canvas, name) {
     self.gameManager.postUpdate();
   }
   
+  /**
+    *
+	*/
   self.draw = function() {
     self.objects.draw(self.context);
   }
   
+  /**
+    *
+	*/
   self.customPreDraw = function(){}
+  
+  /**
+    *
+	*/
   self.preDraw = function() {
     if (self.customPreDraw) {
       self.customPreDraw();
     }
   }
   
+  /**
+    *
+	*/
   self.customPostDraw = function(){}
+  
+  /**
+    *
+	*/
   self.postDraw = function() {
     if (self.customPostDraw) {
       self.customPostDraw();
@@ -121,6 +164,10 @@ function Game(canvas, name) {
 		}
 	}
   }
+  
+  /**
+    *
+	*/
   self.loop = function() {
     self.canvas.width = self.canvas.width;
     self.update();
@@ -128,11 +175,23 @@ function Game(canvas, name) {
     self.draw();
     self.postDraw();
   }
+  
+  /**
+    *
+	*/
   self.start = function(milliseconds) {
     self.timer = setInterval(self.loop, milliseconds);
   }
+  
+  /**
+    *
+	*/
   self.stop = function() {
     clearInterval(self.timer);
   }
+  
+  /**
+    *
+	*/
   self.constructor(canvas, name);
 }

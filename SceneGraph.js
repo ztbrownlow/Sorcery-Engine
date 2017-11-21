@@ -1,5 +1,13 @@
+/**
+  * A SceneGraph holds all of the objects in the game
+  * @class
+  * @namespace SceneGraph
+  */
 function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
   var self = this;
+  /** Creates the SceneGraph objects
+    * @constructs SceneGraph
+	*/
   self.constructor = function(name, doUpdate=true, doDraw=true, clickable=true, updateDirection="forwards", drawDirection="backwards") {
     self.name = name;
     self.doUpdate = doUpdate;
@@ -10,16 +18,28 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     self.drawDirection = drawDirection;
     self.isSceneGraph = true;
   }
+  /** Creates SceneGraph **/
   self.constructor(name, doUpdate, doDraw, clickable, updateDirection, drawDirection);
   
+  /** 
+    * @memberof SceneGraph
+	* @param {int} x - the x value
+	* @param {int} y - the y value
+	*/
   self.pointCollide = function(x, y, limitToClickable) {
     return self.forEachReturn(function(e){if (!limitToClickable || e.isClickable) { var temp = e.pointCollide(x, y); if (temp) return e.isSceneGraph ? temp : e}});
   }
   
+  /** Returns true if the SceneGraph is empty and contains no objects
+    * @memberof SceneGraph
+	*/
   self.isEmpty = function() {
     return (self.children.length == 0);
   }
   
+  /**
+    *
+	*/
   self.mouseDown = function(game, event, returnOnFirstSuccess = true) {
     if (isClickable) {
       if (returnOnFirstSuccess) {
@@ -30,6 +50,9 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
   }
   
+  /**
+    *
+	*/
   self.mouseUp = function(game, event, returnOnFirstSuccess = true) {
     if (isClickable) {
       if (returnOnFirstSuccess) {
@@ -40,6 +63,9 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
   }
   
+  /**
+    *
+	*/
   self.update = function(game) {
     if (doUpdate) {
       if (self.updateDirection == "backwards") {
@@ -50,10 +76,16 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
   }
   
+  /**
+    *
+	*/
   self.updatePosition = function() {
     self.forEach(function(e) {e.updatePosition();});
   }
   
+  /**
+    *
+	*/
   self.draw = function(context) {
     if (self.doDraw) {
       if (self.drawDirection == "backwards") {
@@ -63,32 +95,68 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       }
     }
   }
+  
+  /**
+    *
+	*/
   self.push = function(obj) {
     self.children.push(obj);
     return obj;
   }
+  
+  /**
+    *
+	*/
   self.pop = function() {
     return self.children.pop();
   }
+  
+  /**
+    *
+	*/
   self.unshift = function(obj) {
     self.children.unshift(obj);
     return obj;
   }
+  
+  /**
+    *
+	*/
   self.shift = function(obj) {
     return self.children.shift();
   }
+  
+  /**
+    *
+	*/
   self.first = function() {
     return self.children[0];
   }
+  
+  /**
+    *
+	*/
   self.last = function() {
     return self.children[self.children.length - 1];
   }
+  
+  /**
+    *
+	*/
   Object.defineProperties(self, {
     'length': { get: function() {return self.children.length;}},
   });
+  
+  /**
+    *
+	*/
   self.byName = function(name) {
     return self.children.filter(function(e) { return e.name == name; });
   }
+  
+  /**
+    *
+	*/
   self.firstByName = function(name) {
     var temp = self.children.filter(function(e) { return e.name == name; });
     if (temp.length == 0) { //doesn't exist
@@ -97,6 +165,10 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       return temp[0]; //return first element with name
     }
   }
+  
+  /**
+    *
+	*/
   self.lastByName = function(name) {
     var temp = self.filter(function(e) { return e.name == name; });
     if (temp.length == 0) { //doesn't exist
@@ -105,23 +177,47 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       return temp[temp.length - 1]; //return first element with name
     }
   }
+  
+  /**
+    *
+	*/
   self.removeIndex = function(index) {
     var temp = self.children[index];
     self.children.splice(index, 1);
     return temp;
   }
+  
+  /**
+    *
+	*/
   self.remove = function(e) {
     return self.removeIndex(self.indexOf(e));
   }
+  
+  /**
+    *
+	*/
   self.removeAll = function() {
     self.children.splice(0, self.children.length);
   }
+  
+  /**
+    *
+	*/
   self.indexOf = function(e) {
     return self.children.indexOf(e);
   }
+  
+  /**
+    *
+	*/
   self.forEach = function(func) {
     self.children.forEach(func);
   }
+  
+  /**
+    *
+	*/
   self.forEachUntilFirstSuccess = function(func, deepCheck = false) {
     for (var i = 0; i < self.length; ++i) {
       if (deepCheck && self.children[i] instanceof SceneGraph) {
@@ -135,6 +231,10 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       }
     }
   }
+  
+  /**
+    *
+	*/
   self.forEachReturn = function(func) {
     var output = new Array();
     for (var i = 0; i < self.length; ++i) {
@@ -142,11 +242,19 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
     return output;
   }
+  
+  /**
+    *
+	*/
   self.forEachReverse = function(func) {
     for (var i = self.length - 1; i >= 0; --i) {
       func(self.children[i], i, self.children);
     }
   }
+  
+  /**
+    *
+	*/
   self.forEachReverseUntilFirstSuccess = function(func) {
     for (var i = self.length - 1; i >= 0; --i) {
       if (func(self.children[i], i, self.children)) {
@@ -154,6 +262,10 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
       }
     }
   }
+  
+  /**
+    *
+	*/
   self.forEachReverseReturn = function(func) {
     var output = new Array();
     for (var i = self.length - 1; i >= 0; --i) {
@@ -161,9 +273,17 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
     return output;
   }
+  
+  /**
+    *
+	*/
   self.filter = function(func) {
     return self.children.filter(func);
   }
+  
+  /**
+    *
+	*/
   self.moveToFront = function(index) {
     var temp = self.children[index];
     for (var i = index; i > 0; --i) {
@@ -171,6 +291,10 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     }
     self.children[0] = temp;
   }
+  
+  /**
+    *
+	*/
   self.moveToBack = function(index) {
     var temp = self.children[index];
     for (var i = index; i < self.length - 1; ++i) {
