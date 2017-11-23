@@ -4,6 +4,7 @@ document.write('<script type="text/javascript" src="object.js"></script>');
 document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
 document.write('<script type="text/javascript" src="gameManager.js"></script>');
+document.write('<script type="text/javascript" src="Grid.js"></script>');
 
 /**
   *
