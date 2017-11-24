@@ -1,22 +1,40 @@
 var game = new Game(document.getElementById("canvas"), "Cops and Robbers");
 var gridSize = 60;
-var characterSize = 60;
+var characterSize = 50;
 var gridLength = 10; 
 var gridWidth = 10;
 var maxCops = 2;
 var maxRobbers = 2;
+var humanPlayer = "cop";
+var currentTurn = 0;
+var totalTurns = 0;
+var maxTurns = 50;
 
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "http://www4.ncsu.edu/~alrichma/images/goodpath.png"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "http://www4.ncsu.edu/~alrichma/images/badpath.png"));
-var spr_cop = game.sprites.push(new Sprite("cop", characterSize, characterSize, "http://www4.ncsu.edu/~alrichma/images/cop.png"));
-var spr_robber = game.sprites.push(new Sprite("robber", characterSize, characterSize, "http://www4.ncsu.edu/~alrichma/images/robber.png"));
 
-var obj_cop_tree = game.objects.push(new SceneGraph("cop", true, true, false));
-var obj_robber_tree = game.objects.push(new SceneGraph("robber", true, true, false));
+var obj_players_tree = game.objects.push(new SceneGraph("players", true, true, false));
 var obj_path_tree = game.objects.push(new SceneGraph("path", true, true, false));
+var obj_arrows_tree = game.objects.push(new SceneGraph("arrows", true, true, false));
 
 var grid;
+
+beACop = function(){
+	humanPlayer = "cop";
+	game.setup();
+}
+
+beARobber = function(){
+	humanPlayer = "robber";
+	game.setup();
+}
+
+beNeither = function(){
+	humanPlayer = "neither";
+	game.setup();
+}
+
 
 setupPath = function(grid, pathLevel){
 	for(var i = 0; i < pathLevel.length; i++){
@@ -41,7 +59,7 @@ getOpenPathLocations = function(currentLevel){
 	return openPaths;
 }
 
-setupCop = function(currentLevel){
+setupCop = function(currentLevel, isHuman){
 	var openPaths = getOpenPathLocations(currentLevel);
 	for(var i = 0; i < maxCops; i++){
 		var random = Math.floor(Math.random() * openPaths.length);
@@ -52,12 +70,13 @@ setupCop = function(currentLevel){
 			var x = openPaths[random][0];
 			var y = openPaths[random][1];
 		}
-		var cop = obj_cop_tree.push(new Cop(x*gridSize, y*gridSize, x, y));
+		var cop = obj_players_tree.push(new Cop(x*gridSize, y*gridSize, x, y, isHuman, i + maxRobbers));
+		isHuman = false;
 		grid.changeNodeValue(x, y, cop);
 	}
 }
 
-setupRobber = function(currentLevel){
+setupRobber = function(currentLevel, isHuman){
 	var openPaths = getOpenPathLocations(currentLevel);
 	for(var i = 0; i < maxCops; i++){
 		var random = Math.floor(Math.random() * openPaths.length);
@@ -68,20 +87,28 @@ setupRobber = function(currentLevel){
 			var x = openPaths[random][0];
 			var y = openPaths[random][1];
 		}
-		var robber = obj_robber_tree.push(new Robber(x*gridSize, y*gridSize, x, y));
+		var robber = obj_players_tree.push(new Robber(x*gridSize, y*gridSize, x, y, isHuman, i));
+		isHuman = false;
 		grid.changeNodeValue(x, y, robber);
 	}
 }
 
 game.setup = function(){
-	obj_cop_tree.removeAll();
-	obj_robber_tree.removeAll();
+	obj_players_tree.removeAll();
 	obj_path_tree.removeAll();
+	var copHuman = false;
+	var robberHuman = false;
+	if(humanPlayer == "cop"){
+		copHuman = true;
+	}
+	if(humanPlayer == "robber"){
+		robberHuman = true;
+	}
 	var currentLevel = level1_path;
 	grid = new Grid(currentLevel.length, currentLevel[0].length);
 	setupPath(grid, currentLevel);
-	setupCop(currentLevel);
-	setupRobber(currentLevel);
+	setupRobber(currentLevel, robberHuman);
+	setupCop(currentLevel, copHuman);
 }
 
 function Path(isWalkable, x, y){
@@ -102,34 +129,64 @@ function Path(isWalkable, x, y){
 	self.constructor(isWalkable, x, y);
 }
 
-function Cop(x, y, gridx, gridy){
+function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 	var self = this;
 	
-	self.constructor = function(x, y){
+	self.constructor = function(x, y, gridx, gridy, isHuman, turnNumber){
 		self.x = x;
 		self.y = y;
 		self.gridx = gridx;
 		self.gridy = gridy;
-		self.sprite = spr_cop;
+		self.turnNumber = turnNumber;
+		self.target = null;
+		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"http://www4.ncsu.edu/~alrichma/images/cop.png",true));
+		self.isHuman = isHuman;
 		GameObject.call(self, "Cop", self.sprite, self.x, self.y);
+		if(self.isHuman){
+			self.sprite.currentSprite = 1;
+		}
 	}
 	
-	self.constructor(x, y);
+	self.constructor(x, y, gridx, gridy, isHuman, turnNumber);
+	
+	self.turn = function(){
+		if(self.isHuman){
+			
+		}
+		else{
+			
+		}
+	}
 }
 
-function Robber(x, y, gridx, gridy){
+function Robber(x, y, gridx, gridy, isHuman, turnNumber){
 	var self = this;
 	
-	self.constructor = function(x, y){
+	self.constructor = function(x, y, gridx, gridy, isHuman, turnNumber){
 		self.x = x;
 		self.y = y;
 		self.gridx = gridx;
 		self.gridy = gridy;
-		self.sprite = spr_robber;
+		self.turnNumber = turnNumber;
+		self.sprite = game.sprites.push(new Sprite("robber", characterSize, characterSize, "http://www4.ncsu.edu/~alrichma/images/robber.png",true));
+		self.isHuman = isHuman;
+		if(self.isHuman){
+			self.sprite.currentSprite = 1;
+		}
 		GameObject.call(self, "Robber", self.sprite, self.x, self.y);
 	}
 	
-	self.constructor(x, y);
+	self.constructor(x, y, gridx, gridy, isHuman, turnNumber);
+	
+	self.turn = function(){
+		if(self.isHuman){
+			
+		}
+		else{
+			//var walkableNeighbors = grid.getWalkableNeighbors(gridx, gridy);
+			//console.log(walkableNeighbors);
+		}
+	}
 }
 
 game.setup();

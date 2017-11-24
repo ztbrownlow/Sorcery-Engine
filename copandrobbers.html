@@ -5,9 +5,19 @@
         <title> Cops and Robbers </title>
     </head>
     <body>
-<canvas id="canvas" width="1000" height="1000">
-  Canvas not supported
-</canvas>
+	<p id="current"></p>
+	<p> Turns: </p><p id="turns"></p>
+	<div id="menu">
+		<p> You can play as either a cop or a robber. Click the button of the character you wish to play. When you click on the button a new game will start. </p>
+		<button id="cop" type = "button" onclick="beACop();">Cop</button>
+		<button id="robber" type = "button" onclick="beARobber();">Robber</button>
+		<button id="neither" type = "button" onclick="beNeither();">Neither</button>
+	</div>
+	<canvas id="canvas" width="1000" height="1000">
+		Canvas not supported
+	</canvas>
+	
+	
 
 <script src="engine.js"></script>
 <script src="copsandrobberslocations.js"></script>

@@ -77,6 +77,25 @@ function Grid(length, width){
 		return neighbors;
 	}
 	
+	self.getWalkableNeighbors = function(node){
+		var x = node.x;
+		var y = node.y;
+		var neighbors = new Array();
+		if(self.grid[x-1] && self.grid[x-1][y] && self.grid[x-1][y].isOpen()){ 
+			neighbors.push(self.grid[x-1][y]);
+		}
+		if(self.grid[x+1] && self.grid[x+1][y] && self.grid[x+1][y].isOpen()){ 
+			neighbors.push(self.grid[x+1][y]);
+		}
+		if(self.grid[x][y-1] && self.grid[x][y-1] && self.grid[x][y-1].isOpen()){ 
+			neighbors.push(self.grid[x][y-1]);
+		}
+		if(self.grid[x][y+1] && self.grid[x][y+1] && self.grid[x][y+1].isOpen()){ 
+			neighbors.push(self.grid[x][y+1]);
+		}
+		return neighbors;
+	}
+	
 	self.ManhattanDistance = function(object1, object2){
 		var d1 = Math.abs(object2.x - object1.x);
 		var d2 = Math.abs(object2.y - object1.y);
