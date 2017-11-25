@@ -29,6 +29,7 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
     self.image.angle = defAngle;
 	self.isSpriteSheet = isSpriteSheet;
 	self.currentSprite = 0;
+	self.doDraw = true;
   }
   /** Creates Sprite */
   self.constructor(name, width, height, src, defAngle);
@@ -47,28 +48,30 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
 	* @param {int} angle - the angle of the sprite
 	*/
   self.draw = function(context, x, y, angle) {
-    if(angle + self.image.angle != 0){
-      var RADIANS = Math.PI/180; 
-      context.save()
-      context.translate(x + (self.image.width / 2), y + (self.image.height / 2));
-      context.rotate((angle + self.image.angle) * RADIANS);
-	  if(isSpriteSheet){
-		context.drawImage(self.image, 0 + (self.image.width * self.currentSprite), 0, self.image.width, self.image.height, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height);
-	  }
-	  else{
-		context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height); 
-	  }
-      context.restore();
-    }
-    else{
-		if(isSpriteSheet){
-			context.drawImage(self.image,0 + (self.image.width * self.currentSprite),0,self.image.width, self.image.height,x, y, self.image.width, self.image.height);
+	if(self.doDraw){
+		if(angle + self.image.angle != 0){
+		  var RADIANS = Math.PI/180; 
+		  context.save()
+		  context.translate(x + (self.image.width / 2), y + (self.image.height / 2));
+		  context.rotate((angle + self.image.angle) * RADIANS);
+		  if(isSpriteSheet){
+			context.drawImage(self.image, 0 + (self.image.width * self.currentSprite), 0, self.image.width, self.image.height, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height);
+		  }
+		  else{
+			context.drawImage(self.image, -(self.image.width/2), -(self.image.height/2), self.image.width, self.image.height); 
+		  }
+		  context.restore();
 		}
 		else{
-			context.drawImage(self.image, x, y, self.image.width, self.image.height);
+			if(isSpriteSheet){
+				context.drawImage(self.image,0 + (self.image.width * self.currentSprite),0,self.image.width, self.image.height,x, y, self.image.width, self.image.height);
+			}
+			else{
+				context.drawImage(self.image, x, y, self.image.width, self.image.height);
 
+			}
 		}
-    }
+	}
   }
 }
 

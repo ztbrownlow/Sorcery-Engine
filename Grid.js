@@ -4,8 +4,8 @@ function Node(x, y){
 	self.constructor = function(x, y){
 		self.value = null;
 		self.walkable = false;
-		self.x = i;
-		self.y = j;
+		self.x = x;
+		self.y = y;
 		//f is the cost from the start
 		self.f = null;
 		//g is the cost from the end
@@ -15,12 +15,14 @@ function Node(x, y){
 	}
 	
 	self.isOpen = function(){
-		return self.walkable;
+		return self.walkable && (self.value == null);
 	}
 	
 	self.isClosed = function(){
 		return !self.walkable;
 	}
+	
+	self.constructor(x,y);
 }
 
 function Grid(length, width){
@@ -41,6 +43,13 @@ function Grid(length, width){
 	}
 	
 	self.constructor(length, width);
+	
+	self.moveNodeValue = function(x1, y1, x2, y2){
+		var node1 = self.getNode(x1,y1);
+		var node2 = self.getNode(x2,y2);
+		node2.value = node1.value;
+		node1.value = null;
+	}
 	
 	self.changeNodeValue = function(x, y, value){
 		self.grid[x][y].value = value;
@@ -77,20 +86,18 @@ function Grid(length, width){
 		return neighbors;
 	}
 	
-	self.getWalkableNeighbors = function(node){
-		var x = node.x;
-		var y = node.y;
+	self.getWalkableNeighbors = function(x, y){
 		var neighbors = new Array();
-		if(self.grid[x-1] && self.grid[x-1][y] && self.grid[x-1][y].isOpen()){ 
+		if(self.grid[x-1][y] && self.grid[x-1][y].isOpen()){ 
 			neighbors.push(self.grid[x-1][y]);
 		}
-		if(self.grid[x+1] && self.grid[x+1][y] && self.grid[x+1][y].isOpen()){ 
+		if(self.grid[x+1][y] && self.grid[x+1][y].isOpen()){ 
 			neighbors.push(self.grid[x+1][y]);
 		}
-		if(self.grid[x][y-1] && self.grid[x][y-1] && self.grid[x][y-1].isOpen()){ 
+		if(self.grid[x][y-1] && self.grid[x][y-1].isOpen()){ 
 			neighbors.push(self.grid[x][y-1]);
 		}
-		if(self.grid[x][y+1] && self.grid[x][y+1] && self.grid[x][y+1].isOpen()){ 
+		if(self.grid[x][y+1] && self.grid[x][y+1].isOpen()){ 
 			neighbors.push(self.grid[x][y+1]);
 		}
 		return neighbors;
