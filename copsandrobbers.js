@@ -157,6 +157,11 @@ setupRobber = function(currentLevel, isHuman){
 }
 
 game.setup = function(){
+  document.getElementById("stay").disabled = true;
+	document.getElementById("left").disabled = true;
+	document.getElementById("right").disabled = true;
+	document.getElementById("up").disabled = true;
+	document.getElementById("down").disabled = true;
 	obj_players_tree.removeAll();
 	obj_path_tree.removeAll();
   numRobbers=0;
@@ -238,13 +243,12 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
       if (r.type && r.type == "Robber") {
         var a = grid.astar(selfNode, grid.getNode(r.gridx, r.gridy));
         if (a) {
-          if (!astar || astar.length >= a.length) {
+          if (!astar || astar.length >= a.length) { //find closest robber and seek them out
             astar = a;
           }
         }
       }
     });
-    //var astar = grid.astar(grid.getNode(self.gridx, self.gridy))
 		if(self.isHuman){
       walkableNeighbors = walkableNeighbors.concat(robberNeighbors);
 			for(var i = 0; i < walkableNeighbors.length; i++){
@@ -297,7 +301,7 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 			if(walkableNeighbors.length != 0){
 				var random = Math.floor(Math.random() * walkableNeighbors.length);
 				var selectedNode = walkableNeighbors[random];*/
-      var selectedNode = grid.getNode(astar[1][0], astar[1][1])
+      var selectedNode = grid.getNode(astar[1][0], astar[1][1]) //first step towards closest robber
       if (!selectedNode.value || selectedNode.value.type == "Robber") { 
 				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
         self.gridx = selectedNode.x;
@@ -398,7 +402,6 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 			}
 			changeTurn();
 		}
-		
 	}
 }
 
