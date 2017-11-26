@@ -295,9 +295,9 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   /** Checks if the object has collided with another object 
     * @memberof GameObject
-	* @param {object} other - the object that collided
-	* @returns {boolean} returns true if the object is colliding with another object
-	*/
+    * @param {object} other - the object that collided
+    * @returns {boolean} returns true if the object is colliding with another object
+    */
    self.tryCollide = function(other) {
 		if (self !== other && other.isCollidable && self.checkForObjectCollide(other) && self.canCollideWith(other)) {
 			return self.collideWith(other);

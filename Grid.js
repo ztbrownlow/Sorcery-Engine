@@ -32,10 +32,8 @@ function Grid(length, width){
 		self.grid = new Array(length);
 		for(var i = 0; i < length; i++){
 			self.grid[i] = new Array(width);
-		}
-		for(var i = 0; i < width; i++){
-			for(var j = 0; j < length; j++){
-				self.grid[i][j] = new Node(i, j);
+			for(var j = 0; j < width; j++){
+				self.grid[i][j] = new Node(j, i);
 			}
 		}
 		self.gridLength = length;
@@ -52,55 +50,42 @@ function Grid(length, width){
 	}
 	
 	self.changeNodeValue = function(x, y, value){
-		self.grid[x][y].value = value;
+		self.grid[y][x].value = value;
 	}
 	
 	self.getNodeValue = function(x, y){
-		return self.grid[x][y].value;
+		return self.grid[y][x].value;
 	}
 	
 	self.changeNodeWalkable = function(x, y, walkable){
-		self.grid[x][y].walkable = walkable;
+		self.grid[y][x].walkable = walkable;
 	}
 	
 	self.getNode = function(x, y){
-		return self.grid[x][y];
+		return self.grid[y][x];
 	}
 	
 	self.getNeighbors = function(node){
 		var x = node.x;
 		var y = node.y;
 		var neighbors = new Array();
-		if(self.grid[x-1] && self.grid[x-1][y]){ 
-			neighbors.push(self.grid[x-1][y]);
+		if(self.grid[y-1] && self.grid[y-1][x]){ 
+			neighbors.push(self.grid[y-1][x]);
 		}
-		if(self.grid[x+1] && self.grid[x+1][y]){ 
-			neighbors.push(self.grid[x+1][y]);
+		if(self.grid[y+1] && self.grid[y+1][x]){ 
+			neighbors.push(self.grid[y+1][x]);
 		}
-		if(self.grid[x][y-1] && self.grid[x][y-1]){ 
-			neighbors.push(self.grid[x][y-1]);
+		if(self.grid[y][x-1] && self.grid[y][x-1]){ 
+			neighbors.push(self.grid[y][x-1]);
 		}
-		if(self.grid[x][y+1] && self.grid[x][y+1]){ 
-			neighbors.push(self.grid[x][y+1]);
+		if(self.grid[y][x+1] && self.grid[y][x+1]){ 
+			neighbors.push(self.grid[y][x+1]);
 		}
 		return neighbors;
 	}
 	
 	self.getWalkableNeighbors = function(x, y){
-		var neighbors = new Array();
-		if(self.grid[x-1][y] && self.grid[x-1][y].isOpen()){ 
-			neighbors.push(self.grid[x-1][y]);
-		}
-		if(self.grid[x+1][y] && self.grid[x+1][y].isOpen()){ 
-			neighbors.push(self.grid[x+1][y]);
-		}
-		if(self.grid[x][y-1] && self.grid[x][y-1].isOpen()){ 
-			neighbors.push(self.grid[x][y-1]);
-		}
-		if(self.grid[x][y+1] && self.grid[x][y+1].isOpen()){ 
-			neighbors.push(self.grid[x][y+1]);
-		}
-		return neighbors;
+    return self.getNeighbors(self.getNode(x, y)).filter(function(n){return n.isOpen();});
 	}
 	
 	self.ManhattanDistance = function(object1, object2){

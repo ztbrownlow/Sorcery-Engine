@@ -12,7 +12,7 @@ var maxCops = 2;
 /** The maximum number of robbers to spawn. This can be changed */
 var maxRobbers = 2;
 /** Variable that says what type of character the human wants to play as. This variable is changed by the buttons on the html page */
-var humanPlayer = "cop";
+var humanPlayer = "robber";
 /** The number of the current turn. 0 - (the max cops + max robbers) */
 var currentTurn = 0;
 /** Which turn coorelates with the humans turn */
@@ -34,6 +34,10 @@ var obj_path_tree = game.objects.push(new SceneGraph("path", true, true, false))
 
 var grid;
 
+var numRobbers = 0;
+
+var skipTurns = [];
+
 beACop = function(){
 	humanPlayer = "cop";
 	game.setup();
@@ -47,6 +51,10 @@ beARobber = function(){
 beNeither = function(){
 	humanPlayer = "neither";
 	game.setup();
+}
+
+stay = function() {
+  buttonPressed = "stay";
 }
 
 goLeft = function(){
@@ -65,7 +73,7 @@ goUp = function(){
 	buttonPressed = "up";
 }
 
-game.gameManager.addConditionEvent((function(){return totalTurns < maxTurns}),
+game.gameManager.addConditionEvent((function(){return totalTurns < maxTurns && numRobbers != 0}),
 	function(){
 		var currentPlayer = obj_players_tree.children[currentTurn];
 		currentPlayer.turn();
@@ -84,14 +92,20 @@ game.gameManager.addConditionEvent((function(){return totalTurns == maxTurns}),
 		document.getElementById("current").innerHTML = "GAME OVER! Robbers Win!";
 		document.getElementById("currentturn").innerHTML = "GAME OVER!";
 	}, true);	
-
+  
+game.gameManager.addConditionEvent((function(){return numRobbers == 0;}),
+	function(){
+		document.getElementById("current").innerHTML = "GAME OVER! Cops Win!";
+		document.getElementById("currentturn").innerHTML = "GAME OVER!";
+	}, true);	  
+  
 setupPath = function(grid, pathLevel){
 	for(var i = 0; i < pathLevel.length; i++){
 		for(var j = 0; j < pathLevel[i].length; j++){
 			var walkable = pathLevel[i][j];
-			var path = new Path(walkable, i * gridSize, j * gridSize);
+			var path = new Path(walkable, j * gridSize, i * gridSize);
 			obj_path_tree.push(path);
-			grid.changeNodeWalkable(i, j, walkable);
+			grid.changeNodeWalkable(j, i, walkable);
 		}
 	}
 }
@@ -101,7 +115,7 @@ getOpenPathLocations = function(currentLevel){
 	for(var i = 0; i < currentLevel.length; i++){
 		for(var j = 0; j < currentLevel[i].length; j++){
 			if(currentLevel[i][j]){
-				openPaths.push(new Array(i, j));
+				openPaths.push(new Array(j, i));
 			}
 		}
 	}
@@ -145,8 +159,10 @@ setupRobber = function(currentLevel, isHuman){
 game.setup = function(){
 	obj_players_tree.removeAll();
 	obj_path_tree.removeAll();
+  numRobbers=0;
 	var copHuman = false;
 	var robberHuman = false;
+  skipTurns = [];
 	if(humanPlayer == "cop"){
 		copHuman = true;
 	}
@@ -154,6 +170,7 @@ game.setup = function(){
 		robberHuman = true;
 	}
 	var currentLevel = level1_path;
+  totalTurns = 0;
 	grid = new Grid(currentLevel.length, currentLevel[0].length);
 	setupPath(grid, currentLevel);
 	setupRobber(currentLevel, robberHuman);
@@ -161,14 +178,15 @@ game.setup = function(){
 }
 
 changeTurn = function(){
-	currentTurn++;
-	if(currentTurn > obj_players_tree.length - 1){
-		currentTurn = 0;
-	}
+  currentTurn++;
+  if(currentTurn >= obj_players_tree.length){
+    currentTurn = 0;
+  }
 	totalTurns++;
-	document.getElementById("currentturn").innerHTML = currentTurn;
+	document.getElementById("currentturn").innerHTML = obj_players_tree.children[currentTurn].turnNumber; //currentTurn;
 	document.getElementById("totalturns").innerHTML = totalTurns;
 	buttonPressed = null;
+  document.getElementById("stay").disabled = true;
 	document.getElementById("left").disabled = true;
 	document.getElementById("right").disabled = true;
 	document.getElementById("up").disabled = true;
@@ -179,15 +197,13 @@ function Path(isWalkable, x, y){
 	var self = this;
 	self.constructor = function(isWalkable, x, y){
 		self.isWalkable = isWalkable;
-		self.x = x;
-		self.y = y;
 		if(isWalkable){
 			self.sprite = spr_goodpath;
 		}
 		else{
 			self.sprite = spr_badpath;
 		}
-		GameObject.call(self, "Path", self.sprite, self.x, self.y);
+		GameObject.call(self, "Path", self.sprite, x, y);
 	}
 	
 	self.constructor(isWalkable, x, y);
@@ -197,8 +213,6 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 	var self = this;
 	
 	self.constructor = function(x, y, gridx, gridy, isHuman, turnNumber){
-		self.x = x;
-		self.y = y;
 		self.type = "Cop";
 		self.gridx = gridx;
 		self.gridy = gridy;
@@ -206,7 +220,7 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 		self.target = null;
 		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"http://www4.ncsu.edu/~alrichma/images/cop.png",true));
 		self.isHuman = isHuman;
-		GameObject.call(self, "Cop", self.sprite, self.x, self.y);
+		GameObject.call(self, "Cop", self.sprite, x, y);
 		if(self.isHuman){
 			humanTurn = self.turnNumber;
 			self.sprite.currentSprite = 1;
@@ -217,20 +231,23 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 	
 	self.turn = function(){
 		var walkableNeighbors = grid.getWalkableNeighbors(self.gridx, self.gridy);
+    var robberNeighbors = grid.getNeighbors(grid.getNode(self.gridx, self.gridy)).filter(function(n){return n.value && n.value.type == "Robber";});
 		if(self.isHuman){
+      walkableNeighbors = walkableNeighbors.concat(robberNeighbors);
 			for(var i = 0; i < walkableNeighbors.length; i++){
 				var x = walkableNeighbors[i].x;
 				var y = walkableNeighbors[i].y;
-				if(x == self.gridx && y == (self.gridy +1)){
+        document.getElementById("stay").disabled = false;
+				if(x == self.gridx && y == (self.gridy + 1)) {
 					document.getElementById("down").disabled = false;
 				}
-				if(x == self.gridx && y == (self.gridy - 1)){
+				if(x == self.gridx && y == (self.gridy - 1)) {
 					document.getElementById("up").disabled = false;
 				}
-				if(x == (self.gridx + 1) && y == self.gridy){
+				if(x == (self.gridx + 1) && y == self.gridy) {
 					document.getElementById("right").disabled = false;
 				}
-				if(x == (self.gridx - 1) && y == self.gridy){
+				if(x == (self.gridx - 1) && y == self.gridy) {
 					document.getElementById("left").disabled = false;
 				}
 			}
@@ -246,36 +263,51 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 				else if(buttonPressed == "down"){
 					newy += 1;
 				}
-				else{
+				else if(buttonPressed == "up"){
 					newy -= 1;
 				}
-				grid.moveNodeValue(self.gridx, self.gridy, newx,newy);
-				self.gridx = newx;
-				self.gridy = newy;
-				self.x = self.gridx * gridSize;
-				self.y = self.gridy * gridSize;
+        if (buttonPressed != "stay") {
+          grid.moveNodeValue(self.gridx, self.gridy, newx,newy);
+          self.gridx = newx;
+          self.gridy = newy;
+          self.x = self.gridx * gridSize;
+          self.y = self.gridy * gridSize;
+          obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+        }
 				changeTurn();	
 			}
-		}
-		else{
+		} else {
+      if (robberNeighbors.length != 0) {
+        walkableNeighbors = robberNeighbors;
+      }
 			if(walkableNeighbors.length != 0){
-				var random = Math.floor(Math.random() * (walkableNeighbors.length-1));
+				var random = Math.floor(Math.random() * walkableNeighbors.length);
 				var selectedNode = walkableNeighbors[random];
-				self.gridx = selectedNode.x;
+				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
+        self.gridx = selectedNode.x;
 				self.gridy = selectedNode.y;
 				self.x = self.gridx * gridSize;
 				self.y = self.gridy * gridSize;
-				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
 			}
+      obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
 			changeTurn();
 		}
 	}
+  self.canCollideWith = function(other) {
+    return (other.type && other.type == "Robber");
+  }
+  self.collideWith = function(robber) {
+    --numRobbers;
+    skipTurns.push(robber.turnNumber);
+    obj_players_tree.remove(robber);
+  }
 }
 
 function Robber(gridx, gridy, isHuman, turnNumber){
 	var self = this;
 	
 	self.constructor = function(gridx, gridy, isHuman, turnNumber){
+    ++numRobbers;
 		self.x = gridx * gridSize;
 		self.y = gridy * gridSize;
 		self.type = "Robber";
@@ -299,6 +331,7 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 			for(var i = 0; i < walkableNeighbors.length; i++){
 				var x = walkableNeighbors[i].x;
 				var y = walkableNeighbors[i].y;
+        document.getElementById("stay").disabled = false;
 				if(x == self.gridx && y == (self.gridy +1)){
 					document.getElementById("down").disabled = false;
 				}
@@ -324,26 +357,28 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 				else if(buttonPressed == "down"){
 					newy += 1;
 				}
-				else{
+				else if(buttonPressed == "up"){
 					newy -= 1;
 				}
-				grid.moveNodeValue(self.gridx, self.gridy, newx,newy);
-				self.gridx = newx;
-				self.gridy = newy;
-				self.x = self.gridx * gridSize;
-				self.y = self.gridy * gridSize;
+        if (buttonPressed != "stay") {
+          grid.moveNodeValue(self.gridx, self.gridy, newx,newy);
+          self.gridx = newx;
+          self.gridy = newy;
+          self.x = self.gridx * gridSize;
+          self.y = self.gridy * gridSize;
+        }
 				changeTurn();	
 			}
 		}
 		else{
 			if(walkableNeighbors.length != 0){
-				var random = Math.floor(Math.random() * (walkableNeighbors.length-1));
+				var random = Math.floor(Math.random() * walkableNeighbors.length);
 				var selectedNode = walkableNeighbors[random];
+				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
 				self.gridx = selectedNode.x;
 				self.gridy = selectedNode.y;
 				self.x = self.gridx * gridSize;
 				self.y = self.gridy * gridSize;
-				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
 			}
 			changeTurn();
 		}
@@ -352,4 +387,4 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 }
 
 game.setup();
-game.start(1000);
+game.start(200);
