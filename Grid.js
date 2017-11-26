@@ -95,12 +95,12 @@ function Grid(length, width){
 	}
 	
 	self.astarGridClean = function(){
-		for(var i = 0; i < self.grid.length(); i++){
-			for(var j = 0; j < self.grid[i].length(); j++){
+		for(var i = 0; i < self.grid.length; i++){
+			for(var j = 0; j < self.grid[i].length; j++){
 				var currentNode = self.grid[i][j];
-				currenNode.nodeParent = null;
-				currentNode.f = 0;
-				currentNode.g = 0;
+				currentNode.nodeParent = null;
+				currentNode.f = Infinity;
+				currentNode.g = Infinity;
 				currentNode.h = 0;
 			}
 		}
@@ -113,54 +113,98 @@ function Grid(length, width){
 		var closedList = new Array();
 		var path;
 		openList.push(start);
-		
+    start.g = 0;
+    start.f = self.ManhattanDistance(start,end);
+    while (openList.length) {
+      current = openList[0];
+      ci = 0;
+      for (var i = 1; i < openList.length; ++i) {
+        if (openList[i].f < current.f) {
+          ci = i;
+          current = openList[i];
+        }
+      }
+      if (current === end) {
+        var path = closedList[closedList.push(current) - 1];
+        var result = [];
+				do{ result.push([path.x, path.y]); }
+				while(path = path.nodeParent);
+				//return start to finish
+				return result.reverse();
+      } else {
+        openList.splice(ci,1);
+        closedList.push(current);
+        var neighbors = self.getNeighbors(current).filter(function(n) {return n.walkable});
+        for (var i = 0; i < neighbors.length; ++i) {
+          var n = neighbors[i];
+          if (closedList.includes(n)) {
+            continue;
+          }
+          if (!openList.includes(n)) {
+            openList.push(n);
+          }
+          var gScore = current.g + 1;
+          if (gScore >= n.g) {
+            continue;
+          }
+          n.nodeParent = current;
+          n.g = gScore;
+          n.f = n.g + self.ManhattanDistance(n,end);
+        }
+      }
+    }
+    return null;
+		/*
 		while(openList.length > 0){
 			var current = openList[0];
+      var currentIndex = 0;
 			for(var i = 0; i < openList.length; i++){
 				if(openList[i].f < current.f){
 					current = openList[i];
+          currentIndex = 0;
 				}
 			}
+      
 			if(current === end){
+        console.log("found end")
 				path = closedList[closedList.push(current) - 1];
 				do{ result.push([path.x, path.y]); }
 				while(path = path.nodeParent);
 				//return start to finish
-				result.reverse();
+				return result.reverse();
 			}
-			else{
-				openList.remove(current);
-				closeList.push(current);
+			else
+      {
+				openList.splice(currentIndex,1); //remove current from openList
 				//find nearby nodes
-				var neighbors = self.neighbors(node);
+				var neighbors = self.getNeighbors(current);
 				for(i = 0; i < neighbors.length; i++){
 					var neighbor = neighbors[i];
-					if(closeList.find(neighbor) || neighbor.isClosed()){
+					if(neighbor.isClosed()){
 						continue;
 					}
 					
 					var gScore = current.g + 1;
-					var bestGScore = false;
-					
-					if(!openList.find(neighbor)){
-							bestGScore = true;
-							neighbor.j = self.ManhattanDistance(neighbor, end);
-							openList.push(neighbor);
-					}
-					else if(gScore < neighbor.g){
-						bestGScore = true;
-					}
-					if(bestGScore){
-						neighbor.nodeParent = current;
-						neighbor.g = gScore;
-						neighbor.f = neighbor.g + neighbor.j;
-					}
+          var hScore = self.ManhattanDistance(neighbor, end);
+          var fScore = gScore + hScore;
+          
+          if (neighbor.f < fScore && (closedList.includes(neighbor) || openList.includes(neighbor))) {
+            continue;
+          }
+          
+          neighbor.nodeParent = current;
+          neighbor.h = hScore;
+          neighbor.g = gScore;
+          neighbor.f = fScore;
+          if (!openList.includes(neighbor)) {
+            openList.push(neighbor);
+          }
 				}
+        closedList.push(current);
 			}
-		
-			
-		}
-		return result;
+    }
+    return result;
+    */
 	}
 		
 }

@@ -231,7 +231,20 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 	
 	self.turn = function(){
 		var walkableNeighbors = grid.getWalkableNeighbors(self.gridx, self.gridy);
-    var robberNeighbors = grid.getNeighbors(grid.getNode(self.gridx, self.gridy)).filter(function(n){return n.value && n.value.type == "Robber";});
+    var selfNode = grid.getNode(self.gridx, self.gridy);
+    var robberNeighbors = grid.getNeighbors(selfNode).filter(function(n){return n.value && n.value.type == "Robber";});
+    var astar = null;
+    obj_players_tree.forEach(function(r) {
+      if (r.type && r.type == "Robber") {
+        var a = grid.astar(selfNode, grid.getNode(r.gridx, r.gridy));
+        if (a) {
+          if (!astar || astar.length >= a.length) {
+            astar = a;
+          }
+        }
+      }
+    });
+    //var astar = grid.astar(grid.getNode(self.gridx, self.gridy))
 		if(self.isHuman){
       walkableNeighbors = walkableNeighbors.concat(robberNeighbors);
 			for(var i = 0; i < walkableNeighbors.length; i++){
@@ -277,12 +290,15 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 				changeTurn();	
 			}
 		} else {
+      /*
       if (robberNeighbors.length != 0) {
         walkableNeighbors = robberNeighbors;
       }
 			if(walkableNeighbors.length != 0){
 				var random = Math.floor(Math.random() * walkableNeighbors.length);
-				var selectedNode = walkableNeighbors[random];
+				var selectedNode = walkableNeighbors[random];*/
+      var selectedNode = grid.getNode(astar[1][0], astar[1][1])
+      if (!selectedNode.value || selectedNode.value.type == "Robber") { 
 				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
         self.gridx = selectedNode.x;
 				self.gridy = selectedNode.y;
