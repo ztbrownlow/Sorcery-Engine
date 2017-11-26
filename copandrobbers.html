@@ -5,16 +5,20 @@
         <title> Cops and Robbers </title>
     </head>
     <body>
+	<button id="level1" type = "button" onclick="level1();">Level 1</button>
+	<button id="level2" type = "button" onclick="level2();">Level 2</button>
 	<table style = "border:2px solid black; width:100%">
 		<tr>
 			<td>Current Turn Number:</td>
 			<td>Total Turns:</td>
 			<td>Max Turns:</td>
+			<td>Number of Robbers left to capture</td>
 		</tr>
 		<tr>
 			<td id="currentturn"></td>
 			<td id="totalturns"></td>
 			<td id = "maxturns"></td>
+			<td id = "robbers"></td>
 		</tr>
 	</table>
 	<p id="current"></p>

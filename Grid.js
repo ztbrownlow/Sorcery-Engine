@@ -154,57 +154,6 @@ function Grid(length, width){
       }
     }
     return null;
-		/*
-		while(openList.length > 0){
-			var current = openList[0];
-      var currentIndex = 0;
-			for(var i = 0; i < openList.length; i++){
-				if(openList[i].f < current.f){
-					current = openList[i];
-          currentIndex = 0;
-				}
-			}
-      
-			if(current === end){
-        console.log("found end")
-				path = closedList[closedList.push(current) - 1];
-				do{ result.push([path.x, path.y]); }
-				while(path = path.nodeParent);
-				//return start to finish
-				return result.reverse();
-			}
-			else
-      {
-				openList.splice(currentIndex,1); //remove current from openList
-				//find nearby nodes
-				var neighbors = self.getNeighbors(current);
-				for(i = 0; i < neighbors.length; i++){
-					var neighbor = neighbors[i];
-					if(neighbor.isClosed()){
-						continue;
-					}
-					
-					var gScore = current.g + 1;
-          var hScore = self.ManhattanDistance(neighbor, end);
-          var fScore = gScore + hScore;
-          
-          if (neighbor.f < fScore && (closedList.includes(neighbor) || openList.includes(neighbor))) {
-            continue;
-          }
-          
-          neighbor.nodeParent = current;
-          neighbor.h = hScore;
-          neighbor.g = gScore;
-          neighbor.f = fScore;
-          if (!openList.includes(neighbor)) {
-            openList.push(neighbor);
-          }
-				}
-        closedList.push(current);
-			}
-    }
-    return result;
-    */
 	}
 		
 }

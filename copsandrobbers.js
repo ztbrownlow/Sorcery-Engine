@@ -3,16 +3,12 @@ var game = new Game(document.getElementById("canvas"), "Cops and Robbers");
 var gridSize = 60;
 /** Variable for the size of the characters */
 var characterSize = 50;
-/** The length of the grid. This can be changed */
-var gridLength = 10; 
-/** The width of the grid. This can be changed */
-var gridWidth = 10;
 /** The maximum number of cops to spawn. This can be changed */
 var maxCops = 2;
 /** The maximum number of robbers to spawn. This can be changed */
 var maxRobbers = 2;
 /** Variable that says what type of character the human wants to play as. This variable is changed by the buttons on the html page */
-var humanPlayer = "robber";
+var humanPlayer = "cop";
 /** The number of the current turn. 0 - (the max cops + max robbers) */
 var currentTurn = 0;
 /** Which turn coorelates with the humans turn */
@@ -23,7 +19,15 @@ var totalTurns = 0;
 var maxTurns = 50;
 /** Variable used to test if a button is pressed or not */
 var buttonPressed = null;
+/** The number of robbers left to capture */
+var numRobbers = 0;
+/**Default level */
+var currentLevel = level1_path;
+
 document.getElementById("maxturns").innerHTML = maxTurns;
+document.getElementById("currentturn").innerHTML = currentTurn;
+document.getElementById("totalturns").innerHTML = totalTurns;
+document.getElementById("robbers").innerHTML = numRobbers;
 
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "http://www4.ncsu.edu/~alrichma/images/goodpath.png"));
 
@@ -34,9 +38,19 @@ var obj_path_tree = game.objects.push(new SceneGraph("path", true, true, false))
 
 var grid;
 
-var numRobbers = 0;
+
 
 var skipTurns = [];
+
+level1 = function(){
+	currentLevel = level1_path;
+	game.setup();
+}
+
+level2 = function(){
+	currentLevel = level2_path;
+	game.setup();
+}
 
 beACop = function(){
 	humanPlayer = "cop";
@@ -174,8 +188,7 @@ game.setup = function(){
 	if(humanPlayer == "robber"){
 		robberHuman = true;
 	}
-	var currentLevel = level1_path;
-  totalTurns = 0;
+	totalTurns = 0;
 	grid = new Grid(currentLevel.length, currentLevel[0].length);
 	setupPath(grid, currentLevel);
 	setupRobber(currentLevel, robberHuman);
@@ -190,6 +203,7 @@ changeTurn = function(){
 	totalTurns++;
 	document.getElementById("currentturn").innerHTML = obj_players_tree.children[currentTurn].turnNumber; //currentTurn;
 	document.getElementById("totalturns").innerHTML = totalTurns;
+	document.getElementById("robbers").innerHTML = numRobbers;
 	buttonPressed = null;
   document.getElementById("stay").disabled = true;
 	document.getElementById("left").disabled = true;
@@ -222,7 +236,6 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 		self.gridx = gridx;
 		self.gridy = gridy;
 		self.turnNumber = turnNumber;
-		self.target = null;
 		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"http://www4.ncsu.edu/~alrichma/images/cop.png",true));
 		self.isHuman = isHuman;
 		GameObject.call(self, "Cop", self.sprite, x, y);
@@ -251,10 +264,10 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
     });
 		if(self.isHuman){
       walkableNeighbors = walkableNeighbors.concat(robberNeighbors);
+			document.getElementById("stay").disabled = false;
 			for(var i = 0; i < walkableNeighbors.length; i++){
 				var x = walkableNeighbors[i].x;
 				var y = walkableNeighbors[i].y;
-        document.getElementById("stay").disabled = false;
 				if(x == self.gridx && y == (self.gridy + 1)) {
 					document.getElementById("down").disabled = false;
 				}
@@ -294,22 +307,15 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 				changeTurn();	
 			}
 		} else {
-      /*
-      if (robberNeighbors.length != 0) {
-        walkableNeighbors = robberNeighbors;
-      }
-			if(walkableNeighbors.length != 0){
-				var random = Math.floor(Math.random() * walkableNeighbors.length);
-				var selectedNode = walkableNeighbors[random];*/
-      var selectedNode = grid.getNode(astar[1][0], astar[1][1]) //first step towards closest robber
-      if (!selectedNode.value || selectedNode.value.type == "Robber") { 
+			var selectedNode = grid.getNode(astar[1][0], astar[1][1]) //first step towards closest robber
+			if (!selectedNode.value || selectedNode.value.type == "Robber") { 
 				grid.moveNodeValue(self.gridx, self.gridy, selectedNode.x, selectedNode.y);
-        self.gridx = selectedNode.x;
+				self.gridx = selectedNode.x;
 				self.gridy = selectedNode.y;
 				self.x = self.gridx * gridSize;
 				self.y = self.gridy * gridSize;
 			}
-      obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+			obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
 			changeTurn();
 		}
 	}
@@ -348,10 +354,10 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 	self.turn = function(){
 		var walkableNeighbors = grid.getWalkableNeighbors(self.gridx, self.gridy);
 		if(self.isHuman){
+			document.getElementById("stay").disabled = false;
 			for(var i = 0; i < walkableNeighbors.length; i++){
 				var x = walkableNeighbors[i].x;
 				var y = walkableNeighbors[i].y;
-        document.getElementById("stay").disabled = false;
 				if(x == self.gridx && y == (self.gridy +1)){
 					document.getElementById("down").disabled = false;
 				}
