@@ -14,6 +14,7 @@ Controls:
 
 The goal for cops is to capture all the robbers. If there is still at least one robber left after 50 turns, the robbers win, but when all robbers are captured the cops win. 
 Two characters cannot occupy the same space on the grid, except for when a cop is capturing a robber. Capturing a robber occurs when a cop moves onto a space occupied by a robber.
+When the game ends (no matter which team wins), gameplay will be paused and a message will appear at the top of the screen indicating game over
 
 --
 AI
