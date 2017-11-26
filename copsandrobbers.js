@@ -101,7 +101,7 @@ game.gameManager.addConditionEvent((function(){return totalTurns < maxTurns && n
 		document.getElementById("status").innerHTML ="";
 	}, true);
 	
-game.gameManager.addConditionEvent((function(){return totalTurns == maxTurns}),
+game.gameManager.addConditionEvent((function(){return totalTurns == maxTurns && numRobbers != 0}),
 	function(){
 		document.getElementById("current").innerHTML = "GAME OVER! Robbers Win!";
 		document.getElementById("currentturn").innerHTML = "GAME OVER!";
