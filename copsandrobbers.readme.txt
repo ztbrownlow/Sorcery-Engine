@@ -8,11 +8,13 @@ Instructions
 ------------
 Controls: 
 * Use the two buttons at the top of the page to change between level 1 or level 2
+* Use the two sliders to choose the amount of robbers and cops that will be in the game. The minimum number is 2 and the maximum is 5.
 * Use the the "cop", "robber", and "neither" to switch between who you control. The current character being controlled will have a red outline. These buttons restart the game.
 * Use the arrow buttons to control movement when it is your turn. Directions that aren't possible from your current position will be disabled.
 * You can also choose to "stay" during your turn, meaning you won't move but will just skip your turn. Sometimes this will be your only option.
 
-The goal for cops is to capture all the robbers. If there is still at least one robber left after 50 turns, the robbers win, but when all robbers are captured the cops win. 
+The goal for cops is to capture all the robbers. If there is still at least one robber left after some number of turns, the robbers win, but when all robbers are captured the cops win. 
+The amount of turns is determined by the amount of robbers and cops in the game. 
 Two characters cannot occupy the same space on the grid, except for when a cop is capturing a robber. Capturing a robber occurs when a cop moves onto a space occupied by a robber.
 When the game ends (no matter which team wins), gameplay will be paused and a message will appear at the top of the screen indicating game over
 
