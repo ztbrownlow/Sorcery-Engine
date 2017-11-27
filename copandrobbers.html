@@ -1,61 +1,66 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta charset="UTF-8" />
-        <title> Cops and Robbers </title>
-    </head>
-    <body>
-	<p>Current Level: <span id="levelValue"></span> (if changed, will not be updated until player is chosen)</p>
-	<button id="level1" type = "button" onclick="level1();">Level 1</button>
-	<button id="level2" type = "button" onclick="level2();">Level 2</button>
-	<div id="slidecontainer">
-		<p>Number Of Robbers: <span id="sliderRobbers"></span> (if changed, will not be updated until player is chosen)</p>
-		<input type="range" min="2" max="5" value="2" class="slider" id="numberOfRobbers">
-		<p>Number Of Cops: <span id="sliderCops"></span> (if changed, will not be updated until player is chosen)</p>
-		<input type="range" min="2" max="5" value="2" class="slider" id="numberOfCops">
-	</div>
-	<div id="menu">
-		<p> You can play as either a cop or a robber. Change any of the values (level, # of cops, # of robbers) above then Click the button of the character you wish to play. When you click on the button a new game will start with the chosen values. The max number of turns will be evaluated based on the number of robbers and cops in the game. </p>
-		<button id="cop" type = "button" onclick="beACop();">Cop</button>
-		<button id="robber" type = "button" onclick="beARobber();">Robber</button>
-		<button id="neither" type = "button" onclick="beNeither();">Neither</button>
-	</div>
-	<br/>
-	<table style = "border:2px solid black; width:100%">
-		<tr>
-			<td>Current Turn Number:</td>
-			<td>Total Turns:</td>
-			<td>Max Turns:</td>
-			<td>Number of Robbers left to capture</td>
-		</tr>
-		<tr>
-			<td id="currentturn"></td>
-			<td id="totalturns"></td>
-			<td id = "maxturns"></td>
-			<td id = "robbers"></td>
-		</tr>
-	</table>
-	<p id="current"></p>
-	
-	<table>
-		<tr>
-			<td></td>
-			<td><button id="up" type = "button" onclick="goUp();">↑ </button></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td><button id="left" type = "button" onclick="goLeft();">← </button></td>
-			<td><button id="down" type = "button" onclick="goDown();">↓</button></td>
-			<td><button id="right" type = "button" onclick="goRight();">→ </button></td>
-      <td></td>
-      <td><button id="stay" type = "button" onclick="stay();">Stay</button></td>
-		</tr>
-	</table>
-	<p id = "status"></p>
-		
-	<canvas id="canvas" width="600" height="600">
-		Canvas not supported
-	</canvas>
+<head>
+    <meta charset="UTF-8" />
+    <title> Cops and Robbers </title>
+</head>
+<body>
+  <table><tr>
+    <td>
+      <p>Current Level: <span id="levelValue"></span> (if changed, will not be updated until player is chosen)</p>
+      <button id="level1" type = "button" onclick="level1();">Level 1</button>
+      <button id="level2" type = "button" onclick="level2();">Level 2</button>
+      <div id="slidecontainer">
+        <p>Number Of Robbers: <span id="sliderRobbers"></span> (if changed, will not be updated until player is chosen)</p>
+        <input type="range" min="2" max="5" value="2" class="slider" id="numberOfRobbers">
+        <p>Number Of Cops: <span id="sliderCops"></span> (if changed, will not be updated until player is chosen)</p>
+        <input type="range" min="2" max="5" value="2" class="slider" id="numberOfCops">
+      </div>
+      <div id="menu">
+        <p> You can play as either a cop or a robber. Change any of the values (level, # of cops, # of robbers) above then Click the button of the character you wish to play. When you click on the button a new game will start with the chosen values. The max number of turns will be evaluated based on the number of robbers and cops in the game. </p>
+        <button id="cop" type = "button" onclick="beACop();">Cop</button>
+        <button id="robber" type = "button" onclick="beARobber();">Robber</button>
+        <button id="neither" type = "button" onclick="beNeither();">Neither</button>
+      </div>
+      <br/>
+      <table style = "border:2px solid black; width:100%">
+        <tr>
+          <td>Current Turn Number:</td>
+          <td>Total Turns:</td>
+          <td>Max Turns:</td>
+          <td>Number of Robbers left to capture</td>
+        </tr>
+        <tr>
+          <td id="currentturn"></td>
+          <td id="totalturns"></td>
+          <td id = "maxturns"></td>
+          <td id = "robbers"></td>
+        </tr>
+      </table>
+      <p id="current"></p>
+      
+      <table>
+        <tr>
+          <td></td>
+          <td><button id="up" type = "button" onclick="goUp();">↑ </button></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><button id="left" type = "button" onclick="goLeft();">← </button></td>
+          <td><button id="down" type = "button" onclick="goDown();">↓</button></td>
+          <td><button id="right" type = "button" onclick="goRight();">→ </button></td>
+          <td></td>
+          <td><button id="stay" type = "button" onclick="stay();">Stay</button></td>
+        </tr>
+      </table>
+      <p id = "status"></p>
+    </td>
+    <td>
+      <canvas id="canvas" width="600" height="600">
+        Canvas not supported
+      </canvas>
+    </td>
+  </tr></table>
 <script src="engine.js"></script>
 <script src="copsandrobberslocations.js"></script>
 <script src="copsandrobbers.js"></script>
