@@ -28,6 +28,7 @@ document.getElementById("maxturns").innerHTML = maxTurns;
 document.getElementById("currentturn").innerHTML = currentTurn;
 document.getElementById("totalturns").innerHTML = totalTurns;
 document.getElementById("robbers").innerHTML = numRobbers;
+document.getElementById("levelValue").innerHTML = "Level 1";
 
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "http://www4.ncsu.edu/~alrichma/images/goodpath.png"));
 
@@ -44,12 +45,12 @@ var skipTurns = [];
 
 level1 = function(){
 	currentLevel = level1_path;
-	game.setup();
+	document.getElementById("levelValue").innerHTML = "Level 1";
 }
 
 level2 = function(){
 	currentLevel = level2_path;
-	game.setup();
+	document.getElementById("levelValue").innerHTML = "Level 2";
 }
 
 beACop = function(){
@@ -155,7 +156,7 @@ setupCop = function(currentLevel, isHuman){
 
 setupRobber = function(currentLevel, isHuman){
 	var openPaths = getOpenPathLocations(currentLevel);
-	for(var i = 0; i < maxCops; i++){
+	for(var i = 0; i < maxRobbers; i++){
 		var random = Math.floor(Math.random() * openPaths.length);
 		var x = openPaths[random][0];
 		var y = openPaths[random][1];
@@ -171,17 +172,21 @@ setupRobber = function(currentLevel, isHuman){
 }
 
 game.setup = function(){
-  document.getElementById("stay").disabled = true;
+	document.getElementById("stay").disabled = true;
 	document.getElementById("left").disabled = true;
 	document.getElementById("right").disabled = true;
 	document.getElementById("up").disabled = true;
 	document.getElementById("down").disabled = true;
+	maxRobbers = document.getElementById("numberOfRobbers").value;
+	maxCops = document.getElementById("numberOfCops").value;
+	maxTurns = maxRobbers * 10 + maxCops * 10;
+	document.getElementById("maxturns").innerHTML = maxTurns;
 	obj_players_tree.removeAll();
 	obj_path_tree.removeAll();
-  numRobbers=0;
+	numRobbers=0;
 	var copHuman = false;
 	var robberHuman = false;
-  skipTurns = [];
+	skipTurns = [];
 	if(humanPlayer == "cop"){
 		copHuman = true;
 	}

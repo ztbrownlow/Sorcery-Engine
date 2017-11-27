@@ -5,8 +5,22 @@
         <title> Cops and Robbers </title>
     </head>
     <body>
+	<p>Current Level: <span id="levelValue"></span></p>
 	<button id="level1" type = "button" onclick="level1();">Level 1</button>
 	<button id="level2" type = "button" onclick="level2();">Level 2</button>
+	<div id="slidecontainer">
+		<p>Number Of Robbers: <span id="sliderRobbers"></span></p>
+		<input type="range" min="2" max="5" value="2" class="slider" id="numberOfRobbers">
+		<p>Number Of Cops: <span id="sliderCops"></span></p>
+		<input type="range" min="2" max="5" value="2" class="slider" id="numberOfCops">
+	</div>
+	<div id="menu">
+		<p> You can play as either a cop or a robber. Change any of the values (level, # of cops, # of robbers) above then Click the button of the character you wish to play. When you click on the button a new game will start with the chosen values. The max number of turns will be evaluated based on the number of robbers and cops in the game. </p>
+		<button id="cop" type = "button" onclick="beACop();">Cop</button>
+		<button id="robber" type = "button" onclick="beARobber();">Robber</button>
+		<button id="neither" type = "button" onclick="beNeither();">Neither</button>
+	</div>
+	<br/>
 	<table style = "border:2px solid black; width:100%">
 		<tr>
 			<td>Current Turn Number:</td>
@@ -22,12 +36,7 @@
 		</tr>
 	</table>
 	<p id="current"></p>
-	<div id="menu">
-		<p> You can play as either a cop or a robber. Click the button of the character you wish to play. When you click on the button a new game will start. </p>
-		<button id="cop" type = "button" onclick="beACop();">Cop</button>
-		<button id="robber" type = "button" onclick="beARobber();">Robber</button>
-		<button id="neither" type = "button" onclick="beNeither();">Neither</button>
-	</div>
+	
 	<table>
 		<tr>
 			<td></td>
@@ -50,5 +59,21 @@
 <script src="engine.js"></script>
 <script src="copsandrobberslocations.js"></script>
 <script src="copsandrobbers.js"></script>
+
+<script>
+var slider = document.getElementById("numberOfRobbers");
+var output = document.getElementById("sliderRobbers");
+var slider1 = document.getElementById("numberOfCops");
+var output1 = document.getElementById("sliderCops");
+output.innerHTML = slider.value;
+output1.innerHTML = slider1.value;
+
+slider.oninput = function() {
+  output.innerHTML = this.value;
+}
+slider1.oninput = function() {
+  output1.innerHTML = this.value;
+}
+</script>
 </body>
 </html>
