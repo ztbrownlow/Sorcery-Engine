@@ -307,7 +307,11 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
           self.gridy = newy;
           self.x = self.gridx * gridSize;
           self.y = self.gridy * gridSize;
+          var i = obj_players_tree.indexOf(self);
           obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+          if (i != obj_players_tree.indexOf(self)) {
+            --currentTurn;
+          }
         }
 				changeTurn();	
 			}
@@ -320,7 +324,11 @@ function Cop(x, y, gridx, gridy, isHuman, turnNumber){
 				self.x = self.gridx * gridSize;
 				self.y = self.gridy * gridSize;
 			}
-			obj_players_tree.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
+      var i = obj_players_tree.indexOf(self);
+			obj_players_tree.forEachUntilFirstSuccess( function(e) { return self.tryCollide(e); }, true);
+      if (i != obj_players_tree.indexOf(self)) {
+        --currentTurn;
+      }
 			changeTurn();
 		}
 	}
