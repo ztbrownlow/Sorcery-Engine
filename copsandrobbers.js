@@ -1,3 +1,4 @@
+/** Initialize game */
 var game = new Game(document.getElementById("canvas"), "Cops and Robbers");
 /** Variable for the size of the paths */
 var gridSize = 60;
@@ -21,7 +22,7 @@ var maxTurns = 50;
 var buttonPressed = null;
 /** The number of robbers left to capture */
 var numRobbers = 0;
-/**Default level */
+/** Default level */
 var currentLevel = level1_path;
 
 document.getElementById("maxturns").innerHTML = maxTurns;
@@ -137,9 +138,9 @@ getOpenPathLocations = function(currentLevel){
 	return openPaths;
 }
 
-setupCop = function(currentLevel, isHuman){
+setupCopsAndRobbers = function(currentLevel, isCop, isRobber){
 	var openPaths = getOpenPathLocations(currentLevel);
-	for(var i = 0; i < maxCops; i++){
+	for(var i = 0; i < parseInt(maxRobbers) + parseInt(maxCops); i++){
 		var random = Math.floor(Math.random() * openPaths.length);
 		var x = openPaths[random][0];
 		var y = openPaths[random][1];
@@ -148,26 +149,13 @@ setupCop = function(currentLevel, isHuman){
 			var x = openPaths[random][0];
 			var y = openPaths[random][1];
 		}
-		var cop = obj_players_tree.push(new Cop(x*gridSize, y*gridSize, x, y, isHuman, i + maxRobbers));
-		isHuman = false;
-		grid.changeNodeValue(x, y, cop);
-	}
-}
-
-setupRobber = function(currentLevel, isHuman){
-	var openPaths = getOpenPathLocations(currentLevel);
-	for(var i = 0; i < maxRobbers; i++){
-		var random = Math.floor(Math.random() * openPaths.length);
-		var x = openPaths[random][0];
-		var y = openPaths[random][1];
-		while(grid.getNodeValue(x, y) != null){
-			var random = Math.floor(Math.random() * openPaths.length);
-			var x = openPaths[random][0];
-			var y = openPaths[random][1];
-		}
-		var robber = obj_players_tree.push(new Robber(x, y, isHuman, i));
-		isHuman = false;
-		grid.changeNodeValue(x, y, robber);
+    if (i < maxRobbers) {
+      grid.changeNodeValue(x,y,obj_players_tree.push(new Robber(x, y, isRobber, i)));
+      isRobber = false;
+    } else {
+      grid.changeNodeValue(x,y,obj_players_tree.push(new Cop(x, y, isCop, i)));
+      isCop = false;
+    }
 	}
 }
 
@@ -189,15 +177,13 @@ game.setup = function(){
 	skipTurns = [];
 	if(humanPlayer == "cop"){
 		copHuman = true;
-	}
-	if(humanPlayer == "robber"){
+	} else if(humanPlayer == "robber"){
 		robberHuman = true;
 	}
 	totalTurns = 0;
 	grid = new Grid(currentLevel.length, currentLevel[0].length);
 	setupPath(grid, currentLevel);
-	setupRobber(currentLevel, robberHuman);
-	setupCop(currentLevel, copHuman);
+	setupCopsAndRobbers(currentLevel, copHuman, robberHuman);
 }
 
 changeTurn = function(){
@@ -233,24 +219,24 @@ function Path(isWalkable, x, y){
 	self.constructor(isWalkable, x, y);
 }
 
-function Cop(x, y, gridx, gridy, isHuman, turnNumber){
+function Cop(gridx, gridy, isHuman, turnNumber){
 	var self = this;
 	
-	self.constructor = function(x, y, gridx, gridy, isHuman, turnNumber){
+	self.constructor = function(gridx, gridy, isHuman, turnNumber){
 		self.type = "Cop";
 		self.gridx = gridx;
 		self.gridy = gridy;
 		self.turnNumber = turnNumber;
 		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"http://www4.ncsu.edu/~alrichma/images/cop.png",true));
 		self.isHuman = isHuman;
-		GameObject.call(self, "Cop", self.sprite, x, y);
+		GameObject.call(self, "Cop", self.sprite, gridx*gridSize, gridy*gridSize);
 		if(self.isHuman){
 			humanTurn = self.turnNumber;
 			self.sprite.currentSprite = 1;
 		}
 	}
 	
-	self.constructor(x, y, gridx, gridy, isHuman, turnNumber);
+	self.constructor(gridx, gridy, isHuman, turnNumber);
 	
 	self.turn = function(){
 		var walkableNeighbors = grid.getWalkableNeighbors(self.gridx, self.gridy);

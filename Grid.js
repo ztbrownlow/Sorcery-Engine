@@ -1,6 +1,18 @@
+/** A node for use in the Grid class.
+  * @class
+  * @namespace Node
+  * @param x the x position of the node in the grid
+  * @param y the y position of the node in the grid
+  */
 function Node(x, y){
 	var self = this;
 	
+  /**
+   * Creates the node
+   * @constructs Node
+   * @param x the x position of the node in the grid
+   * @param y the y position of the node in the grid
+   */
 	self.constructor = function(x, y){
 		self.value = null;
 		self.walkable = false;
@@ -14,10 +26,20 @@ function Node(x, y){
 		self.nodeParent = null;
 	}
 	
+  /**
+    * Checks if a node is open for traversing
+    * @memberof Node
+    * @returns true if node has null value and is walkable
+    */
 	self.isOpen = function(){
 		return self.walkable && (self.value == null);
 	}
 	
+  /**
+    * Checks if a node isn't walkable
+    * @memberof Node
+    * @returns true if node is not walkable
+    */
 	self.isClosed = function(){
 		return !self.walkable;
 	}
@@ -25,9 +47,21 @@ function Node(x, y){
 	self.constructor(x,y);
 }
 
+/**
+  * Grid class used for maintaining states on a grid and traversing it
+  * @namespace Grid
+  * @param length the number of rows in the grid
+  * @param width the number of columns in the grid
+  */
 function Grid(length, width){
 	var self = this;
 	
+  /**
+   * Creates the grid
+   * @constructs Grid
+   * @param length the number of rows in the grid
+   * @param width the number of columns in the grid
+   */
 	self.constructor = function(length, width){
 		self.grid = new Array(length);
 		for(var i = 0; i < length; i++){
@@ -42,6 +76,14 @@ function Grid(length, width){
 	
 	self.constructor(length, width);
 	
+  /**
+    * Moves a value from one node to another
+    * @memberof Grid
+    * @param x1 the x position of the node whose value will be copied over
+    * @param y1 the y position of the node whose value will be copied over
+    * @param x2 the x position of the node who will receive the new value
+    * @param y2 the y position of the node who will receive the new value
+    */
 	self.moveNodeValue = function(x1, y1, x2, y2){
 		var node1 = self.getNode(x1,y1);
 		var node2 = self.getNode(x2,y2);
@@ -49,22 +91,56 @@ function Grid(length, width){
 		node1.value = null;
 	}
 	
+  /**
+    * Changes the value of a node in the grid
+    * @param x the x position of the node whose value will be changed
+    * @param y the y position of the node whose value will be changed
+    * @param value the new value
+    * @memberof Grid
+    */
 	self.changeNodeValue = function(x, y, value){
 		self.grid[y][x].value = value;
 	}
 	
+  /**
+    * Gets the value at a node in the grid
+    * @param x the x position of the node whose value will be checked
+    * @param y the y position of the node whose value will be checked
+    * @returns the value of the node
+    * @memberof Grid
+    */
 	self.getNodeValue = function(x, y){
 		return self.grid[y][x].value;
 	}
 	
+  /**
+    * Changes the if a node in the grid is walkable
+    * @param x the x position of the node which will be changed
+    * @param y the y position of the node which will be changed
+    * @param walkable whether or not the node should be walkable
+    * @memberof Grid
+    */
 	self.changeNodeWalkable = function(x, y, walkable){
 		self.grid[y][x].walkable = walkable;
 	}
 	
+  /** 
+    * Gets the node at a certain position in the grid
+    * @param x the x position to check
+    * @param y the y position to check
+    * @returns the node at the position
+    * @memberof Grid
+    */
 	self.getNode = function(x, y){
 		return self.grid[y][x];
 	}
 	
+  /**
+    * Gets the neighbors of a node
+    * @param node the node to check
+    * @returns the node's neighbors
+    * @memberof Grid
+    */
 	self.getNeighbors = function(node){
 		var x = node.x;
 		var y = node.y;
@@ -84,16 +160,34 @@ function Grid(length, width){
 		return neighbors;
 	}
 	
+  /**
+    * Gets the open neighbors of a node
+    * @param x the x position of the node to checked
+    * @param  y the y position of the node to check
+    * @returns the node's open neighbors
+    * @memberof Grid
+    */
 	self.getWalkableNeighbors = function(x, y){
     return self.getNeighbors(self.getNode(x, y)).filter(function(n){return n.isOpen();});
 	}
 	
+  /**
+    * Gets the manhattan distance between two nodes
+    * @param object1 node to check
+    * @param object2 node to check
+    * @returns the Manhattan distance between object1 and object2
+    * @memberof Grid
+    */
 	self.ManhattanDistance = function(object1, object2){
 		var d1 = Math.abs(object2.x - object1.x);
 		var d2 = Math.abs(object2.y - object1.y);
 		return d1 + d2;
 	}
 	
+  /**
+    * Cleans the grid to prepare for running A*
+    * @memberof Grid
+    */
 	self.astarGridClean = function(){
 		for(var i = 0; i < self.grid.length; i++){
 			for(var j = 0; j < self.grid[i].length; j++){
@@ -106,6 +200,13 @@ function Grid(length, width){
 		}
 	}
 	
+  /**
+    * Gets the shortest path between two nodes in the grid
+    * @param start the starting node
+    * @param end the ending node
+    * @returns the shortest path between the two nodes as an array of [x, y] coordinates
+    * @memberof Grid
+    */
 	self.astar = function(start, end){
 		self.astarGridClean();
 		var result = new Array();
@@ -155,5 +256,4 @@ function Grid(length, width){
     }
     return null;
 	}
-		
 }

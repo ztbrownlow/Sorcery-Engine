@@ -1,12 +1,24 @@
 /** A game object creates an object with a sprite at a certain position. Once the object is added to a SceneGraph it will be drawn on the canvas.
   * @class
   * @namespace GameObject
+  * @param name the name of the object
+  * @param sprite the sprite for the object (null if undrawable)
+  * @param x the x position of the object on the screen
+  * @param y the y position of the object on the screen
+  * @param xOffset the x offset of the top left corner of the sprite relative to the object position
+  * @param yOffset the y offset of the top left corner of the sprite relative to the object position
   */
 function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   var self = this;
   
   /** Creates the game object
 	* @constructs GameObject
+  * @param name the name of the object
+  * @param sprite the sprite for the object (null if undrawable)
+  * @param x the x position of the object on the screen
+  * @param y the y position of the object on the screen
+  * @param xOffset the x offset of the top left corner of the sprite relative to the object position
+  * @param yOffset the y offset of the top left corner of the sprite relative to the object position
 	*/
   self.constructor = function(name, sprite, x, y, xOffset, yOffset) {
     self.name = name;
@@ -29,10 +41,15 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.angle = 0;
   }
   
-  /** This defines some getters and setters for the object
+  /** 
+    * This defines some getters and setters for the object
     * @memberof GameObject
     */
   Object.defineProperties(self, {
+    /**
+      * x position of object
+      * @memberof GameObject
+      */
     'x': { 
       get: function() {
         return self.pos.x;
@@ -41,6 +58,10 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
         self.nextX = val;
       }
     },
+    /**
+      * y position of object
+      * @memberof GameObject
+      */
     'y': { 
       get: function() {
         return self.pos.y;
@@ -50,8 +71,20 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       }
     },
     
+    /**
+      * width of object
+      * @memberof GameObject
+      */
     'width': { get: function() {if(sprite == null){return null} else{return sprite.width}}},
+    /**
+      * height of object
+      * @memberof GameObject
+      */
     'height': { get: function() {if(sprite == null){ return null} else{return sprite.height}}},
+    /**
+      * source of sprite
+      * @memberof GameObject
+      */
     'src': { get: function() {if(sprite == null){ return null} else{return sprite.src}}}
   });  
   
