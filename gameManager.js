@@ -246,11 +246,18 @@ function Score(game){
 	self.subtractScore = function(score){
 		self.score -= score;
 	}
-	
+
+  /** Gets the score
+   *  @memberof Score
+   *  @returns the score
+   */
 	self.getScore = function() {
 		return self.score;
 	}
 	
+  /** Resets the score to 0
+   *  @memberof Score
+   */
 	self.restart = function() {
 		self.score = 0;
 	}
@@ -360,6 +367,12 @@ function HighScore(max){
   */
 function Life(sprite, x, y){
 	var self = this;
+  /** constructor
+  * @constructs Life
+  * @param {sprite} sprite - the sprite that the lives will look like
+  * @param {number} x - the x position
+  * @param {number} y - the y position
+  */
 	self.constructor = function(sprite, x, y){
 		GameObject.call(self,"life",sprite, x, y);
 	}

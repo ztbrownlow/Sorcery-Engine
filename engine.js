@@ -7,21 +7,28 @@ document.write('<script type="text/javascript" src="gameManager.js"></script>');
 document.write('<script type="text/javascript" src="Grid.js"></script>');
 
 /**
-  *
-  */
+ * Flattens a array of arrays (of arrays...) into a single array
+ */
 function flatten(arrays) {
   return arrays.reduce(function(a, b){ if(a){return a.concat(b)} else {return b} });
 }
 
 /**
-    *
-	*/
+ * The main game class
+ * @class
+ * @namespace Game
+ * @param canvas the canvas to draw on
+ * @param name the name of the game
+ */
 function Game(canvas, name) {
   var self = this
   
   /**
-    *
-	*/
+   * Constructor
+   * @constructs Game
+   * @param canvas the canvas to draw on
+   * @param name the name of the game
+   */
   self.constructor = function(canvas, name) {
     self.canvas = canvas;
     self.mouseX = 0;

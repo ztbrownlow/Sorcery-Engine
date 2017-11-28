@@ -7,7 +7,7 @@ function Vector(x, y, z = 0) {
   
   /** Creates the Vector object
     * @constructs Vector
-	*/
+    */
   self.constructor = function(x, y, z) {
     self.x = x;
     self.y = y;
@@ -19,9 +19,9 @@ function Vector(x, y, z = 0) {
   
   /** Adds two Vectors together
     * @memberof Vector
-	* @param {Vector} other - the vector you want to add
-	* @return {Vector} A new vector with the two vectors added
-	*/
+    * @param {Vector} other - the vector you want to add
+    * @return {Vector} A new vector with the two vectors added
+    */
   self.add = function(other) {
     return new Vector(self.x + other.x, self.y + other.y, self.z + other.z);
   }

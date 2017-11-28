@@ -7,16 +7,65 @@ var Key = {
   keyDownFuncs: [],
   keyUpFuncs: [],
   keyHeldFuncs: [],
-
+  /**
+   * Keycode for the spacebar
+   * @memberof Key
+   * @static
+   */
   SPACE: 32,
+  /**
+   * Keycode for left arrow key
+   * @memberof Key
+   * @static
+   */
   LEFT: 37,
+  /**
+   * Keycode for up arrow key
+   * @memberof Key
+   * @static
+   */
   UP: 38,
+  /**
+   * Keycode for right arrow key
+   * @memberof Key
+   * @static
+   */
   RIGHT: 39,
+  /**
+   * Keycode for down arrow key
+   * @memberof Key
+   * @static
+   */
   DOWN: 40,
+  /**
+   * Keycode for w
+   * @memberof Key
+   * @static
+   */
   W: 87,
+  /**
+   * Keycode for a
+   * @memberof Key
+   * @static
+   */
   A: 65,
+  /**
+   * Keycode for s
+   * @memberof Key
+   * @static
+   */
   S: 83,
+  /**
+   * Keycode for d
+   * @memberof Key
+   * @static
+   */
   D: 68,
+  /**
+   * Signifies to bind an event to a key event no matter what key is pressed
+   * @memberof Key
+   * @static
+   */
   ANY: -1,
   
   isDown: function(keyCode) {
