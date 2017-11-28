@@ -1,13 +1,13 @@
 /**
   * An interface for a drawable object
-  * @class
-  * @namespace Drawable
+  * @class Drawable
   */
 function Drawable(name) {
   var self = this;
   
   /**
    * Creates a Drawable
+   * @memberof Drawable
    * @constructs Drawable
    */
   self.constructor = function(name) {
@@ -15,6 +15,7 @@ function Drawable(name) {
   }
   /**
    * Draw function
+   * @memberof Drawable
    * @param context the context to draw on
    * @param x the x coordinate to draw at
    * @param y the y coordinate to draw at

@@ -1,3 +1,7 @@
+/**
+ * @module 
+ * @ignore 
+ */
 /** Initialize game */
 var game = new Game(document.getElementById("canvas"), "Cops and Robbers");
 /** Variable for the size of the paths */

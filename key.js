@@ -1,11 +1,38 @@
+/** Sets up keyup listener */
 window.addEventListener('keyup', function(event) { if (!event.repeat) { Key.onKeyup(event); } }, false);
+/** Sets up keydown listener */
 window.addEventListener('keydown', function(event) { if (!event.repeat) { Key.onKeydown(event); } }, false);
 
+/**
+ * Static class that handles key events
+ * @static
+ * @namespace Key
+ */
 var Key = {
+  /**
+   * what keys are currently pressed
+   * @memberof Key
+   * @ignore
+   */
   _pressed: {},
   
+  /**
+   * data structure to hold functions that run on keydown
+   * @ignore
+   * @memberof Key
+   */
   keyDownFuncs: [],
+  /**
+   * data structure to hold functions that run on keyup
+   * @ignore
+   * @memberof Key
+   */
   keyUpFuncs: [],
+  /**
+   * data structure to hold functions that run while a key is held
+   * @ignore
+   * @memberof Key
+   */
   keyHeldFuncs: [],
   /**
    * Keycode for the spacebar
@@ -68,18 +95,49 @@ var Key = {
    */
   ANY: -1,
   
+  /**
+   * Checks if a key is currently pressed
+   * @return true if key is pressed
+   * @static
+   */
   isDown: function(keyCode) {
     return this._pressed[keyCode];
   },
   
+  /**
+   * Resets what keys are currently pressed
+   * @memberof Key
+   */
   reset: function() {
     this._pressed = {};
   },
   
+  /**
+   * Code for binding event to key up
+   * @memberof Key
+   * @static
+   */
   KEY_UP: 0,
+  /**
+   * Code for binding event to key down
+   * @memberof Key
+   * @static
+   */
   KEY_DOWN: 1,
+  /**
+   * Code for binding event to key held
+   * @memberof Key
+   * @static
+   */
   KEY_HELD: 2,
   
+  /**
+   * Binds a function to a key
+   * @param key the key to bind to
+   * @param keyDir Key.KEY_UP, Key.KEY_DOWN, or Key.KEY_HELD
+   * @param func the function to bind
+   * @memberof Key
+   */
   bind: function(key, keyDir, func) {
     if (keyDir == this.KEY_UP) {
       if (!this.keyUpFuncs[key]) {
@@ -103,6 +161,10 @@ var Key = {
     }
   },
   
+  /**
+   * The update function, called from the game update
+   * @memberof Key
+   */
   update: function() {
     for (var i = 0; i < this.keyHeldFuncs.length; ++i) {
       if (this.keyHeldFuncs[i].key == this.ANY || this.isDown(this.keyHeldFuncs[i].key)) {
@@ -111,6 +173,10 @@ var Key = {
     }
   },
   
+  /**
+   * function that is called on keydown event
+   * @ignore
+   */
   onKeydown: function(event, activateAny=true) {
     if (this.keyDownFuncs[event.keyCode]) {
       this.keyDownFuncs[event.keyCode].forEach(function(f) {f(event);});
@@ -121,6 +187,10 @@ var Key = {
     this._pressed[event.keyCode] = true;
   },
   
+  /**
+   * function that is called on keyup event
+   * @ignore
+   */
   onKeyup: function(event, activateAny=true) {
     if (this.keyUpFuncs[event.keyCode]) {
       this.keyUpFuncs[event.keyCode].forEach(function(f) {f(event);});
