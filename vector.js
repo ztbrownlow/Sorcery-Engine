@@ -1,6 +1,9 @@
 /** A vector holds three integer values, x, y and z. By default if you want to use only x and y, z will be zero.
   * @class
   * @namespace Vector
+  * @property {Number} x x
+  * @property {Number} y y
+  * @property {Number} z z
   */
 function Vector(x, y, z = 0) {
   var self = this;
@@ -46,7 +49,7 @@ function Vector(x, y, z = 0) {
   
   /** Multiplies two Vectors together
     * @memberof Vector
-	* @param {int} scalar - the value you want to multiply to the vector
+	* @param {Number} scalar - the value you want to multiply to the vector
 	* @return {Vector} A new vector with the vector scaled by multiplication based on the number given
 	*/
   self.multiply = function(scalar) {
@@ -55,7 +58,7 @@ function Vector(x, y, z = 0) {
   
   /** Divides two Vectors together
     * @memberof Vector
-	* @param {int} scalar - the value you want to divide the vector by
+	* @param {Number} scalar - the value you want to divide the vector by
 	* @return {Vector} A new vector with the vector scaled by division based on the number given
 	*/
   self.divide = function(scalar) {
@@ -72,7 +75,7 @@ function Vector(x, y, z = 0) {
   
   /** Returns the magnitude of the vector
 	* @memberof Vector
-	* @return {int} The magnitude of the vector
+	* @return {Number} The magnitude of the vector
 	*/
   self.magnitude = function() {
     return Math.hypot(self.x, self.y, self.z);

@@ -1,13 +1,14 @@
 /**
   * An interface for a drawable object
   * @class Drawable
+  * @namespace Drawable
+  * @param name the name of the drawable
   */
 function Drawable(name) {
   var self = this;
   
   /**
    * Creates a Drawable
-   * @memberof Drawable
    * @constructs Drawable
    */
   self.constructor = function(name) {
@@ -15,7 +16,7 @@ function Drawable(name) {
   }
   /**
    * Draw function
-   * @memberof Drawable
+   * @function Drawable.draw
    * @param context the context to draw on
    * @param x the x coordinate to draw at
    * @param y the y coordinate to draw at
@@ -32,6 +33,9 @@ function Drawable(name) {
   * @param src image source
   * @param isSpriteSheet if image is sprite sheet
   * @param defAngle default image angle
+  * @property {String} src image source
+  * @property {Number} width image width
+  * @property {Number} height image height
   */
 function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   var self = this;
@@ -60,29 +64,17 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   self.constructor(name, width, height, src, defAngle);
   
   Object.defineProperties(self, {
-    /**
-      * image source
-      * @memberof Sprite
-      */
     'src': { get: function() { return self.image.src }, set: function(v) { self.image.src = v } },
-    /**
-      * image width
-      * @memberof Sprite
-      */
     'width': { get: function() { return self.image.width }, set: function(v) { self.image.width = v } },
-    /**
-      * image height
-      * @memberof Sprite
-      */
     'height': { get: function() { return self.image.height }, set: function(v) { self.image.height = v } }
   });
   
   /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
-	* @memberof Sprite
+	* @function Sprite.draw
 	* @param {context} context - the context
-	* @param {int} x - the x position on the canvas
-	* @param {int} y - the y position on the canvas
-	* @param {int} angle - the angle of the sprite
+	* @param {Number} x - the x position on the canvas
+	* @param {Number} y - the y position on the canvas
+	* @param {Number} angle - the angle of the sprite
 	*/
   self.draw = function(context, x, y, angle) {
     if(self.doDraw){
@@ -138,10 +130,10 @@ function FilledRect(name, width, height, fillStyle) {
   }
   self.constructor(name, width, height, fillStyle);
   /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
-    * @memberof Sprite
+    * @function FilledRect.draw
     * @param {context} context - the context
-    * @param {int} x - the x position on the canvas
-    * @param {int} y - the y position on the canvas
+    * @param {Number} x - the x position on the canvas
+    * @param {Number} y - the y position on the canvas
     */
   self.draw = function(context, x, y) {
     var saveContext = false;
