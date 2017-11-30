@@ -43,6 +43,265 @@
         
 
 
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>objects</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="SceneGraph.html">SceneGraph</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">object tree</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sprites</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="SceneGraph.html">SceneGraph</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">sprite tree</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mouseX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">x position of mouse</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mouseY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">y position of mouse</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">name of game</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>timer</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">id of timer for running game loop</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>score</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="SceneGraph.html">SceneGraph</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">tree of score objects</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>canvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLCanvasElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">canvas to draw on</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">RenderingContext</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">2d context of canvas</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gameManager</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="GameManager.html">GameManager</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">instance of game manager used by game</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
 <dl class="details">
 
     
@@ -163,7 +422,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line203">line 203</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -249,7 +508,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line185">line 185</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -335,7 +594,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line176">line 176</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line186">line 186</a>
     </li></ul></dd>
     
 
@@ -369,7 +628,7 @@
     
 
     
-    <h4 class="name" id="findRandomUnoccupiedPoint"><span class="type-signature"></span>findRandomUnoccupiedPoint<span class="signature">(objectTree<span class="signature-attributes">opt</span>, step<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="findRandomUnoccupiedPoint"><span class="type-signature"></span>findRandomUnoccupiedPoint<span class="signature">(objectTree<span class="signature-attributes">opt</span>, step<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Number>}</span></h4>
     
 
     
@@ -444,12 +703,12 @@
             
                 <td class="default">
                 
-                    Game.objects
+                    this.objects
                 
                 </td>
             
 
-            <td class="description last">the objectTree to check against. If none, defaults to Game.objects</td>
+            <td class="description last">the objectTree to check against. If none, defaults to this.objects</td>
         </tr>
 
     
@@ -529,7 +788,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line58">line 58</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -567,7 +826,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array</span>
+<span class="param-type">Array.&lt;Number></span>
 
 
     </dd>
@@ -585,7 +844,7 @@
     
 
     
-    <h4 class="name" id="getObjectsUnderMouse"><span class="type-signature"></span>getObjectsUnderMouse<span class="signature">(objectTree<span class="signature-attributes">opt</span>, limitToClickable<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="getObjectsUnderMouse"><span class="type-signature"></span>getObjectsUnderMouse<span class="signature">(objectTree<span class="signature-attributes">opt</span>, limitToClickable<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Number>}</span></h4>
     
 
     
@@ -660,12 +919,12 @@
             
                 <td class="default">
                 
-                    Game.objects
+                    this.objects
                 
                 </td>
             
 
-            <td class="description last">what objectTree to check through. Defaults to Game.objects</td>
+            <td class="description last">what objectTree to check through. Defaults to this.objects</td>
         </tr>
 
     
@@ -745,7 +1004,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line98">line 98</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line108">line 108</a>
     </li></ul></dd>
     
 
@@ -783,7 +1042,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Array</span>
+<span class="param-type">Array.&lt;Number></span>
 
 
     </dd>
@@ -853,7 +1112,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line229">line 229</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -939,7 +1198,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line119">line 119</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line129">line 129</a>
     </li></ul></dd>
     
 
@@ -1025,7 +1284,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line152">line 152</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line162">line 162</a>
     </li></ul></dd>
     
 
@@ -1111,7 +1370,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line143">line 143</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line153">line 153</a>
     </li></ul></dd>
     
 
@@ -1197,7 +1456,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line131">line 131</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -1355,7 +1614,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line86">line 86</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -1463,7 +1722,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line210">line 210</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line220">line 220</a>
     </li></ul></dd>
     
 
@@ -1549,7 +1808,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line192">line 192</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line202">line 202</a>
     </li></ul></dd>
     
 
@@ -1684,7 +1943,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line242">line 242</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -1770,7 +2029,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line254">line 254</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line264">line 264</a>
     </li></ul></dd>
     
 
@@ -1856,7 +2115,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line162">line 162</a>
+        <a href="engine.js.html">engine.js</a>, <a href="engine.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -1906,7 +2165,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Nov 30 2017 17:48:41 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Nov 30 2017 18:53:04 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

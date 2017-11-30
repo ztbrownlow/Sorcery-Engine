@@ -28,6 +28,16 @@ function flatten(arrays, removeNullsAndUndefineds=true) {
  * @namespace Game
  * @param canvas the canvas to draw on
  * @param name the name of the game
+ * @property {SceneGraph} objects object tree
+ * @property {SceneGraph} sprites sprite tree
+ * @property {Number} mouseX x position of mouse
+ * @property {Number} mouseY y position of mouse
+ * @property {String} name name of game
+ * @property {Number} timer id of timer for running game loop
+ * @property {SceneGraph} score tree of score objects
+ * @property {HTMLCanvasElement} canvas canvas to draw on
+ * @property {RenderingContext} context 2d context of canvas
+ * @property {GameManager} gameManager instance of game manager used by game
  */
 function Game(canvas, name) {
   var self = this
@@ -59,9 +69,9 @@ function Game(canvas, name) {
     * Finds a random point that is not occupied by any part of any object
     * @memberof Game
     * @function Game#findRandomUnoccupiedPoint
-    * @param {SceneGraph} [objectTree=Game.objects] the objectTree to check against. If none, defaults to {@link Game.objects}
+    * @param {SceneGraph} [objectTree=this.objects] the objectTree to check against. If none, defaults to this.objects
     * @param {Number} [step=1] how large of an increment to use when selecting a random point. If none, defaults to 1 pixel. Useful for grid-based games
-    * @return {Array} a random point that does not hit any objects in the format [x, y]
+    * @return {Number[]} a random point that does not hit any objects in the format [x, y]
     */
   self.findRandomUnoccupiedPoint = function(objectTree, step) {
     var x;
@@ -99,9 +109,9 @@ function Game(canvas, name) {
     * Gets a list of all objects that are under the mouse
     * @memberof Game
     * @function Game#getObjectsUnderMouse
-    * @param {SceneGraph} [objectTree=Game.objects] what objectTree to check through. Defaults to {@link Game.objects}
+    * @param {SceneGraph} [objectTree={@link this.objects}] what objectTree to check through. Defaults to {@link this.objects}
     * @param {Boolean} [limitToClickable=true] whether or not to only check against clickable objects. Defaults to true.
-    * @return {Array} a list of objects under the mouse
+    * @return {Number[]} a list of objects under the mouse
     */
   self.getObjectsUnderMouse = function(objectTree=null, limitToClickable=true) {
     if (!objectTree) {
