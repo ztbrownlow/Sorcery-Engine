@@ -59,7 +59,7 @@ function Game(canvas, name) {
     * Finds a random point that is not occupied by any part of any object
     * @memberof Game
     * @function Game#findRandomUnoccupiedPoint
-    * @param {SceneGraph} [objectTree=Game.objects] the objectTree to check against. If none, defaults to Game.objects.
+    * @param {SceneGraph} [objectTree=Game.objects] the objectTree to check against. If none, defaults to {@link Game.objects}
     * @param {Number} [step=1] how large of an increment to use when selecting a random point. If none, defaults to 1 pixel. Useful for grid-based games
     * @return {Array} a random point that does not hit any objects in the format [x, y]
     */
@@ -86,7 +86,6 @@ function Game(canvas, name) {
   /**
     * Checks if a coordinate is out of the bounds of the canvas
     * @memberof Game
-    * @instance
     * @function Game#outOfBounds
     * @param {Number} x x coordinate to check
     * @param {Number} y y coordinate to check
@@ -99,9 +98,8 @@ function Game(canvas, name) {
   /**
     * Gets a list of all objects that are under the mouse
     * @memberof Game
-    * @instance
     * @function Game#getObjectsUnderMouse
-    * @param {SceneGraph} [objectTree=Game.objects] what objectTree to check through. Defaults to Game.objects
+    * @param {SceneGraph} [objectTree=Game.objects] what objectTree to check through. Defaults to {@link Game.objects}
     * @param {Boolean} [limitToClickable=true] whether or not to only check against clickable objects. Defaults to true.
     * @return {Array} a list of objects under the mouse
     */
@@ -121,7 +119,6 @@ function Game(canvas, name) {
   /**
     * Mousedown function. Calls mouseDown on all of the clickable objects in the game
     * @memberof Game
-    * @instance
     * @function Game#mouseDown
     */
   self.mouseDown = function(e) {
@@ -134,7 +131,6 @@ function Game(canvas, name) {
   /**
     * Mouseup function. Calls mouseUp on all of the clickable objects in the game
     * @memberof Game
-    * @instance
     * @function Game#mouseUp
     */
   self.mouseUp = function(e) {
@@ -147,7 +143,6 @@ function Game(canvas, name) {
   /**
     * Mouseout function, called when the mouse leaves the canvas. By default, delgates to Game.MouseDown
     * @memberof Game
-    * @instance
     * @function Game#mouseOut
     */
   self.mouseOut = function(e) {
@@ -157,7 +152,6 @@ function Game(canvas, name) {
   /**
     * Mousemove function. Updates Game.mouseX and Game.mouseY
     * @memberof Game
-    * @instance
     * @function Game#mouseMove
     */
   self.mouseMove = function(e) {
@@ -168,7 +162,6 @@ function Game(canvas, name) {
   /**
     * Update function. In order, Gets key presses, runs all events from the game manager, updates all objects, updates all object states to reflect their new positions, and finally runs post-update events from the game manager.
     * @memberof Game
-    * @instance
     * @function Game#update
     */
   self.update = function() {
@@ -183,7 +176,6 @@ function Game(canvas, name) {
   /**
     * Draws the game by drawing all of the drawable objects
     * @memberof Game
-    * @instance
     * @function Game#draw
     */
   self.draw = function() {
@@ -193,7 +185,6 @@ function Game(canvas, name) {
   /**
     * User-defined custom pre draw function. By default, doesn't do anything. Override to use.
     * @memberof Game
-    * @instance
     * @function Game#customPreDraw
     */
   self.customPreDraw = function(){}
@@ -201,7 +192,6 @@ function Game(canvas, name) {
   /**
     * Runs before draw call. Calls Game.customPreDraw
     * @memberof Game
-    * @instance
     * @function Game#preDraw
     */
   self.preDraw = function() {
@@ -213,7 +203,6 @@ function Game(canvas, name) {
   /**
     * User-defined custom post draw function. By default, doesn't do anything. Override to use.
     * @memberof Game
-    * @instance
     * @function Game#customPostDraw
     */
   self.customPostDraw = function(){}
@@ -221,7 +210,6 @@ function Game(canvas, name) {
   /**
     * Runs after draw call. Calls Game.customPostDraw and then draws the score if applicable
     * @memberof Game
-    * @instance
     * @function Game#postDraw
     */
   self.postDraw = function() {
@@ -241,7 +229,6 @@ function Game(canvas, name) {
   /**
     * Game loop. Runs through update and draw process
     * @memberof Game
-    * @instance
     * @function Game#loop
     */
   self.loop = function() {
@@ -255,7 +242,6 @@ function Game(canvas, name) {
   /**
     * Starts running the game
     * @memberof Game
-    * @instance
     * @function Game#start
     * @param {Number} milliseconds the amount of time that should be set to pass between game loop calls
     */
@@ -268,7 +254,6 @@ function Game(canvas, name) {
   /**
     * Stops running the game
     * @memberof Game
-    * @instance
     * @function Game#stop
     */
   self.stop = function() {
