@@ -1,7 +1,7 @@
 const POOL_BEHAVIOR_ON_OVERFLOW = { RETURN_NULL:0, RETURN_NEW_AND_NOT_POOL:1, EXPAND_POOL:2 }
 const POOL_SELECTION = { FIRST:0, RANDOM:1 }
 
-var ObjectPool = function(name, generator, resetFunc, destroyFunc, maxStore, behaviorOnOverflow, poolSelection, doUpdate=true, doDraw=true, clickable=false) {
+var ObjectPool = function(name, generator, resetFunc, destroyFunc, maxStore, behaviorOnOverflow, poolSelection=POOL_SELECTION.FIRST, doUpdate=true, doDraw=true, clickable=false) {
   var self = this;
   
   self.constructor = function(name, generator, resetFunc, destroyFunc, maxStore, behaviorOnOverflow, poolSelection, doUpdate=true, doDraw=true, clickable=false) {
@@ -13,6 +13,7 @@ var ObjectPool = function(name, generator, resetFunc, destroyFunc, maxStore, beh
     self.pooled = [];
     self.select = poolSelection;
     self.bof = behaviorOnOverflow;
+    self._isAggregate = true;
   }
   
   self.newInstance = function() {
@@ -22,7 +23,7 @@ var ObjectPool = function(name, generator, resetFunc, destroyFunc, maxStore, beh
     return tmp;
   }
   
-  self.getObjectAndAddToPool = function() {
+  self.spawn = function() {
     if (self.pooled.length < maxStore) {
       var obj = self.newInstance();
       self.pooled.push(obj);
@@ -66,16 +67,27 @@ var ObjectPool = function(name, generator, resetFunc, destroyFunc, maxStore, beh
   self.spawnSeveral = function(n) {
     var out = [];
     for (var i = 0; i < n; ++i) {
-      out.push(self.getObjectAndAddToPool());
+      out.push(self.spawn());
     }
     return out;
   }
 
-  self.recycleAll = function() {
-    self.pooled.forEach(function(e) {e.isBeingUsed = false;});
-    if (self.destroyFunc) {self.children.forEach(function(e) {self.destroyFunc(e)})};
-    self.removeAll();
+  self.constructor(name, generator, resetFunc, destroyFunc, maxStore, behaviorOnOverflow, poolSelection, doUpdate, doDraw, clickable);
+  
+  self.remove = function(e) {
+    var f = self.pooled.find(function(p) {p.object === e});
+    if (f) {
+      f.isBeingUsed = false;
+    }
+    if (self.destroyFunc) {
+      self.destroyFunc(e);
+    }
+    return self.removeIndex(self.indexOf(e));
   }
   
-  self.constructor(name, generator, resetFunc, destroyFunc, maxStore, behaviorOnOverflow, poolSelection, doUpdate, doDraw, clickable);
+  self.removeAll = function() {
+    self.pooled.forEach(function(e) {e.isBeingUsed = false;});
+    if (self.destroyFunc) {self.children.forEach(function(e) {self.destroyFunc(e)})};
+    self.children.splice(0, self.children.length);
+  }
 }

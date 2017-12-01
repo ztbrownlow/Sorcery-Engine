@@ -25,6 +25,7 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
     self.updateDirection = updateDirection;
     self.drawDirection = drawDirection;
     self.isSceneGraph = true;
+    self._isAggregate = true;
   }
   /** Creates SceneGraph **/
   self.constructor(name, doUpdate, doDraw, clickable, updateDirection, drawDirection);
@@ -228,7 +229,7 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
 	*/
   self.forEachUntilFirstSuccess = function(func, deepCheck = false) {
     for (var i = 0; i < self.length; ++i) {
-      if (deepCheck && self.children[i] instanceof SceneGraph) {
+      if (deepCheck && self.children[i]._isAggregate) {
         var temp = self.children[i].forEachUntilFirstSuccess(func, true);
         if (temp) {
           return temp;
@@ -238,6 +239,7 @@ function SceneGraph(name, doUpdate=true, doDraw=true, clickable=true, updateDire
         return self.children[i];
       }
     }
+    return false;
   }
   
   /**

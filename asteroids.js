@@ -42,12 +42,20 @@ function resetAsteroid(asteroid) {
   asteroid.direction = asteroid.calculateVelocity(asteroid.asteroidSpeed, asteroid.angle);
 }
 
-var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
-var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
-var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
-var asteroidPool = new ObjectPool("Asteroids", newAsteroid, resetAsteroid, null, 10, POOL_BEHAVIOR_ON_OVERFLOW.EXPAND_POOL, POOL_SELECTION.FIRST);
+function newBullet() {
+  return new Bullet(0,25,16,0,0,"rocket");
+}
 
-game.objects.push(asteroidPool);
+function resetBullet(b) {
+  b.x=rocket.x+rocketSize/2;
+  b.y=rocket.y+rocketSize/2;
+  b.direction=b.calculateVelocity(b.bulletSpeed,rocket.angle);
+}
+
+var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
+var obj_bullet = game.objects.push(new ObjectPool("bullet", newBullet, resetBullet, null, 20, POOL_BEHAVIOR_ON_OVERFLOW.EXPAND_POOL));//game.objects.push(new SceneGraph("bullet",true,true,false));
+var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
+var asteroidPool = game.objects.push(new ObjectPool("asteroids", newAsteroid, resetAsteroid, null, 10, POOL_BEHAVIOR_ON_OVERFLOW.EXPAND_POOL));
 
 game.gameManager.addConditionEvent(asteroidPool.isEmpty, 
   function() {
@@ -70,9 +78,7 @@ if(!localHighScore){
   highscore.addHighScore("ztbrownl",30);
   highscore.addHighScore("alrichma",20);
   highscore.addHighScore("rnpettit",10);
-}
-else
-{
+} else {
   highscore.highScores = localHighScore;
 }
 
@@ -115,16 +121,25 @@ game.setup = function(){
 	obj_rocket.removeAll();
 	obj_alien.removeAll();
 	rocket = obj_rocket.push(new Rocket());
-  asteroidPool.recycleAll();
+  asteroidPool.removeAll();
   asteroidPool.spawnSeveral(4);
   Key.reset();
 }
+
+var angleChange = 15;
+
+Key.bind(Key.W, Key.KEY_HELD, function(){rocket.move()});
+Key.bind(Key.A, Key.KEY_HELD, function(){rocket.changeAngle(-angleChange)});
+Key.bind(Key.D, Key.KEY_HELD, function(){rocket.changeAngle(angleChange)});
+Key.bind(Key.UP, Key.KEY_HELD, function(){rocket.move()});
+Key.bind(Key.LEFT, Key.KEY_HELD, function(){rocket.changeAngle(-angleChange)});
+Key.bind(Key.RIGHT, Key.KEY_HELD, function(){rocket.changeAngle(angleChange)});
+Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
 
 function Rocket(){
 	var self = this;
 	var maxSpeed = 15;
 	var rocketSpeed = 2;
-	var angleChange = 15;
 	
 	self.constructor = function(){
 		GameObject.call(self,"rocket",spr_rocket,rocket_start_x,rocket_start_y);
@@ -132,18 +147,11 @@ function Rocket(){
 		self.setCircleHitbox();
 		self.bulletLimit = 0;
 		self.moving = false;
-		Key.bind(Key.W, Key.KEY_HELD, function(){move()});
-		Key.bind(Key.A, Key.KEY_HELD, function(){self.changeAngle(-angleChange)});
-		Key.bind(Key.D, Key.KEY_HELD, function(){self.changeAngle(angleChange)});
-		Key.bind(Key.UP, Key.KEY_HELD, function(){move()});
-		Key.bind(Key.LEFT, Key.KEY_HELD, function(){self.changeAngle(-angleChange)});
-		Key.bind(Key.RIGHT, Key.KEY_HELD, function(){self.changeAngle(angleChange)});
-		Key.bind(Key.SPACE, Key.KEY_DOWN, function(){rocket.shootBullet();});
 		self.immune = false;
 	}
 	self.constructor();
 	
-	function move(){
+	self.move = function(){
 		var tempVel = self.velocity;
 		var speed = self.calculateVelocity(rocketSpeed,self.angle);
 		tempVel = tempVel.add(speed);
@@ -157,7 +165,7 @@ function Rocket(){
 	
 	self.shootBullet = function(){
 		if(self.bulletLimit <= 0){
-			obj_bullet.push(new Bullet(self.angle, 25, 16, self.x + (rocketSize/2), self.y + (rocketSize/2), "rocket"))
+      obj_bullet.spawn();
 			self.bulletCount++;
 			self.bulletLimit = 2;
 		}
@@ -187,7 +195,7 @@ function Rocket(){
 			else{
 				obj_rocket.removeAll();
 			}
-			obj_bullet.remove(self)
+			obj_alien.remove(other)
 		}
 	}
 	
@@ -208,7 +216,7 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 	self.constructor();
 	self.customUpdate = function(game){
 		self.bulletLife--;
-		if(self.bulletLife < 0){
+		if(self.bulletLife < 0) {
 			obj_bullet.remove(self);  
 		}
 		game.objects.forEachUntilFirstSuccess( function(e) {return self.tryCollide(e); }, true);
@@ -218,7 +226,7 @@ function Bullet(angle, speed, life, positionX, positionY, owner){
 		if(other instanceof Alien && self.owner == "rocket"){
 			score.addScore(50);
 			obj_bullet.remove(self)
-			obj_alien.remove(self);	
+			obj_alien.remove(other);	
 		}
 		if(other instanceof Rocket && self.owner == "alien"){
 			lives.loseLife();
@@ -250,7 +258,13 @@ function Alien(x, y){
 	self.customUpdate = function(game){
 		if(self.shootTime < 0){
 			var angle = Math.random() * 360;
-			obj_bullet.push(new Bullet(angle, 10, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
+      var b = obj_bullet.spawn().object;
+      b.x = self.x + (alienSize/2);
+      b.y = self.y + (alienSize/2);
+      b.direction = b.calculateVelocity(10, Math.random() * 360);
+      b.bulletLife = 30;
+      b.owner = "alien";
+			//obj_bullet.push(new Bullet(angle, 10, 30, self.x + (alienSize/2), self.y + (alienSize/2), "alien"));
 			self.shootTime = shootTimeLimit;
 		}
 		self.shootTime--;
@@ -277,6 +291,7 @@ function Asteroid(x, y, angle, speed, size, sprite){
 	self.canCollideWith = function(other) { return true; }
 	self.collideWith = function(other){
 		if(other instanceof Bullet){
+      console.log(other);
 			if(other.owner == "rocket"){
 				if(self.size == 1){
 					score.addScore(100);
@@ -324,7 +339,7 @@ function Asteroid(x, y, angle, speed, size, sprite){
   }
 	self.splitAsteroids = function(){
 		if(self.size != 1){
-      var other = asteroidPool.getObjectAndAddToPool().object;
+      var other = asteroidPool.spawn().object;
       self.asteroidSpeed *= 2;
       other.x = self.x;
       other.y = self.y;
