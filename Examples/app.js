@@ -8,28 +8,31 @@ app.get('/networksnake.js', function(req /* request */, res /* resource */) { //
   res.sendFile(__dirname + '/networksnake.js');
 });
 app.get('/engine.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/engine.js');
+  res.sendFile('/engine/engine.js', {root:'.'});
 });
 app.get('/vector.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/vector.js');
+  res.sendFile('/engine/vector.js', {root:'.'});
 });
 app.get('/Sprites.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/Sprites.js');
+  res.sendFile('/engine/Sprites.js', {root:'.'});
 });
 app.get('/object.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/object.js');
+  res.sendFile('/engine/object.js', {root:'.'});
 });
 app.get('/SceneGraph.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/SceneGraph.js');
+  res.sendFile('/engine/SceneGraph.js', {root:'.'});
 });
 app.get('/key.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/key.js');
+  res.sendFile('/engine/key.js', {root:'.'});
 });
 app.get('/gameManager.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/gameManager.js');
+  res.sendFile('/engine/gameManager.js', {root:'.'});
 });
 app.get('/objectPool.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
-  res.sendFile(__dirname + '/objectPool.js');
+  res.sendFile('/engine/objectPool.js', {root:'.'});
+});
+app.get('/Grid.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
+  res.sendFile('/engine/Grid.js', {root:'.'});
 });
 
 //app.get("/highscores.json', function(req /* request */, res /* resource */) {

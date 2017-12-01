@@ -139,7 +139,7 @@ function FilledRect(name, width, height, fillStyle) {
   self.constructor(name, width, height, fillStyle);
   /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
     * @function FilledRect#draw
-    * @param {RendeirngContext} context - the context
+    * @param {RenderingContext} context - the context
     * @param {Number} x - the x position on the canvas
     * @param {Number} y - the y position on the canvas
     */

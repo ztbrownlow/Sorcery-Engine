@@ -1,11 +1,14 @@
-document.write('<script type="text/javascript" src="vector.js"></script>');
-document.write('<script type="text/javascript" src="Sprites.js"></script>');
-document.write('<script type="text/javascript" src="object.js"></script>');
-document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
-document.write('<script type="text/javascript" src="key.js"></script>');
-document.write('<script type="text/javascript" src="gameManager.js"></script>');
-document.write('<script type="text/javascript" src="Grid.js"></script>');
-document.write('<script type="text/javascript" src="objectPool.js"></script>');
+var script = document.getElementsByTagName('script')
+script = script[script.length-1].src
+baseURL = script.substr(0,script.lastIndexOf('/')+1);
+document.write('<script type="text/javascript" src="' + baseURL + 'vector.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'Sprites.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'object.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'SceneGraph.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'key.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'gameManager.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'Grid.js"></script>');
+document.write('<script type="text/javascript" src="' + baseURL + 'objectPool.js"></script>');
 
 /**
  * Flattens an n-dimensional array
@@ -246,8 +249,8 @@ function Game(canvas, name) {
     * @function Game#loop
     */
   self.loop = function() {
-    self.update();
     self.canvas.width = self.canvas.width;
+    self.update();
     self.preDraw();
     self.draw();
     self.postDraw();
