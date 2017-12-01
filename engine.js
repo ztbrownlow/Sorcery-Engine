@@ -24,8 +24,7 @@ function flatten(arrays, removeNullsAndUndefineds=true) {
 
 /**
  * The main game class
- * @class
- * @namespace Game
+ * @class Game
  * @param canvas the canvas to draw on
  * @param name the name of the game
  * @property {SceneGraph} objects object tree
@@ -43,8 +42,9 @@ function Game(canvas, name) {
   var self = this
   
   /**
-   * Constructor
-   * @constructs Game
+   * Constructor method
+   * @memberof Game
+   * @function Game.constructor
    * @param canvas the canvas to draw on
    * @param name the name of the game
    */
@@ -54,6 +54,9 @@ function Game(canvas, name) {
     self.mouseY = 0;
     self.name = name;
     self.context = canvas.getContext('2d');
+    if (self.timer != null) {
+      clearInterval(self.timer);
+    }
     self.timer = null;
     self.sprites = new SceneGraph("sprites");
     self.objects = new SceneGraph("objects");

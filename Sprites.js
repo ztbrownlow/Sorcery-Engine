@@ -1,8 +1,8 @@
 /**
   * An interface for a drawable object
   * @class Drawable
-  * @namespace Drawable
-  * @param name the name of the drawable
+  * @param {String} name the name of the drawable
+  * @property {String} name the name of the drawable
   */
 function Drawable(name) {
   var self = this;
@@ -25,8 +25,9 @@ function Drawable(name) {
 }
 
 /** A sprite is the image of an object
-  * @class 
+  * @class Sprite
   * @namespace Sprite
+  * @implements Drawable
   * @param name image name
   * @param width image width
   * @param height image height
@@ -105,7 +106,8 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
 
 /**
  * A filled rectangle that can be used like a sprite
- * @namespace FilledRect
+ * @implements Drawable
+ * @class FilledRect
  * @param name the name of the rectangle sprite
  * @param width the width of the rectangle
  * @param height the height of the rectangle
@@ -114,8 +116,9 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
 function FilledRect(name, width, height, fillStyle) {
   var self = this;
   /**
-   * Constructor
-   * @constructs FilledRect
+   * Constructor method
+   * @memberof FilledRect
+   * @function FilledRect.constructor
    * @param name the name of the rectangle sprite
    * @param width the width of the rectangle
    * @param height the height of the rectangle
