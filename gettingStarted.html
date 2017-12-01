@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8" />
+        <title> Sorcery the Javascript Engine </title>
+		<link rel="stylesheet" type="text/css" href="sorcery.css" />
+    </head>
+    <body>
+	<img src = "http://www4.ncsu.edu/~alrichma/images/title.png" alt= "title" />
+	<div class="topnav" id="myTopnav">
+		<a href="index.html">Index</a>
+		<a href="features.html">Features</a>
+		<a class="active" href="gettingStarted.html">Getting Started</a>
+		<a href="gamehub.html">Sample Games</a>
+		<a href="out/index.html">JSDoc</a>
+		<a href="creators.html">Creators</a>
+	</div> 
+	
+	<p> Click here to download templates to create a game </p>
+	<a href="gameTemplate.js" download> Javascript Template</a><br/>
+	<a href ="websiteTemplate.html" download> Website Template </a>
+	<p> To download the game engine and see code for sample games go to: <a href = "https://github.ncsu.edu/ztbrownl/csc481Alchemy"> our github page</a>
+	<p> Please see our JSDoc for an API reference for each class </p>
+	
+	<h3> The Game Object </h3>
+	<p> The very basic line you need to start a game is: <br/> 
+		<span style="font-family:Courier">var game = new Game(document.getElementById("canvas"), "gamename"); </span>
+		<br/><br/>
+		This gives you access to the game object which is how you will control everything in your game. In the game object you have access to a scene graph for the sprites, objects, score, and the game manager.
+		<br/><br/>
+		Everytime you want to add an object, sprite, or score to the game, you must add it to the Scenegraph that is relates to or else it won't show up on the canvas. To help organize your objects, feel free to create more scenegraphs and add them to the existing scene graphs.
+		<br/><br/>
+			For example, if you want to add a scene graph for a particle object you must push the scene graph to the object scene graph to have it show up on the canvas.
+			<br/><br/>
+				<span style="font-family:Courier">game.objects.push(new SceneGraph("example", true, true, false));</span>
+	</p>
+	<h3> The Game Manager </h3>
+	<p> The game manager will help you create events to happen in the game based on certain condition, time, etc. There is one game manager per game and it is created when the game is made so there is no need to define your own. 
+	</p>
+	<h3>Starting a game</h3>
+	<p> By editing the function, <span style="font-family:Courier">game.setup = function(){}</span>, anything inside of that function will be the first code that the game will read before starting a new game. This function must be called at the end of the file so the game will setup before officially starting. This is where you will initlize any objects needed for the game. Use this function everytime you want to start a new game.  You can then start the game using <span style="font-family:Courier">game.start(10);</span> to start the game updating. The number in the parameter is how many milliseconds between each update. So if you want there to be one second between updates the number you would need is 1000. </p>
+	</body>
+</html>
