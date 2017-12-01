@@ -94,6 +94,327 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="POOL_BEHAVIOR_ON_OVERFLOW"><span class="type-signature">(constant) </span>POOL_BEHAVIOR_ON_OVERFLOW<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    Enum for behavior of ObjectPool when the number of currently spawned objects exceeds the pool size
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>RETURN_NULL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value for if the pool should just return null and not spawn any new objects</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>RETURN_NEW_AND_NOT_POOL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value for if the pool should spawn an object but not pool it</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>EXPAND_POOL</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value for if a pool should just expand its size to fit the new object being spawned</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line6">line 6</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="POOL_SELECTION"><span class="type-signature">(constant) </span>POOL_SELECTION<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    Enum for how objects are taken from the pool
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>FIRST</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Select the first unallocated pool object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>RANDOM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Select a random unallocated pool object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -302,6 +623,565 @@
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    
+    <h4 class="name" id="destroyFuncCallback"><span class="type-signature"></span>destroyFuncCallback<span class="signature">(obj)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Destructor for a GameObject
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="GameObject.html">GameObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">object to destroy</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    
+    <h4 class="name" id="generatorCallback"><span class="type-signature"></span>generatorCallback<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns a new GameObject
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line26">line 26</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    GameObject
+</div>
+
+
+
+    
+
+
+
+
+
+            
+                
+<h4 class="name" id="PooledInstance">PooledInstance</h4>
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="GameObject.html">GameObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">instance of object</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isBeingUsed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">whether or not the pooled instance is currently allocated</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cRef</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">pointer to list of spawned objects in ObjectPool</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>object.pooledInstance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ObjectPool.html">ObjectPool</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">pointer to ObjectPool that contains object</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+                
+
+    
+
+    
+    <h4 class="name" id="resetFuncCallback"><span class="type-signature"></span>resetFuncCallback<span class="signature">(obj)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Resets the properties of a GameObject to what they would be if it was a newly created object
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="GameObject.html">GameObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">object to reset</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="objectPool.js.html">objectPool.js</a>, <a href="objectPool.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    
 
     
 </article>
@@ -314,13 +1194,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FilledRect.html">FilledRect</a></li><li><a href="Game.html">Game</a></li><li><a href="GameManager.html">GameManager</a></li><li><a href="GameObject.html">GameObject</a></li><li><a href="Grid.html">Grid</a></li><li><a href="HighScore.html">HighScore</a></li><li><a href="Lives.html">Lives</a></li><li><a href="Node.html">Node</a></li><li><a href="SceneGraph.html">SceneGraph</a></li><li><a href="Score.html">Score</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vector.html">Vector</a></li></ul><h3>Namespaces</h3><ul><li><a href="Key.html">Key</a></li></ul><h3>Interfaces</h3><ul><li><a href="Drawable.html">Drawable</a></li></ul><h3>Global</h3><ul><li><a href="global.html#flatten">flatten</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="FilledRect.html">FilledRect</a></li><li><a href="Game.html">Game</a></li><li><a href="GameManager.html">GameManager</a></li><li><a href="GameObject.html">GameObject</a></li><li><a href="Grid.html">Grid</a></li><li><a href="HighScore.html">HighScore</a></li><li><a href="Lives.html">Lives</a></li><li><a href="Node.html">Node</a></li><li><a href="ObjectPool.html">ObjectPool</a></li><li><a href="SceneGraph.html">SceneGraph</a></li><li><a href="Score.html">Score</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Vector.html">Vector</a></li></ul><h3>Namespaces</h3><ul><li><a href="Key.html">Key</a></li></ul><h3>Interfaces</h3><ul><li><a href="Drawable.html">Drawable</a></li></ul><h3>Global</h3><ul><li><a href="global.html#flatten">flatten</a></li><li><a href="global.html#POOL_BEHAVIOR_ON_OVERFLOW">POOL_BEHAVIOR_ON_OVERFLOW</a></li><li><a href="global.html#POOL_SELECTION">POOL_SELECTION</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Dec 01 2017 02:49:04 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Dec 01 2017 15:10:06 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
