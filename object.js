@@ -35,6 +35,7 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
     self.isClickable = true;
     self.isCollidable = true;
     self.isLooping = false;
+    self.doUpdate = true;
     self.setSquareHitbox([0, 1], [0, 1]);
     self.direction = new Vector(0,0);
     self.velocity = new Vector(0,0);
@@ -75,17 +76,17 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
       * width of object
       * @memberof GameObject
       */
-    'width': { get: function() {if(sprite == null){return null} else{return sprite.width}}},
+    'width': { get: function() {if(self.sprite == null){return null} else{return self.sprite.width}}},
     /**
       * height of object
       * @memberof GameObject
       */
-    'height': { get: function() {if(sprite == null){ return null} else{return sprite.height}}},
+    'height': { get: function() {if(self.sprite == null){ return null} else{return self.sprite.height}}},
     /**
       * source of sprite
       * @memberof GameObject
       */
-    'src': { get: function() {if(sprite == null){ return null} else{return sprite.src}}}
+    'src': { get: function() {if(self.sprite == null){ return null} else{return self.sprite.src}}}
   });  
   
   /** Use this function to set the Square Hitbox for the object
@@ -99,18 +100,18 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
   
   /** Use this function to set the Circle Hitbox for the object
     * @memberof GameObject
-	* @param {vector} center - The center of the circle
-	* @param {int} radius - The radius of the circle
-	*/
+    * @param {vector} center - The center of the circle
+    * @param {int} radius - The radius of the circle
+    */
   self.setCircleHitbox = function(center=new Vector(self.width/2, self.height/2), radius=Math.max(self.width, self.height)/2) {
     self.hitbox = {type: 'circle', radius: radius, center: center};
   }
   
   /** Returns true if the mouse is currently clicking down on the object
     * @memberof GameObject
-	* @param {game} game - the game object
-	* @param {event} event - an event or function that will happen when the mouse is down on the object
-	* @returns {boolean} True if the mouse is currently clicking down on the object
+    * @param {game} game - the game object
+    * @param {event} event - an event or function that will happen when the mouse is down on the object
+    * @returns {boolean} True if the mouse is currently clicking down on the object
     */
   self.mouseDown = function(game, event) {
     self.isClicked = true;
@@ -144,23 +145,25 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
 	* @param {game} game - The game object
 	*/
   self.update = function(game) {
-    self.customUpdate(game);
-    if(self.isLooping && game.outOfBounds(self.nextX, self.nextY)){
-      if(self.nextX > game.canvas.width){self.nextX = 0}
-      else if(self.nextX < 0){self.nextX = game.canvas.width}
-        
-      if(self.nextY > game.canvas.height){self.nextY = 0}
-      else if(self.nextY < 0){self.nextY = game.canvas.height}
+    if (self.doUpdate) {
+      self.customUpdate(game);
+      if(self.isLooping && game.outOfBounds(self.nextX, self.nextY)){
+        if(self.nextX > game.canvas.width){self.nextX = 0}
+        else if(self.nextX < 0){self.nextX = game.canvas.width}
+          
+        if(self.nextY > game.canvas.height){self.nextY = 0}
+        else if(self.nextY < 0){self.nextY = game.canvas.height}
+      }
+      if (self.direction.x != 0 || self.direction.y != 0) {
+        self.nextX += self.direction.x;
+        self.nextY += self.direction.y;
+      }
+      if (self.isDraggable && self.isClicked) {
+        self.nextX = game.mouseX;
+        self.nextY = game.mouseY;
+      }
+      self.postUpdate(game);
     }
-    if (self.direction.x != 0 || self.direction.y != 0) {
-      self.nextX += self.direction.x;
-      self.nextY += self.direction.y;
-    }
-    if (self.isDraggable && self.isClicked) {
-      self.nextX = game.mouseX;
-      self.nextY = game.mouseY;
-    }
-    self.postUpdate(game);
   }
   
   /** Override this function to put in your custom post updates for this object. Called after update. 

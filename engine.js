@@ -5,6 +5,7 @@ document.write('<script type="text/javascript" src="SceneGraph.js"></script>');
 document.write('<script type="text/javascript" src="key.js"></script>');
 document.write('<script type="text/javascript" src="gameManager.js"></script>');
 document.write('<script type="text/javascript" src="Grid.js"></script>');
+document.write('<script type="text/javascript" src="objectPool.js"></script>');
 
 /**
  * Flattens an n-dimensional array

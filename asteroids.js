@@ -18,10 +18,42 @@ var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, 
 var spr_alien = game.sprites.push(new Sprite("smallAlien", alienSize, alienSize, "http://www4.ncsu.edu/~alrichma/images/alien.png"));
 
 
+function newAsteroid() {
+	//default values for a big asteroid, speed and size of 3
+	return new Asteroid(0, 0, 0, 0, 3, bigAsteroid);
+}
+
+function resetAsteroid(asteroid) {
+  var x, y;
+	//choose a number that will not be around the rocket
+	do {
+		x = Math.random() * (game.canvas.width)
+	} while(x > (rocket.x - 200) && x < (rocket.x + 200));
+	do {
+		y = Math.random() * (game.canvas.height)
+	} while(y > (rocket.y - 100) && y < (rocket.y - 100));
+	var angle = Math.random() * (360);
+  asteroid.setSize(3);
+  asteroid.setCircleHitbox();
+  asteroid.angle = angle;
+  asteroid.asteroidSpeed = game.gameManager.level == 0 ? 2 : 2 * game.gameManager.level;
+  asteroid.x = x;
+  asteroid.y = y;
+  asteroid.direction = asteroid.calculateVelocity(asteroid.asteroidSpeed, asteroid.angle);
+}
+
 var obj_rocket = game.objects.push(new SceneGraph("rocket",true,true,false));
 var obj_bullet = game.objects.push(new SceneGraph("bullet",true,true,false));
 var obj_alien = game.objects.push(new SceneGraph("alien",true,true,false));
-var obj_asteroids = game.objects.push(new SceneGraph("asteroids",true,true,false));
+var asteroidPool = new ObjectPool("Asteroids", newAsteroid, resetAsteroid, null, 10, POOL_BEHAVIOR_ON_OVERFLOW.EXPAND_POOL, POOL_SELECTION.FIRST);
+
+game.objects.push(asteroidPool);
+
+game.gameManager.addConditionEvent(asteroidPool.isEmpty, 
+  function() {
+    ++game.gameManager.level;
+    asteroidPool.spawnSeveral(4 + Math.floor(game.gameManager.level/2));
+  }, true);
 var rocket;
 
 var lives = new Lives(3, spr_liferocket, game);
@@ -46,13 +78,6 @@ else
 
 var alienRate = 300;
 
-game.gameManager.addConditionEvent(obj_asteroids.isEmpty, 
-  function() {
-    game.gameManager.level++;
-    var amtSpawn = 4 + Math.floor(game.gameManager.level/2)
-    var speed = 2 * game.gameManager.level;
-    for(i = 0; i < amtSpawn; i++){ spawnAsteroid(rocket.x, rocket.y, speed); }
-  }, true);
 game.gameManager.addConditionEvent(obj_rocket.isEmpty, 
   function() {
     rocket = obj_rocket.push(new Rocket());
@@ -86,28 +111,13 @@ game.setup = function(){
 	  var text = highscore.getNameAt(i) + " " + highscore.getHighScoreAt(i);
       hs_elems[i].innerHTML = text;
 	}
-	obj_asteroids.removeAll();
 	obj_bullet.removeAll();
 	obj_rocket.removeAll();
 	obj_alien.removeAll();
 	rocket = obj_rocket.push(new Rocket());
-	for(i = 0; i < 4; i++){ spawnAsteroid(rocket.x, rocket.y, 2); }
-    Key.reset();
-}
-
-function spawnAsteroid(rocketx, rockety, speed) {
-	var x = rocket.x;
-	var y = rocket.y;
-	//choose a number that will not be around the rocket
-	while(x > (rocket.x - 200) && x < (rocket.x + 200)){
-		x = Math.random() * (game.canvas.width)
-	}
-	while(y > (rocket.y - 100) && y < (rocket.y - 100)){
-		y = Math.random() * (game.canvas.height)
-	}
-	var angle = Math.random() * (360);
-	//default values for a big asteroid, speed and size of 3
-	obj_asteroids.push(new Asteroid(x,y,angle, speed, 3, bigAsteroid));
+  asteroidPool.recycleAll();
+  asteroidPool.spawnSeveral(4);
+  Key.reset();
 }
 
 function Rocket(){
@@ -252,6 +262,7 @@ function Asteroid(x, y, angle, speed, size, sprite){
 	var size = size;
 	self.constructor = function(x, y, angle, speed, size, sprite){
 		self.size = size;
+    self.angle = angle;
 		self.asteroidSpeed = speed;
 		GameObject.call(self,"asteroid",sprite,x,y);
 		self.velocity = self.calculateVelocity(speed, angle);
@@ -277,10 +288,10 @@ function Asteroid(x, y, angle, speed, size, sprite){
 					score.addScore(40);
 				}
 				//splits the asteroids based on size
-				self.splitAsteroids(self.size);
+				self.splitAsteroids();
 			}
 			//remove bullet that hit
-			obj_bullet.remove(self);
+			obj_bullet.remove(other);
 		}
 		if(other instanceof Rocket  && !other.immune){
 			lives.loseLife();
@@ -293,22 +304,41 @@ function Asteroid(x, y, angle, speed, size, sprite){
 				obj_rocket.removeAll();
 			}
 			//remove bullet that hit
-			obj_bullet.remove(self);
+			//obj_bullet.remove(other);
 		}
 	}
-	
-	self.splitAsteroids = function(size){
-		var tempSize = 2;
-		var tempSprite = mediumAsteroid;
-		if(size != 1){
-			if(size == 2){
-				tempSize = 1;
-				tempSprite = smallAsteroid;
-			}
-			obj_asteroids.push(new Asteroid(self.x,self.y,angle+30, self.asteroidSpeed*2, tempSize, tempSprite));
-			obj_asteroids.push(new Asteroid(self.x,self.y,angle-30, self.asteroidSpeed*2, tempSize, tempSprite));
-		}
-		obj_asteroids.remove(self);
+  self.setSize = function(n) {
+    self.size = n;
+    switch(n) {
+      case 3:
+        self.sprite = bigAsteroid;
+        break;
+      case 2:
+        self.sprite = mediumAsteroid;
+        break;
+      case 1:
+        self.sprite = smallAsteroid;
+        break;
+    }
+    self.setCircleHitbox();
+  }
+	self.splitAsteroids = function(){
+		if(self.size != 1){
+      var other = asteroidPool.getObjectAndAddToPool().object;
+      self.asteroidSpeed *= 2;
+      other.x = self.x;
+      other.y = self.y;
+      other.angle = self.angle - 30;
+      other.setSize(self.size - 1);
+      other.asteroidSpeed = self.asteroidSpeed;
+      other.direction = other.calculateVelocity(self.asteroidSpeed, other.angle);
+      
+      self.setSize(self.size - 1);
+      self.angle += 30;
+      self.direction = self.calculateVelocity(self.asteroidSpeed, self.angle);
+		} else {
+      asteroidPool.recycle(self.pooledInstance);
+    }
 	}
 }
 

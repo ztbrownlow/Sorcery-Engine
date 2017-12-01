@@ -28,6 +28,9 @@ app.get('/key.js', function(req /* request */, res /* resource */) { //sets func
 app.get('/gameManager.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
   res.sendFile(__dirname + '/gameManager.js');
 });
+app.get('/objectPool.js', function(req /* request */, res /* resource */) { //sets function that is called on page load
+  res.sendFile(__dirname + '/objectPool.js');
+});
 
 //app.get("/highscores.json', function(req /* request */, res /* resource */) {
 //  res.sendFile(__dirname + '/highscores.json');
