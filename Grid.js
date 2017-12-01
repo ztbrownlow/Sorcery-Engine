@@ -1,18 +1,23 @@
 /** A node for use in the Grid class.
-  * @class
-  * @namespace Node
-  * @param x the x position of the node in the grid
-  * @param y the y position of the node in the grid
+  * @class Node
+  * @param {Number} x the x position of the node in the grid
+  * @param {Number} y the y position of the node in the grid
+  * @property {Number} x x coordinate on grid of node
+  * @property {Number} y y coordinate on grid of node
+  * @property {Number} f used for A*
+  * @property {Number} g used for A*
+  * @property {Number} h used for A*
+  * @property {Number} nodeParent used for pathfinding
   */
 function Node(x, y){
 	var self = this;
 	
-  /**
-   * Creates the node
-   * @constructs Node
-   * @param x the x position of the node in the grid
-   * @param y the y position of the node in the grid
-   */
+	/**
+	 * Creates the node
+	 * @function Node#constructor
+	 * @param {Number} x the x position of the node in the grid
+	 * @param {Number} y the y position of the node in the grid
+	 */
 	self.constructor = function(x, y){
 		self.value = null;
 		self.walkable = false;
@@ -26,20 +31,20 @@ function Node(x, y){
 		self.nodeParent = null;
 	}
 	
-  /**
-    * Checks if a node is open for traversing
-    * @memberof Node
-    * @returns true if node has null value and is walkable
-    */
+	/**
+	 * Checks if a node is open for traversing
+	 * @function Node#isOpen
+	 * @returns true if node has null value and is walkable
+	 */
 	self.isOpen = function(){
 		return self.walkable && (self.value == null);
 	}
 	
-  /**
-    * Checks if a node isn't walkable
-    * @memberof Node
-    * @returns true if node is not walkable
-    */
+	/**
+	  * Checks if a node isn't walkable
+	  * @function Node#isClosed
+	  * @returns true if node is not walkable
+	  */
 	self.isClosed = function(){
 		return !self.walkable;
 	}
@@ -49,16 +54,19 @@ function Node(x, y){
 
 /**
   * Grid class used for maintaining states on a grid and traversing it
-  * @namespace Grid
-  * @param length the number of rows in the grid
-  * @param width the number of columns in the grid
+  * @class Grid
+  * @param {Number} length the number of rows in the grid
+  * @param {Number} width the number of columns in the grid
+  * @property {Node[][]} grid
+  * @property {Number} gridLength width of grid
+  * @property {Number} gridWidth width of grid
   */
 function Grid(length, width){
 	var self = this;
 	
   /**
    * Creates the grid
-   * @constructs Grid
+   * @function Grid#constructor
    * @param length the number of rows in the grid
    * @param width the number of columns in the grid
    */
@@ -78,7 +86,7 @@ function Grid(length, width){
 	
   /**
     * Moves a value from one node to another
-    * @memberof Grid
+    * @function Grid#moveNodeValue
     * @param x1 the x position of the node whose value will be copied over
     * @param y1 the y position of the node whose value will be copied over
     * @param x2 the x position of the node who will receive the new value
@@ -93,9 +101,10 @@ function Grid(length, width){
 	
   /**
     * Changes the value of a node in the grid
-    * @param x the x position of the node whose value will be changed
-    * @param y the y position of the node whose value will be changed
-    * @param value the new value
+    * @function Grid#changeNodeValue
+    * @param {Number} x the x position of the node whose value will be changed
+    * @param {Number} y the y position of the node whose value will be changed
+    * @param {object} value the new value
     * @memberof Grid
     */
 	self.changeNodeValue = function(x, y, value){
@@ -104,10 +113,10 @@ function Grid(length, width){
 	
   /**
     * Gets the value at a node in the grid
-    * @param x the x position of the node whose value will be checked
-    * @param y the y position of the node whose value will be checked
-    * @returns the value of the node
-    * @memberof Grid
+    * @param {Number} x the x position of the node whose value will be checked
+    * @param {Number} y the y position of the node whose value will be checked
+    * @function Grid#getNodeValue
+    * @returns {object} the value of the node
     */
 	self.getNodeValue = function(x, y){
 		return self.grid[y][x].value;
@@ -115,10 +124,10 @@ function Grid(length, width){
 	
   /**
     * Changes the if a node in the grid is walkable
-    * @param x the x position of the node which will be changed
-    * @param y the y position of the node which will be changed
-    * @param walkable whether or not the node should be walkable
-    * @memberof Grid
+    * @param {Number} x the x position of the node which will be changed
+    * @param {Number} y the y position of the node which will be changed
+    * @param {Boolean} walkable whether or not the node should be walkable
+    * @function Grid#changeNodeWalkable
     */
 	self.changeNodeWalkable = function(x, y, walkable){
 		self.grid[y][x].walkable = walkable;
@@ -126,10 +135,10 @@ function Grid(length, width){
 	
   /** 
     * Gets the node at a certain position in the grid
-    * @param x the x position to check
-    * @param y the y position to check
-    * @returns the node at the position
-    * @memberof Grid
+    * @param {Number} x the x position to check
+    * @param {Number} y the y position to check
+    * @returns {Node} the node at the position
+    * @function Grid#getNode
     */
 	self.getNode = function(x, y){
 		return self.grid[y][x];
@@ -137,9 +146,9 @@ function Grid(length, width){
 	
   /**
     * Gets the neighbors of a node
-    * @param node the node to check
-    * @returns the node's neighbors
-    * @memberof Grid
+    * @param {Node} node the node to check
+    * @returns {Node[]}the node's neighbors
+    * @function Grid#getNeighbors
     */
 	self.getNeighbors = function(node){
 		var x = node.x;
@@ -162,10 +171,10 @@ function Grid(length, width){
 	
   /**
     * Gets the open neighbors of a node
-    * @param x the x position of the node to checked
-    * @param  y the y position of the node to check
-    * @returns the node's open neighbors
-    * @memberof Grid
+    * @param {Number} x the x position of the node to checked
+    * @param {Number} y the y position of the node to check
+    * @returns {Node[]} the node's open neighbors
+    * @function Grid#getWalkableNeighbors
     */
 	self.getWalkableNeighbors = function(x, y){
     return self.getNeighbors(self.getNode(x, y)).filter(function(n){return n.isOpen();});
@@ -173,10 +182,10 @@ function Grid(length, width){
 	
   /**
     * Gets the manhattan distance between two nodes
-    * @param object1 node to check
-    * @param object2 node to check
-    * @returns the Manhattan distance between object1 and object2
-    * @memberof Grid
+    * @param {Node} object1 node to check
+    * @param {Node} object2 node to check
+    * @returns {Number} the Manhattan distance between object1 and object2
+    * @function Grid#ManhattanDistance
     */
 	self.ManhattanDistance = function(object1, object2){
 		var d1 = Math.abs(object2.x - object1.x);
@@ -186,7 +195,7 @@ function Grid(length, width){
 	
   /**
     * Cleans the grid to prepare for running A*
-    * @memberof Grid
+    * @function Grid#astarGridClean
     */
 	self.astarGridClean = function(){
 		for(var i = 0; i < self.grid.length; i++){
@@ -202,10 +211,10 @@ function Grid(length, width){
 	
   /**
     * Gets the shortest path between two nodes in the grid
-    * @param start the starting node
-    * @param end the ending node
-    * @returns the shortest path between the two nodes as an array of [x, y] coordinates
-    * @memberof Grid
+    * @param {Node} start the starting node
+    * @param {Node} end the ending node
+    * @returns {Array} the shortest path between the two nodes as an array of [x, y] coordinates
+    * @function Grid#astar
     */
 	self.astar = function(start, end){
 		self.astarGridClean();
@@ -214,46 +223,46 @@ function Grid(length, width){
 		var closedList = new Array();
 		var path;
 		openList.push(start);
-    start.g = 0;
-    start.f = self.ManhattanDistance(start,end);
-    while (openList.length) {
-      current = openList[0];
-      ci = 0;
-      for (var i = 1; i < openList.length; ++i) {
-        if (openList[i].f < current.f) {
-          ci = i;
-          current = openList[i];
-        }
-      }
-      if (current === end) {
-        var path = closedList[closedList.push(current) - 1];
-        var result = [];
+		start.g = 0;
+		start.f = self.ManhattanDistance(start,end);
+		while (openList.length) {
+			current = openList[0];
+			ci = 0;
+			for (var i = 1; i < openList.length; ++i) {
+				if (openList[i].f < current.f) {
+					ci = i;
+					current = openList[i];
+				}
+			}
+			if (current === end) {
+				var path = closedList[closedList.push(current) - 1];
+				var result = [];
 				do{ result.push([path.x, path.y]); }
 				while(path = path.nodeParent);
 				//return start to finish
 				return result.reverse();
-      } else {
-        openList.splice(ci,1);
-        closedList.push(current);
-        var neighbors = self.getNeighbors(current).filter(function(n) {return n.walkable});
-        for (var i = 0; i < neighbors.length; ++i) {
-          var n = neighbors[i];
-          if (closedList.includes(n)) {
-            continue;
-          }
-          if (!openList.includes(n)) {
-            openList.push(n);
-          }
-          var gScore = current.g + 1;
-          if (gScore >= n.g) {
-            continue;
-          }
-          n.nodeParent = current;
-          n.g = gScore;
-          n.f = n.g + self.ManhattanDistance(n,end);
-        }
-      }
-    }
-    return null;
+			} else {
+				openList.splice(ci,1);
+				closedList.push(current);
+				var neighbors = self.getNeighbors(current).filter(function(n) {return n.walkable});
+				for (var i = 0; i < neighbors.length; ++i) {
+					var n = neighbors[i];
+					if (closedList.includes(n)) {
+						continue;
+					}
+					if (!openList.includes(n)) {
+						openList.push(n);
+					}
+					var gScore = current.g + 1;
+					if (gScore >= n.g) {
+						continue;
+					}
+					n.nodeParent = current;
+					n.g = gScore;
+					n.f = n.g + self.ManhattanDistance(n,end);
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -164,8 +164,8 @@ function GameObject(name, sprite, x, y, xOffset=0, yOffset=0) {
 	self.customPreDraw = null;
 	
 	/** The update function of the object. Do not override this function. Handles looping, velocity, and dragging
-	 * @memberof GameManager
-	 * @function GameManager#update
+	 * @memberof GameObject
+	 * @function GameObject#update
 	 * @param {Game} game - The game object
 	 */
 	self.update = function(game) {

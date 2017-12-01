@@ -1,6 +1,6 @@
 /**
   * An interface for a drawable object
-  * @class Drawable
+  * @interface Drawable
   * @param {String} name the name of the drawable
   * @property {String} name the name of the drawable
   */
@@ -9,46 +9,51 @@ function Drawable(name) {
   
   /**
    * Creates a Drawable
-   * @constructs Drawable
+   * @memberof Drawable
+   * @function Drawable#constructor
+   * @param {String} name name
    */
   self.constructor = function(name) {
     self.name = name
   }
   /**
    * Draw function
-   * @function Drawable.draw
-   * @param context the context to draw on
-   * @param x the x coordinate to draw at
-   * @param y the y coordinate to draw at
+   * @function Drawable#draw
+   * @param {RenderingContext} context the context to draw on
+   * @param {Number} x the x coordinate to draw at
+   * @param {Number} y the y coordinate to draw at
    */
   self.draw = function(context, x, y) { }  
 }
 
 /** A sprite is the image of an object
   * @class Sprite
-  * @namespace Sprite
   * @implements Drawable
-  * @param name image name
-  * @param width image width
-  * @param height image height
-  * @param src image source
-  * @param isSpriteSheet if image is sprite sheet
-  * @param defAngle default image angle
+  * @param {String} name image name
+  * @param {Number} width image width
+  * @param {Number} height image height
+  * @param {String} src image source
+  * @param {Boolean} [isSpriteSheet=false] if image is sprite sheet
+  * @param {Number} [defAngle=0] default image angle
   * @property {String} src image source
   * @property {Number} width image width
   * @property {Number} height image height
+  * @property {Image} image the image
+  * @property {Boolean} isSpriteSheet if image is sprite sheet
+  * @property {Number} currentSprite=0 the index into the spritesheet
+  * @property {Boolean} doDraw=true whether the sprite should be drawn or not
   */
 function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   var self = this;
   
   /** Creates the Sprite
-    * @constructs Sprite
-    * @param name image name
-    * @param width image width
-    * @param height image height
-    * @param src image source
-    * @param isSpriteSheet if image is sprite sheet
-    * @param defAngle default image angle
+    * @function Sprite.constructor
+    * @param {String} name image name
+    * @param {Number} width image width
+    * @param {Number} height image height
+    * @param {String} src image source
+    * @param {Boolean} [isSpriteSheet=false] if image is sprite sheet
+    * @param {Number} [defAngle=0] default image angle
     */
   self.constructor = function(name, width, height, src, isSpriteSheet=false, defAngle=0) {
     Drawable.call(self, name);
@@ -71,12 +76,12 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
   });
   
   /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
-	* @function Sprite.draw
-	* @param {context} context - the context
-	* @param {Number} x - the x position on the canvas
-	* @param {Number} y - the y position on the canvas
-	* @param {Number} angle - the angle of the sprite
-	*/
+  * @function Sprite#draw
+  * @param {RenderingContext} context - the context
+  * @param {Number} x - the x position on the canvas
+  * @param {Number} y - the y position on the canvas
+  * @param {Number} angle - the angle of the sprite
+  */
   self.draw = function(context, x, y, angle) {
     if(self.doDraw){
       if(angle + self.image.angle != 0){
@@ -108,21 +113,21 @@ function Sprite(name, width, height, src, isSpriteSheet=false, defAngle=0) {
  * A filled rectangle that can be used like a sprite
  * @implements Drawable
  * @class FilledRect
- * @param name the name of the rectangle sprite
- * @param width the width of the rectangle
- * @param height the height of the rectangle
- * @param fillStyle the fill style of the rectangle
+ * @param {String} name the name of the rectangle sprite
+ * @param {Number} width the width of the rectangle
+ * @param {Number} height the height of the rectangle
+ * @param {String} fillStyle the fill style of the rectangle
  */
 function FilledRect(name, width, height, fillStyle) {
   var self = this;
   /**
    * Constructor method
    * @memberof FilledRect
-   * @function FilledRect.constructor
-   * @param name the name of the rectangle sprite
-   * @param width the width of the rectangle
-   * @param height the height of the rectangle
-   * @param fillStyle the fill style of the rectangle
+   * @function FilledRect#constructor
+   * @param {String} name the name of the rectangle sprite
+   * @param {Number} width the width of the rectangle
+   * @param {Number} height the height of the rectangle
+   * @param {String} fillStyle the fill style of the rectangle
    */
   self.constructor = function(name, width, height, fillStyle) {
     Drawable.call(self, name);
@@ -133,8 +138,8 @@ function FilledRect(name, width, height, fillStyle) {
   }
   self.constructor(name, width, height, fillStyle);
   /** Draws the sprite based on the angle and sprite sheet chosen. Do not override this function.
-    * @function FilledRect.draw
-    * @param {context} context - the context
+    * @function FilledRect#draw
+    * @param {RendeirngContext} context - the context
     * @param {Number} x - the x position on the canvas
     * @param {Number} y - the y position on the canvas
     */

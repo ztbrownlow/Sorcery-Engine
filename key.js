@@ -98,6 +98,7 @@ var Key = {
   /**
    * Checks if a key is currently pressed
    * @return true if key is pressed
+   * @param {Number} keyCode the key to check
    * @static
    */
   isDown: function(keyCode) {
@@ -133,9 +134,9 @@ var Key = {
   
   /**
    * Binds a function to a key
-   * @param key the key to bind to
-   * @param keyDir Key.KEY_UP, Key.KEY_DOWN, or Key.KEY_HELD
-   * @param func the function to bind
+   * @param {Number} key the key to bind to
+   * @param {Number} keyDir Key.KEY_UP, Key.KEY_DOWN, or Key.KEY_HELD
+   * @param {function} func the function to bind
    * @memberof Key
    */
   bind: function(key, keyDir, func) {

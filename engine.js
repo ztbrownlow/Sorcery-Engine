@@ -26,8 +26,8 @@ function flatten(arrays, removeNullsAndUndefineds=true) {
 /**
  * The main game class
  * @class Game
- * @param canvas the canvas to draw on
- * @param name the name of the game
+ * @param {HTMLCanvasElement} canvas the canvas to draw on
+ * @param {String} name the name of the game
  * @property {SceneGraph} objects object tree
  * @property {SceneGraph} sprites sprite tree
  * @property {Number} mouseX x position of mouse
@@ -45,9 +45,9 @@ function Game(canvas, name) {
   /**
    * Constructor method
    * @memberof Game
-   * @function Game.constructor
-   * @param canvas the canvas to draw on
-   * @param name the name of the game
+   * @function Game#constructor
+   * @param {HTMLCanvasElement} canvas the canvas to draw on
+   * @param {String} name the name of the game
    */
   self.constructor = function(canvas, name) {
     self.canvas = canvas;
