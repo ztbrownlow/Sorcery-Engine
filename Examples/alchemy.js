@@ -131,37 +131,6 @@ function addElement(name, img, unlocked) {
   var ypos = game.canvas.height - guiHeight + (imageSize+sepWidth)*Math.floor(i++/Math.floor(guiWidth/imageSize));
   obj_elements.push(new Element(spr_elements.push(new Sprite(name, imageSize, imageSize, img)), name, unlocked, xpos, ypos));
 }
-<<<<<<< HEAD
-addElement("wings", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/wings.png?raw=true", true)
-addElement("scales", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/scales.png?raw=true", true)
-addElement("fur", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/fur.png?raw=true", true)
-addElement("skin", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/skin.png?raw=true", true)
-addElement("horn", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/horn.png?raw=true", true)
-addElement("water", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/water.png?raw=true", true)
-addElement("hair", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/hair.png?raw=true", false)
-addElement("bird", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/bird.png?raw=true", false)
-addElement("snake", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/snake.png?raw=true", false)
-addElement("dragon", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/dragon.png?raw=true", false)
-addElement("human", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/human.png?raw=true", false)
-addElement("fish", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/fish.png?raw=true", false)
-addElement("horse", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/horse.png?raw=true", false)
-addElement("lion", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages//lion.png?raw=true", false)
-addElement("bull", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/bull.png?raw=true", false)
-addElement("unicorn", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/unicorn.png?raw=true?raw=true", false)
-addElement("griffin", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/griffin.png?raw=true", false)
-addElement("werewolf", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/werewolf.png?raw=true", false)
-addElement("angel",
-"https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/angel.png?raw=true", false)
-addElement("pegasus", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/pegasus.png?raw=true", false)
-addElement("sphinx", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/sphinx.png?raw=true", false)
-addElement("mermaid", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/mermaid.png?raw=true", false)
-addElement("minotaur", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/minotar.png?raw=true", false)
-addElement("centaur", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/centaur.png?raw=true", false)
-addElement("medusa", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/medusa.png?raw=true", false)
-addElement("harpy",
-"https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/harpy.png?raw=true", false)
-addElement("manticore", "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/alchemyimages/manticore.png?raw=true", false)
-=======
 addElement("wings", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/wings.png", true)
 addElement("scales", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/scales.png", true)
 addElement("fur", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/fur.png", true)
@@ -189,7 +158,7 @@ addElement("centaur", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engi
 addElement("medusa", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/medusa.png", false)
 addElement("harpy", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/harpy.png", false)
 addElement("manticore", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/manticore.png", false)
->>>>>>> 8e67b4acc91e3d07393e80ece574496293600fad
+
 obj_elements.firstByName("scales").link(obj_elements.firstByName("fur"), obj_elements.firstByName("hair"))
 obj_elements.firstByName("wings").link(obj_elements.firstByName("wings"), obj_elements.firstByName("bird"))
 obj_elements.firstByName("scales").link(obj_elements.firstByName("scales"), obj_elements.firstByName("snake"))

@@ -35,7 +35,6 @@ document.getElementById("totalturns").innerHTML = totalTurns;
 document.getElementById("robbers").innerHTML = numRobbers;
 document.getElementById("levelValue").innerHTML = "Level 1";
 
-<<<<<<< HEAD
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/goodpath.png?raw=true"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/badpath.png?raw=true"));
@@ -43,7 +42,7 @@ var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/goodpath.png"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/badpath.png"));
->>>>>>> 8e67b4acc91e3d07393e80ece574496293600fad
+
 
 var obj_players_tree = game.objects.push(new SceneGraph("players", true, true, false));
 var obj_path_tree = game.objects.push(new SceneGraph("path", true, true, false));
@@ -237,11 +236,7 @@ function Cop(gridx, gridy, isHuman, turnNumber){
 		self.gridx = gridx;
 		self.gridy = gridy;
 		self.turnNumber = turnNumber;
-<<<<<<< HEAD
-		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/cop.png?raw=true",true));
-=======
 		self.sprite = game.sprites.push(new Sprite("cop", characterSize, characterSize,"https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/cop.png",true));
->>>>>>> 8e67b4acc91e3d07393e80ece574496293600fad
 		self.isHuman = isHuman;
 		GameObject.call(self, "Cop", self.sprite, gridx*gridSize, gridy*gridSize);
 		if(self.isHuman){
@@ -353,11 +348,7 @@ function Robber(gridx, gridy, isHuman, turnNumber){
 		self.gridx = gridx;
 		self.gridy = gridy;
 		self.turnNumber = turnNumber;
-<<<<<<< HEAD
-		self.sprite = game.sprites.push(new Sprite("robber", characterSize, characterSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/robber.png?raw=true",true));
-=======
 		self.sprite = game.sprites.push(new Sprite("robber", characterSize, characterSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/robber.png",true));
->>>>>>> 8e67b4acc91e3d07393e80ece574496293600fad
 		self.isHuman = isHuman;
 		if(self.isHuman){
 			self.sprite.currentSprite = 1;
