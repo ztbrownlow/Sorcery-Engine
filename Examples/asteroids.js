@@ -9,13 +9,13 @@ var rocket_start_x = canvas.width/2;
 var rocket_start_y = canvas.height/2;
 
 
-var bigAsteroid = game.sprites.push(new Sprite("asteroid", bigAsteroidSize, bigAsteroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var mediumAsteroid = game.sprites.push(new Sprite("asteroid", mediumAsteroidSize, mediumAsteroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var smallAsteroid = game.sprites.push(new Sprite("asteroid", smallAsteroidSize, smallAsteroidSize, "http://www4.ncsu.edu/~alrichma/images/astroid.png"));
-var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png", true));
-var spr_liferocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "http://www4.ncsu.edu/~alrichma/images/rocket.png",true));
+var bigAsteroid = game.sprites.push(new Sprite("asteroid", bigAsteroidSize, bigAsteroidSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/astroid.png?raw=true"));
+var mediumAsteroid = game.sprites.push(new Sprite("asteroid", mediumAsteroidSize, mediumAsteroidSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/astroid.png?raw=true"));
+var smallAsteroid = game.sprites.push(new Sprite("asteroid", smallAsteroidSize, smallAsteroidSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/astroid.png?raw=true"));
+var spr_rocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/rocket.png?raw=true", true));
+var spr_liferocket = game.sprites.push(new Sprite("rocket", rocketSize, rocketSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/rocket.png?raw=true",true));
 var bullet = game.sprites.push(new FilledRect("bullet", bulletSize, bulletSize, "#6FDC6F"));
-var spr_alien = game.sprites.push(new Sprite("smallAlien", alienSize, alienSize, "http://www4.ncsu.edu/~alrichma/images/alien.png"));
+var spr_alien = game.sprites.push(new Sprite("smallAlien", alienSize, alienSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/alien.png?raw=true"));
 
 
 function newAsteroid() {

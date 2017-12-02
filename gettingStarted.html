@@ -14,15 +14,16 @@
 		<a href="gamehub.html">Sample Games</a>
 		<a href="out/index.html">JSDoc</a>
 		<a href="creators.html">Creators</a>
+		<a href="https://github.com/ztbrownlow/Sorcery-Engine">Github</a>
 	</div> 
 	
 	<p> Click here to download templates to create a game </p>
 	<a href="gameTemplate.js" download> Javascript Template</a><br/>
 	<a href ="websiteTemplate.html" download> Website Template </a>
-	<p> To download the game engine and see code for sample games go to: <a href = "https://github.ncsu.edu/ztbrownl/csc481Alchemy"> our github page</a>
+	<p> To download the game engine and see code for sample games go to: <a href = "https://github.com/ztbrownlow/Sorcery-Engine"> our github page</a>
 	<p> Please see our JSDoc for an API reference for each class </p>
 	
-	<h3> The Game Object </h3>
+	<h3> The Game</h3>
 	<p> The very basic line you need to start a game is: <br/> 
 		<span style="font-family:Courier">var game = new Game(document.getElementById("canvas"), "gamename"); </span>
 		<br/><br/>
@@ -39,5 +40,25 @@
 	</p>
 	<h3>Starting a game</h3>
 	<p> By editing the function, <span style="font-family:Courier">game.setup = function(){}</span>, anything inside of that function will be the first code that the game will read before starting a new game. This function must be called at the end of the file so the game will setup before officially starting. This is where you will initlize any objects needed for the game. Use this function everytime you want to start a new game.  You can then start the game using <span style="font-family:Courier">game.start(10);</span> to start the game updating. The number in the parameter is how many milliseconds between each update. So if you want there to be one second between updates the number you would need is 1000. </p>
+	<h3> Creating GameObjects </h3>
+	<p> With the nature of javascript, this is a generic setup for each GameObject.<br/>
+	<div style="font-family:Courier">
+		function ObjectName(){<br/>
+		&nbsp;&nbsp;var self = this;<br/>
+		<br/>
+		&nbsp;&nbsp;self.constructor = function(){<br/>
+		&nbsp;&nbsp;&nbsp;&nbsp;GameObject.call(self,"objectName",sprite,x,y);<br/>
+		&nbsp;&nbsp;}<br/>
+		&nbsp;&nbsp;self.constructor();<br/>
+		<br/>
+		&nbsp;&nbsp;self.customUpdate = function(game){<br/>
+		<br/>
+		&nbsp;&nbsp;}<br/>
+		}
+	</div>
+	Use the name self to refer to the object throughout the function.
+	When creating a game object use the <span style="font-family:Courier">customUpdate</span> to create specific updates for your object!
+	<br/>
+	Remember to add your objects to a SceneGraph!</p>
 	</body>
 </html>
