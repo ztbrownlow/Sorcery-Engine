@@ -5,4 +5,4 @@ body{
 	color:#FFFFFF;
 }
 canvas, img { display:block; margin:1em auto; border:1px solid black; }
-canvas { background:url(https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/astroidsImages/starrynight.png?raw=true) }
+canvas { background:url(https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/asteroidsImages/starrynight.png?raw=true) }

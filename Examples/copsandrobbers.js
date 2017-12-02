@@ -38,7 +38,7 @@ document.getElementById("levelValue").innerHTML = "Level 1";
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/goodpath.png?raw=true"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/badpath.png?raw=true"));
-=======
+
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/goodpath.png"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/badpath.png"));
