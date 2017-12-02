@@ -1,11 +1,11 @@
 var game = new Game(document.getElementById("canvas"), "snake");
 var snakeSize = 20;
 
-var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakehead.png"));
-var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snakebody.png"));
-var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/snaketail.png"));
-var spr_food = game.sprites.push(new Sprite("food", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruit.png"));
-var spr_food_rotten = game.sprites.push(new Sprite("food_rotten", snakeSize, snakeSize, "http://www4.ncsu.edu/~alrichma/images/fruitrotten.png"));
+var spr_snake_head = game.sprites.push(new Sprite("snake_head", snakeSize, snakeSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/snakeImages/snakehead.png"));
+var spr_snake_body = game.sprites.push(new Sprite("snake_body", snakeSize, snakeSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/snakeImages/snakebody.png"));
+var spr_snake_tail = game.sprites.push(new Sprite("snake_tail", snakeSize, snakeSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/snakeImages/snaketail.png"));
+var spr_food = game.sprites.push(new Sprite("food", snakeSize, snakeSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/snakeImages/fruit.png"));
+var spr_food_rotten = game.sprites.push(new Sprite("food_rotten", snakeSize, snakeSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/snakeImages/fruitrotten.png"));
 var spr_wall = game.sprites.push(new FilledRect("wall", snakeSize, snakeSize, "#000000"));
 
 var obj_snake_tree = game.objects.push(new SceneGraph("snake", true, true, false));
