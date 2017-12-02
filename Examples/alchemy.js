@@ -158,6 +158,7 @@ addElement("centaur", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engi
 addElement("medusa", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/medusa.png", false)
 addElement("harpy", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/harpy.png", false)
 addElement("manticore", "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/alchemyimages/manticore.png", false)
+
 obj_elements.firstByName("scales").link(obj_elements.firstByName("fur"), obj_elements.firstByName("hair"))
 obj_elements.firstByName("wings").link(obj_elements.firstByName("wings"), obj_elements.firstByName("bird"))
 obj_elements.firstByName("scales").link(obj_elements.firstByName("scales"), obj_elements.firstByName("snake"))

@@ -35,9 +35,14 @@ document.getElementById("totalturns").innerHTML = totalTurns;
 document.getElementById("robbers").innerHTML = numRobbers;
 document.getElementById("levelValue").innerHTML = "Level 1";
 
+var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/goodpath.png?raw=true"));
+
+var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://github.com/ztbrownlow/Sorcery-Engine/blob/master/Examples/images/copsandrobbersImages/badpath.png?raw=true"));
+=======
 var spr_goodpath = game.sprites.push(new Sprite("good_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/goodpath.png"));
 
 var spr_badpath = game.sprites.push(new Sprite("bad_path", gridSize, gridSize, "https://raw.githubusercontent.com/ztbrownlow/Sorcery-Engine/master/Examples/images/copsandrobbersImages/badpath.png"));
+
 
 var obj_players_tree = game.objects.push(new SceneGraph("players", true, true, false));
 var obj_path_tree = game.objects.push(new SceneGraph("path", true, true, false));
